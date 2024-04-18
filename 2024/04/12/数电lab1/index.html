@@ -35,19 +35,23 @@
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240414002449048.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418210327043.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413175749827.png">
-<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413180508944.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213106251.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213118749.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213318678.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181132483.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181329167.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181342965.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181400790.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181507357.png">
-<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413182131396.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213106251.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213118749.png">
+<meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240418213318678.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181329167.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181342965.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181400790.png">
 <meta property="og:image" content="http://example.com/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181507357.png">
 <meta property="article:published_time" content="2024-04-12T03:13:28.000Z">
-<meta property="article:modified_time" content="2024-04-18T13:04:34.629Z">
+<meta property="article:modified_time" content="2024-04-18T13:34:24.564Z">
 <meta property="article:author" content="Charoneo">
 <meta property="article:tag" content="数电">
 <meta name="twitter:card" content="summary">
@@ -250,7 +254,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-18 21:04:34" itemprop="dateModified" datetime="2024-04-18T21:04:34+08:00">2024-04-18</time>
+                <time title="修改时间：2024-04-18 21:34:24" itemprop="dateModified" datetime="2024-04-18T21:34:24+08:00">2024-04-18</time>
               </span>
 
           
@@ -282,7 +286,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>6.4k</span>
+              <span>6.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -382,13 +386,11 @@
 
 <p>④编写测试程序</p>
 <p>添加测试文件”voter5_tb.sv”，编写相关代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns/1ns</span><br><span class="line">module voter5_tb();</span><br><span class="line">    parameter int count = 2;</span><br><span class="line">    bit [2*count:0] I;</span><br><span class="line">    logic pass;</span><br><span class="line"></span><br><span class="line">    // Instance of the module under test</span><br><span class="line">    voter5 i1(</span><br><span class="line">        .I(I),</span><br><span class="line">        .pass(pass)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    initial begin</span><br><span class="line">        repeat(100) begin</span><br><span class="line">            // Generate a random input value with a specified number of bits</span><br><span class="line">            I = $urandom_range(2**(count+1)-1, 0);</span><br><span class="line">            #10;</span><br><span class="line">        end</span><br><span class="line">        $stop; // Stop the simulation</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns/1ns</span><br><span class="line">module  voter5_tb();</span><br><span class="line"> logic [4:0] I;</span><br><span class="line"> logic  pass;</span><br><span class="line"> integer i;</span><br><span class="line"> voter5 DUT(.I(I),.pass(pass));</span><br><span class="line"> initial begin</span><br><span class="line">   for(i=0;i&lt;32;i=i+1) begin</span><br><span class="line">    I=i;</span><br><span class="line">    #20;   </span><br><span class="line">    end</span><br><span class="line"> end</span><br><span class="line"> initial begin</span><br><span class="line"> $timeformat(-9,0,&quot;ns&quot;,5);</span><br><span class="line"> $monitor(&quot;At time %t: I=%b,pass=%b&quot;,$time,I,pass);</span><br><span class="line"> end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
 
-<p>定义一个参数count，这样有利于适应不同表决器的人数的场景，实例化voter5模块名字为i1，把I和pass传入并匹配。</p>
-<p>利用initial过程块（只执行一次），repeat(100)重复一百次</p>
-<p><code>urandom_range</code>内置函数生成宽度为2*(count+1)的随机数，#10代表延迟10ns</p>
-<p><img src="/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413180508944.png" alt="image-20240413180508944"></p>
-<p>仿真结果如上图（一种情况）。</p>
+<p>仿真结果:</p>
+<div><img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" /></div>
+
 <p>⑤编辑约束文件</p>
 <p>根据”远程硬件平台管脚对应关系.xlsx”，选择对应的管脚，约束文件（voter_xdc.sv）如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set_property -dict &#123;PACKAGE_PIN B9  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[0]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN D11  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[1]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN B11  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[2]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN B12  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[3]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN A10  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[4]&#125;];</span><br><span class="line"></span><br><span class="line">set_property -dict &#123;PACKAGE_PIN K13  IOSTANDARD LVCMOS33&#125; [get_ports &#123;pass&#125;];</span><br></pre></td></tr></table></figure>
@@ -412,10 +414,11 @@
 
 <p>②测试程序</p>
 <p>和内容1中的测试程序一致</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//voter5_tb.sv</span><br><span class="line">module voter5_tb(</span><br><span class="line"></span><br><span class="line">    );</span><br><span class="line">parameter int count = 2;</span><br><span class="line">    bit [2*count:0] I;</span><br><span class="line">    logic pass;</span><br><span class="line"></span><br><span class="line">    // Instance of the module under test</span><br><span class="line">    voter5 i1(</span><br><span class="line">        .I(I),</span><br><span class="line">        .pass(pass)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    initial begin</span><br><span class="line">        repeat(100) begin</span><br><span class="line">            // Generate a random input value with a specified number of bits</span><br><span class="line">            I = $urandom_range(2**(count+1)-1, 0);</span><br><span class="line">            #10;</span><br><span class="line">        end</span><br><span class="line">        $stop; // Stop the simulation</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns/1ns</span><br><span class="line">module  voter5_tb();</span><br><span class="line"> logic [4:0] I;</span><br><span class="line"> logic  pass;</span><br><span class="line"> integer i;</span><br><span class="line"> voter5 DUT(.I(I),.pass(pass));</span><br><span class="line"> initial begin</span><br><span class="line">   for(i=0;i&lt;32;i=i+1) begin</span><br><span class="line">    I=i;</span><br><span class="line">    #20;   </span><br><span class="line">    end</span><br><span class="line"> end</span><br><span class="line"> initial begin</span><br><span class="line"> $timeformat(-9,0,&quot;ns&quot;,5);</span><br><span class="line"> $monitor(&quot;At time %t: I=%b,pass=%b&quot;,$time,I,pass);</span><br><span class="line"> end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
 
-<p>结果如下（其中一种情况）：</p>
-<p><img src="/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413182131396.png" alt="image-20240413182131396"></p>
+<p>结果如下：</p>
+<div><img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" /></div>
+
 <p>③编辑约束文件，综合、实现并生成bin文件</p>
 <p>④远程平台验证</p>
 <p>结果如下：</p>
