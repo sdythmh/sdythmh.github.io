@@ -30,7 +30,7 @@
 <meta property="og:description" content="本文将从h08开始，介绍每一次作业的做法，其中h05是java程序设计lab1，h11是java程序设计lab2，这里就不做过多赘述了">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-18T16:18:00.000Z">
-<meta property="article:modified_time" content="2024-04-19T14:18:57.964Z">
+<meta property="article:modified_time" content="2024-04-20T06:14:04.073Z">
 <meta property="article:author" content="Charoneo">
 <meta property="article:tag" content="java实验">
 <meta name="twitter:card" content="summary">
@@ -224,10 +224,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-04-19 00:18:00 / 修改时间：22:18:57" itemprop="dateCreated datePublished" datetime="2024-04-19T00:18:00+08:00">2024-04-19</time>
+              <time title="创建时间：2024-04-19 00:18:00" itemprop="dateCreated datePublished" datetime="2024-04-19T00:18:00+08:00">2024-04-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-20 14:14:04" itemprop="dateModified" datetime="2024-04-20T14:14:04+08:00">2024-04-20</time>
+              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -258,14 +264,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>12k</span>
+              <span>15k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>11 分钟</span>
+              <span>13 分钟</span>
             </span>
             <div class="post-description">本文将从h08开始，介绍每一次作业的做法，其中h05是java程序设计lab1，h11是java程序设计lab2，这里就不做过多赘述了</div>
 
@@ -415,6 +421,23 @@
 <p>同时还要注意，在使用BufferdReader时要考虑异常</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Set&lt;String&gt; <span class="title function_">copyToTargetDirAndReturnNoExist</span><span class="params">(String studentListFile,String srcDir,String target)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    Set&lt;String&gt; noPicIds = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">    <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(target);</span><br><span class="line">    <span class="keyword">if</span>(!dir.exists()) &#123;</span><br><span class="line">        dir.mkdirs();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span>(<span class="type">BufferedReader</span> <span class="variable">reader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(<span class="keyword">new</span> <span class="title class_">FileReader</span>(studentListFile)))&#123;</span><br><span class="line">        String line;</span><br><span class="line">        <span class="keyword">while</span>((line = reader.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            String[] details = line.split(<span class="string">&quot;\t&quot;</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">studentId</span> <span class="operator">=</span> details[<span class="number">0</span>];</span><br><span class="line">            <span class="type">String</span> <span class="variable">StuName</span> <span class="operator">=</span> details[<span class="number">1</span>];</span><br><span class="line">            <span class="type">String</span> <span class="variable">StuClass</span> <span class="operator">=</span> details[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line">            <span class="type">File</span> <span class="variable">picFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(srcDir + studentId + <span class="string">&quot;.jpg&quot;</span>);</span><br><span class="line">            <span class="keyword">if</span>(picFile.exists()) &#123;</span><br><span class="line">                <span class="type">File</span> <span class="variable">targetFile</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(target + StuClass);</span><br><span class="line">                <span class="keyword">if</span>(!targetFile.exists()) &#123;</span><br><span class="line">                    targetFile.mkdirs();</span><br><span class="line">                &#125;</span><br><span class="line">                Files.copy(Paths.get(picFile.getPath()), Paths.get(targetFile.getPath(),studentId +<span class="string">&quot;_&quot;</span> + StuName + <span class="string">&quot;.jpg&quot;</span>),StandardCopyOption.REPLACE_EXISTING);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                noPicIds.add(studentId);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">catch</span>(IOException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IOException</span>(<span class="string">&quot;Error Handling File Operations&quot;</span>,e);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> noPicIds;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h1 id="h15"><a href="#h15" class="headerlink" title="h15"></a>h15</h1><p><strong>任务1</strong>：</p>
+<p>测试程序输入一个StringBuffer，刚输入的时候StringBuffer值为空，等待1000ms后，这个StringBuffer的值变为”ok”</p>
+<p><strong>做法</strong>：</p>
+<p>考点主要是重写<code>run</code>方法和<code>Thread.sleep</code>的使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadUtil</span> <span class="keyword">extends</span> <span class="title class_">Thread</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> StringBuffer buf;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">ThreadUtil</span><span class="params">(StringBuffer buf)</span> &#123;</span><br><span class="line">		<span class="built_in">this</span>.buf = buf;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">			buf.append(<span class="string">&quot;ok&quot;</span>);</span><br><span class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			System.out.println(<span class="string">&quot;Thread was Interrupted!&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>任务2</strong>：</p>
+<p>多线程方式，统计[start,end)区间所有的质数，并且小到大排序返回</p>
+<p><strong>做法</strong>：</p>
+<p>首先利用<code>ExecutorService</code>创建一个指定大小的线程池，大小具体为传进来的参数threadCount。</p>
+<p>然后设置一个List里面专门用来存放future对象</p>
+<p>接下来计算每个线程处理的区间大小，让每个线程处理的数字数量几乎相等，注意如果是最后一个线程，必须处理到末尾（end）</p>
+<p><code>executor</code>在<code>submit</code>时，应该用实现<code>Callable</code>接口而不是<code>Runnable</code>接口，因为<code>Callable</code>接口可以有返回值，在重写的<code>call()</code>方法中完成对素数的挑选。</p>
+<p>注意<code>submit</code>返回的对象是<code>Future</code>，所以我们把每一个<code>Future</code>对象都存到一个<code>List</code>中，最后把<code>List</code>中所有的<code>Future</code>对象中的对象（类型是<code>List&lt;long&gt;</code>）合并（用<code>addAll</code>函数）为一个大的<code>List</code>。</p>
+<p>最后调用<code>Collections.sort()</code>方法对这个<code>List</code>进行排序，返回结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Future;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Callable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PrimeUtil</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> List&lt;Long&gt; <span class="title function_">getPrimeList</span><span class="params">(<span class="type">long</span> start, <span class="type">long</span> end, <span class="type">int</span> threadCount)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(threadCount);</span><br><span class="line">        List&lt;Future&lt;List&lt;Long&gt;&gt;&gt; futures = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="type">long</span> <span class="variable">blockSize</span> <span class="operator">=</span> (end - start) / threadCount;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; threadCount; i++) &#123;</span><br><span class="line">            <span class="type">long</span> <span class="variable">localStart</span> <span class="operator">=</span> start + i * blockSize;</span><br><span class="line">            <span class="type">long</span> <span class="variable">localEnd</span> <span class="operator">=</span> (i == threadCount - <span class="number">1</span>) ? end : localStart + blockSize;</span><br><span class="line">            futures.add(executor.submit(<span class="keyword">new</span> <span class="title class_">PrimeTask</span>(localStart, localEnd)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        List&lt;Long&gt; primes = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (Future&lt;List&lt;Long&gt;&gt; future : futures) &#123;</span><br><span class="line">            primes.addAll(future.get()); <span class="comment">// Retrieve and combine results</span></span><br><span class="line">        &#125;</span><br><span class="line">        executor.shutdown();</span><br><span class="line"></span><br><span class="line">        Collections.sort(primes); <span class="comment">// Ensure the primes are sorted</span></span><br><span class="line">        <span class="keyword">return</span> primes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">PrimeTask</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;List&lt;Long&gt;&gt; &#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="type">long</span> start, end;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">PrimeTask</span><span class="params">(<span class="type">long</span> start, <span class="type">long</span> end)</span> &#123;</span><br><span class="line">            <span class="built_in">this</span>.start = start;</span><br><span class="line">            <span class="built_in">this</span>.end = end;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> List&lt;Long&gt; <span class="title function_">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            List&lt;Long&gt; localPrimes = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">long</span> <span class="variable">number</span> <span class="operator">=</span> start; number &lt; end; number++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (isPrime(number)) &#123;</span><br><span class="line">                    localPrimes.add(number);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> localPrimes;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">isPrime</span><span class="params">(<span class="type">long</span> number)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (number &lt;= <span class="number">1</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">if</span> (number &lt;= <span class="number">3</span>) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            <span class="keyword">if</span> (number % <span class="number">2</span> == <span class="number">0</span> || number % <span class="number">3</span> == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">long</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">5</span>; i * i &lt;= number; i += <span class="number">6</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (number % i == <span class="number">0</span> || number % (i + <span class="number">2</span>) == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -463,7 +486,10 @@
     <a href="/2024/04/16/java%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-lab2/" rel="prev" title="java程序设计-lab2">
       <i class="fa fa-chevron-left"></i> java程序设计-lab2
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/20/%E5%A5%87%E6%80%AA%E7%9A%84cpp%E4%BD%9C%E4%B8%9A/" rel="next" title="奇怪的cpp作业">
+      奇怪的cpp作业 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -527,7 +553,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#h08"><span class="nav-number">1.</span> <span class="nav-text">h08</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h09"><span class="nav-number">2.</span> <span class="nav-text">h09</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h10"><span class="nav-number">3.</span> <span class="nav-text">h10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h11"><span class="nav-number">4.</span> <span class="nav-text">h11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h12"><span class="nav-number">5.</span> <span class="nav-text">h12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h13"><span class="nav-number">6.</span> <span class="nav-text">h13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h14"><span class="nav-number">7.</span> <span class="nav-text">h14</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#h08"><span class="nav-number">1.</span> <span class="nav-text">h08</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h09"><span class="nav-number">2.</span> <span class="nav-text">h09</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h10"><span class="nav-number">3.</span> <span class="nav-text">h10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h11"><span class="nav-number">4.</span> <span class="nav-text">h11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h12"><span class="nav-number">5.</span> <span class="nav-text">h12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h13"><span class="nav-number">6.</span> <span class="nav-text">h13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h14"><span class="nav-number">7.</span> <span class="nav-text">h14</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#h15"><span class="nav-number">8.</span> <span class="nav-text">h15</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -543,7 +569,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -556,7 +582,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -619,12 +645,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">64k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">58 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
