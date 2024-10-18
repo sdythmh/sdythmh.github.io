@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="天津大学智能与计算学部计算机网络课程2024春季学期socket实验week4">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网socket实验week4">
+<meta property="og:url" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="天津大学智能与计算学部计算机网络课程2024春季学期socket实验week4">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/v2-7b3107ece3b8e47097ed0a7bee923299_720w.jpg">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614045520028.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614045932695.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614045957702.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050133110.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050204034.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050339310.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050413778.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050453866.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050521564.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614050553165.png">
+<meta property="og:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614051322143.png">
+<meta property="article:published_time" content="2024-06-13T17:36:30.000Z">
+<meta property="article:modified_time" content="2024-06-13T21:14:45.727Z">
+<meta property="article:author" content="Charoneo">
+<meta property="article:tag" content="计网实验">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/v2-7b3107ece3b8e47097ed0a7bee923299_720w.jpg">
+
+<link rel="canonical" href="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>计网socket实验week4 | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计网socket实验week4
+        </h1>
+
+        <div class="post-meta">
+	
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-06-14 01:36:30 / 修改时间：05:14:45" itemprop="dateCreated datePublished" datetime="2024-06-14T01:36:30+08:00">2024-06-14</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/06/14/计网socket实验week4/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+            <div class="post-description">天津大学智能与计算学部计算机网络课程2024春季学期socket实验week4</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、协议设计"><a href="#一、协议设计" class="headerlink" title="一、协议设计"></a>一、协议设计</h1><p><strong>具体要求：</strong></p>
+<p>当服务器在等待一个客户端发送下一个请求时，能够同时处理来自其它客户端的请求，使服务器能够同时处理多个并发的客户端。</p>
+<p>注意：</p>
+<ol>
+<li><p>将服务器能够支持的最大连接数设置为 1024，这是操作系统可用文件描述符数量的最大值。</p>
+</li>
+<li><p>客户端可能会“暂停”（即请求发送了一半突然暂停）或出错，但这些问题不应对其他并发用户产生不良影响。也就是说，如果一个客户端只发送了请求的一半就停止了，那么服务端应继续为另一个客户端提供服务。</p>
+</li>
+<li><p>只能通过 select()方法实现并发，禁止使用多线程。</p>
+</li>
+</ol>
+<h2 id="（一）协议头部"><a href="#（一）协议头部" class="headerlink" title="（一）协议头部"></a>（一）协议头部</h2><p>在讨论并发的概念时，常常会提到另一个相关概念——并行。以下是对这两个概念的区分：</p>
+<p><strong>并发（Concurrency）：</strong> 并发是指在不同时间点将任务交给处理器处理。在某一时刻，多个任务可能不会同时运行，但它们会在不同时间片轮流执行。</p>
+<p><strong>并行（Parallelism）：</strong> 并行则是将每个任务分配给独立的处理器进行处理。在某一时刻，多个任务可以同时运行。</p>
+<p>并发和并行有显著的区别。并行是在不同的物理处理器上同时执行不同的代码片段，其关键是同时完成多个任务。而并发则是同时管理多个任务，这些任务可能在执行过程中被暂停，以便处理其他任务。</p>
+<p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/v2-7b3107ece3b8e47097ed0a7bee923299_720w.jpg" alt="理解并行与并发 - 知乎"></p>
+<p>在现代服务器上，实现并发主要有两种方法：多线程同步阻塞和 I&#x2F;O 多路复用。</p>
+<p>如果服务器不做特别处理，每次只能处理一个连接。新的连接必须等待当前连接结束才能建立，这就是最初的同步阻塞方法。这种方式一次只能连接一对服务器和客户端。</p>
+<p>为了提高处理效率，多线程同步阻塞方法应运而生。每次 <code>accept</code> 接受一个连接，就创建一个线程来处理该连接，这样就可以同时处理多个连接，这是经典的多线程同步阻塞方法。</p>
+<p>然而，多线程同步阻塞并不理想，会导致资源浪费。每个 TCP 连接需要一个线程，10k 个连接需要 10k 个线程。然而，大部分连接并不活跃，即便需要处理业务逻辑，也可以快速返回结果，大部分时间都在 I&#x2F;O 阻塞或等待网络响应。这使得创建和管理大量线程非常耗费资源，线程切换也极其耗费 CPU。最终，CPU 处理实际业务的时间少，大部分资源浪费在线程切换上。</p>
+<p>I&#x2F;O 多路复用方法则不同，它将阻塞的 socket 暂时放置一边，处理其他事情，从而避免资源浪费，这是非阻塞 I&#x2F;O 的核心概念。</p>
+<p>![123](.&#x2F;DALL·E 2024-06-14 02.21.34 - A diagram illustrating the process of handling I_O in concurrent servers. On the left side, labeled ‘Application Process,’ it shows multiple calls to .webp)</p>
+<p>上图展示了调用 <code>recv</code> 时的情况。当用户进程发出 <code>read</code> 操作时，如果内核中的数据尚未准备好，系统不会阻塞用户进程，而是立即返回一个错误。用户进程不需要等待，而是立即知道数据尚未准备好，于是可以再次发送 <code>read</code> 操作。一旦内核中的数据准备好，再次接收到用户进程的系统调用，数据会立刻被拷贝到用户内存，然后返回。</p>
+<p>I&#x2F;O 多路复用的原理是不断检查多个 socket，当某个 socket 数据准备好时立即返回，否则整个进程继续阻塞。这样，一个进程可以在不耗费大量资源的情况下处理多个连接。这种轮询操作由内核态完成，从而减少内核态和用户态之间的切换。</p>
+<h2 id="（二）协议规则"><a href="#（二）协议规则" class="headerlink" title="（二）协议规则"></a>（二）协议规则</h2><p>具体实现的流程如下：</p>
+<p>1）主进程采用 I&#x2F;O 多路复用技术来监控多个 socket 资源。 </p>
+<p>2）当客户端尝试连接时，服务端会接受连接请求，并将其加入到监控列表中。</p>
+<p>3）客户端与服务端之间的通信也会触发 I&#x2F;O 复用函数返回。</p>
+<p>4）服务端在循环中同时处理新的连接请求和已有连接的业务请求。</p>
+<h2 id="（三）主要数据结构"><a href="#（三）主要数据结构" class="headerlink" title="（三）主要数据结构"></a>（三）主要数据结构</h2><p>在本次第四周的 socket 实验中，我们引入了一个名为 <code>fdclient[]</code> 的数组数据结构，用作用户池。这个数组的定义和初始化如下所示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fdclient[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>数组的大小设置为 1024，这是因为实验指导书中提到最大连接用户数为 1024。为了管理和操作这个用户池，我们使用了一个辅助索引 <code>fdptr</code>，其定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fdptr = <span class="number">1024</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>fdptr</code> 是一个整数变量，用来记录当前处理的用户在用户池中的位置。在处理用户连接的循环中，<code>fdptr</code> 会持续遍历 <code>fdclient[]</code> 数组中的所有用户，从而确保每个用户都能被正确处理和管理。</p>
+<p>进一步解释：</p>
+<ol>
+<li><strong>用户池 (<code>fdclient[]</code>)</strong>: 这个数组用于存储每个连接的文件描述符。文件描述符是系统为每个连接分配的唯一标识符，用于跟踪和管理活动连接。</li>
+<li><strong>辅助索引 (<code>fdptr</code>)</strong>: <code>fdptr</code> 是一个指针，指向当前正在处理的用户在 <code>fdclient[]</code> 数组中的位置。每次新的连接或需要处理现有连接时，<code>fdptr</code> 会更新以指向下一个用户，从而在循环中遍历所有连接。</li>
+<li><strong>循环处理</strong>: 在服务器运行过程中，会进入一个循环，使用 <code>fdptr</code> 遍历 <code>fdclient[]</code> 数组中的每个用户，处理他们的连接请求和数据传输。这种方法确保了服务器能够高效地管理多个并发连接。</li>
+</ol>
+<h2 id="（四）相关算法"><a href="#（四）相关算法" class="headerlink" title="（四）相关算法"></a>（四）相关算法</h2><p>本周的实验任务是确保服务器能够在等待一个客户端发送下一个请求的同时，处理来自其他客户端的请求，从而实现对多个并发客户端的支持。为实现这一目标，我们将使用 <code>select</code> 函数。</p>
+<p><code>select</code> 是一个阻塞调用函数，允许我们监听多个文件描述符（socket）的状态，并在其中某个变为可读、可写或发生异常时返回。这样，服务器可以同时处理多个客户端连接，而无需为每个连接创建一个线程。</p>
+<p><code>select</code> 函数原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">select</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> nfds,</span></span><br><span class="line"><span class="params">    fd_set *readfds,</span></span><br><span class="line"><span class="params">    fd_set *writefds,</span></span><br><span class="line"><span class="params">    fd_set *exceptfds,</span></span><br><span class="line"><span class="params">    <span class="type">const</span> <span class="keyword">struct</span> timeval *timeout</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>nfds</strong>：这个参数在现代实现中已被忽略，主要用于兼容性目的。</li>
+<li><strong>readfds</strong>：指向一组等待可读性检查的文件描述符的集合。</li>
+<li><strong>writefds</strong>：指向一组等待可写性检查的文件描述符的集合。</li>
+<li><strong>exceptfds</strong>：指向一组等待异常状态检查的文件描述符的集合。</li>
+<li><strong>timeout</strong>：指定 <code>select</code> 等待的最长时间，可以是 NULL 表示无限期阻塞。</li>
+</ul>
+<p><code>fd_set</code> 的理解：</p>
+<p><code>fd_set</code> 是一个文件描述符集合，用于指定需要监听的文件描述符。可以将 <code>fd_set</code> 视为一个位数组，其中每一位表示一个文件描述符的状态。假设 <code>fd_set</code> 的大小为 1 字节，则可以表示最多 8 个文件描述符。如果 <code>sizeof(fd_set)</code> 为 512 字节，则可以表示 512 * 8 &#x3D; 4096 个文件描述符。</p>
+<p>使用 <code>select</code> 的步骤：</p>
+<ol>
+<li>初始化 <code>fd_set</code>：使用 <code>FD_ZERO</code> 宏清空集合，然后使用 <code>FD_SET</code> 宏添加需要监听的文件描述符。</li>
+<li>调用 <code>select</code>：传递文件描述符集合以及超时时间，<code>select</code> 将阻塞直到其中一个文件描述符变为可读、可写或发生异常，或者超时。</li>
+<li>处理返回结果：使用 <code>FD_ISSET</code> 宏检查哪个文件描述符准备好，并进行相应处理。</li>
+</ol>
+<p><code>select</code> 的性能注意事项：</p>
+<ul>
+<li><strong>内核态和用户态的拷贝开销</strong>：每次调用 <code>select</code>，都需要将文件描述符集合从用户态拷贝到内核态，这在文件描述符数量较多时会产生较大的开销。</li>
+<li><strong>线性扫描</strong>：内核需要线性扫描整个 <code>fd_set</code> 集合，因此随着监控文件描述符数量的增加，I&#x2F;O 性能会线性下降。</li>
+</ul>
+<h2 id="算法内容"><a href="#算法内容" class="headerlink" title="算法内容"></a>算法内容</h2><ol>
+<li><strong>初始化和创建套接字</strong><ul>
+<li>创建服务器套接字并设置为非阻塞模式。</li>
+<li>绑定服务器套接字到指定的地址和端口，并开始监听连接请求。</li>
+</ul>
+</li>
+<li><strong>并发处理</strong><ul>
+<li>使用 <code>select()</code> 方法监控多个文件描述符，等待它们变为可读或可写状态。</li>
+<li>当一个新客户端连接时，接受连接并将客户端套接字设置为非阻塞模式。</li>
+<li>将客户端套接字添加到文件描述符集合中，以便 <code>select()</code> 方法监控它们。</li>
+</ul>
+</li>
+<li><strong>处理客户端请求</strong><ul>
+<li>当客户端发送数据时，接收并处理请求，根据 HTTP 方法（GET、HEAD、POST）执行相应的操作。</li>
+<li>如果接收到的请求不完整或出现错误，关闭客户端连接并从文件描述符集合中移除该客户端。</li>
+<li>向客户端发送响应，包括错误信息（如 400、404、501 等）。</li>
+</ul>
+</li>
+<li><strong>日志记录</strong><ul>
+<li>在处理请求和发送响应时，记录每个请求的详细信息，包括请求的类型、来源 IP、时间等。</li>
+<li>在出现错误时，记录错误信息和相关的详细信息。</li>
+</ul>
+</li>
+</ol>
+<h2 id="伪代码"><a href="#伪代码" class="headerlink" title="伪代码"></a>伪代码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">函数 main()</span><br><span class="line">    初始化服务器套接字</span><br><span class="line">    将套接字绑定到端口 9999</span><br><span class="line">    监听套接字</span><br><span class="line"></span><br><span class="line">    初始化 fd 集合用于 select()</span><br><span class="line">    将服务器套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">    循环</span><br><span class="line">        复制 fd 集合以供 select() 使用</span><br><span class="line">        调用 select() 监视套接字</span><br><span class="line"></span><br><span class="line">        如果服务器套接字有新连接</span><br><span class="line">            处理新连接()</span><br><span class="line"></span><br><span class="line">        处理现有连接()</span><br><span class="line"></span><br><span class="line">    关闭服务器套接字</span><br><span class="line"></span><br><span class="line">函数 处理新连接()</span><br><span class="line">    接受新连接</span><br><span class="line">    将客户端套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">函数 处理现有连接()</span><br><span class="line">    遍历 fd 集合中的每个套接字</span><br><span class="line">        如果套接字有数据可读</span><br><span class="line">            处理客户端()</span><br><span class="line"></span><br><span class="line">函数 处理客户端()</span><br><span class="line">    当客户端有数据可读</span><br><span class="line">        从客户端读取数据</span><br><span class="line">        解析 HTTP 请求</span><br><span class="line">        处理请求()</span><br><span class="line">        将响应发送回客户端</span><br><span class="line">        如果必要，关闭客户端连接</span><br><span class="line"></span><br><span class="line">函数 处理请求()</span><br><span class="line">    如果请求为空</span><br><span class="line">        发送 400 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line">    否则如果请求有效</span><br><span class="line">        检查 HTTP 版本</span><br><span class="line">        如果版本不支持</span><br><span class="line">            发送 505 错误响应</span><br><span class="line">            记录错误日志</span><br><span class="line">        否则</span><br><span class="line">            调用 use_method() 处理请求</span><br><span class="line">    否则</span><br><span class="line">        发送 501 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line"></span><br><span class="line">函数 关闭客户端()</span><br><span class="line">    从 fd 集合中移除客户端套接字</span><br><span class="line">    关闭客户端套接字</span><br><span class="line"></span><br><span class="line">函数 发送错误响应()</span><br><span class="line">    构造错误响应</span><br><span class="line">    将响应发送到客户端</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="四、实验结果分析与测试"><a href="#四、实验结果分析与测试" class="headerlink" title="四、实验结果分析与测试"></a>四、实验结果分析与测试</h1><p>ApacheBench（简称 ab）是 Apache 服务器附带的一个简单却强大的 Web 压力测试工具。它是一个命令行工具，能够通过创建大量并发访问线程模拟多个用户对特定 URL 地址的访问，从而测试目标服务器的负载能力。</p>
+<p>工具特点</p>
+<ul>
+<li><strong>轻量化</strong>：ab 工具对发起负载的本机要求很低。</li>
+<li><strong>易上手</strong>：命令行界面简单直观，学习曲线平缓。</li>
+<li><strong>核心指标</strong>：能够提供基本的性能指标，如每秒请求数和每次请求的响应时间。</li>
+<li><strong>缺点</strong>：不支持图形化结果展示，也不能实时监控。</li>
+</ul>
+<p>使用方法</p>
+<p>ab 的基本命令格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">css</span><br><span class="line">复制代码</span><br><span class="line">ab [options] [http://]hostname[:port]/path</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>options</code> 可以包括多种参数设置。在性能测试中，我们通常关注以下两个主要参数：</p>
+<ul>
+<li><code>-n</code>：设置测试中总共发起的请求数，即 Number of requests to perform。</li>
+<li><code>-c</code>：设置一次产生的请求数（或并发数），即 Number of multiple requests to make。</li>
+</ul>
+<p>例如，要对 <code>http://example.com</code> 进行测试，总共发起 1000 个请求，并且同时产生 100 个并发请求，可以使用以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arduino</span><br><span class="line">复制代码</span><br><span class="line">ab -n 1000 -c 100 http://example.com/</span><br></pre></td></tr></table></figure>
+
+<p>结果解释</p>
+<p>运行上述命令后，ab 工具会输出详细的测试结果，其中最重要的几个指标包括：</p>
+<ol>
+<li><strong>Requests per second</strong>：<ul>
+<li>该指标表示每秒钟处理的请求数，相当于性能测试工具 LoadRunner 中的每秒事务数。括号中的 <code>mean</code> 表示这是一个平均值。</li>
+<li>计算公式：<code>Requests per second = 总请求数 / 总测试时间</code></li>
+</ul>
+</li>
+<li><strong>Time per request</strong>：<ul>
+<li>该指标表示平均每个请求的响应时间，相当于 LoadRunner 中的平均事务响应时间。括号中的 <code>mean</code> 表示这是一个平均值。</li>
+<li>计算公式：<code>Time per request = 总测试时间 / 总请求数</code></li>
+</ul>
+</li>
+<li>**Time per request (concurrent)**：<ul>
+<li>这一行显示的 <code>Time per request</code> 是每个连接请求实际运行时间的平均值。它的值等于上面行的 <code>Time per request</code> 除以并发数 <code>c</code>。</li>
+<li>计算公式：<code>Time per request (concurrent) = Time per request / 并发数</code></li>
+</ul>
+</li>
+</ol>
+<p>修改好的代码可以同时执行两个客户端的请求，测试结果如下图：</p>
+<p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614045520028.png" alt="image-20240614045520028"></p>
+<p>在ab测试中，为了比较不同在并发数下我们的服务器的工作状态，我们选取 n&#x3D;256，c 取 1,2,4,8,16,32,64,128,256 最后的测试</p>
+<p>各种情况的截图如下</p>
+<p>这是c&#x3D;1</p>
+<div><img src="./image-20240614045932695.png" alt="image-20240614045932695" style="zoom: 80%;" /><img src="./image-20240614045957702.png" alt="image-20240614045957702" style="zoom:80%;" /></div>
+
+<p>接下来分别是c&#x3D;2,4,8….</p>
+<div><img src="./image-20240614050133110.png" alt="image-20240614050133110" style="zoom:80%;" /><img src="./image-20240614050204034.png" alt="image-20240614050204034" style="zoom:80%;" /></div>
+
+<div><img src="./image-20240614050339310.png" alt="image-20240614050339310" style="zoom:80%;" /><img src="./image-20240614050413778.png" alt="image-20240614050413778" style="zoom:80%;" /></div>
+
+<div><img src="./image-20240614050453866.png" alt="image-20240614050453866" style="zoom:80%;" /><img src="./image-20240614050521564.png" alt="image-20240614050521564" style="zoom:80%;" /></div>
+
+<div><img src="./image-20240614050553165.png" alt="image-20240614050553165" style="zoom:80%;"></div>
+
+<p>结果数据如下表所示</p>
+<table>
+<thead>
+<tr>
+<th>c</th>
+<th>request per second</th>
+<th>time per request1</th>
+<th>time per request2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>173.18</td>
+<td>5.774</td>
+<td>5.774</td>
+</tr>
+<tr>
+<td>2</td>
+<td>169.42</td>
+<td>11.805</td>
+<td>5.902</td>
+</tr>
+<tr>
+<td>4</td>
+<td>177.76</td>
+<td>22.503</td>
+<td>5.626</td>
+</tr>
+<tr>
+<td>8</td>
+<td>27.08</td>
+<td>295.372</td>
+<td>36.922</td>
+</tr>
+<tr>
+<td>16</td>
+<td>34.08</td>
+<td>29.347</td>
+<td>32.91</td>
+</tr>
+<tr>
+<td>32</td>
+<td>45.56</td>
+<td>702.379</td>
+<td>21.949</td>
+</tr>
+<tr>
+<td>64</td>
+<td>42.88</td>
+<td>1492.624</td>
+<td>23.322</td>
+</tr>
+<tr>
+<td>128</td>
+<td>34.98</td>
+<td>3659.200</td>
+<td>33.78</td>
+</tr>
+</tbody></table>
+<p>从表格中可以观察到，随着并发数的增加，我们的每秒请求数（Requests per second）也在不断增加。这意味着随着并发数的上升，每秒处理的事务数量也在增加。然而，当并发数达到32时，Requests per second达到了峰值，之后便开始下降。对于每个并发客户端的请求时间（Time per request）也是类似的趋势。一开始，随着并发数的增加，每个请求的平均处理时间在减少，直到并发数达到32时，Time per request达到最小值。随后，随着并发数的进一步增加，Time per request又开始上升，最终在并发数为256时达到了一个最高点。</p>
+<h2 id="测试平台截屏"><a href="#测试平台截屏" class="headerlink" title="测试平台截屏"></a>测试平台截屏</h2><p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614051322143.png" alt="image-20240614051322143"></p>
+<h1 id="五、进度总结（未完成）"><a href="#五、进度总结（未完成）" class="headerlink" title="五、进度总结（未完成）"></a>五、进度总结（未完成）</h1>
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/" title="计网socket实验week4">http://example.com/2024/06/14/计网socket实验week4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/" rel="tag"># 计网实验</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek3/" rel="prev" title="计网socket实验week3">
+      <i class="fa fa-chevron-left"></i> 计网socket实验week3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="next" title="单周期MIPS处理器的设计与实现">
+      单周期MIPS处理器的设计与实现 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">一、协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%8D%8F%E8%AE%AE%E5%A4%B4%E9%83%A8"><span class="nav-number">1.1.</span> <span class="nav-text">（一）协议头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%8D%8F%E8%AE%AE%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">（二）协议规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E4%B8%BB%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">（三）主要数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">（四）相关算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%86%85%E5%AE%B9"><span class="nav-number">1.5.</span> <span class="nav-text">算法内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">伪代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">四、实验结果分析与测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%88%AA%E5%B1%8F"><span class="nav-number">2.1.</span> <span class="nav-text">测试平台截屏</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BF%9B%E5%BA%A6%E6%80%BB%E7%BB%93%EF%BC%88%E6%9C%AA%E5%AE%8C%E6%88%90%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">五、进度总结（未完成）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">215k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:16</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>

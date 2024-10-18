@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数字逻辑和数字系统第二次实验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vendmachine">
+<meta property="og:url" content="http://example.com/2024/05/20/vendmachine/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="数字逻辑和数字系统第二次实验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520144102043.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520144232012.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520144412271.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520145948080.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520152501255.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520154650111.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520155139873.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520155531944.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520160354874.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520161341223.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520161355079.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520161402310.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520161411064.png">
+<meta property="og:image" content="http://example.com/2024/05/20/vendmachine/image-20240520161420887.png">
+<meta property="article:published_time" content="2024-05-20T06:37:46.000Z">
+<meta property="article:modified_time" content="2024-05-20T08:14:38.781Z">
+<meta property="article:author" content="Charoneo">
+<meta property="article:tag" content="数电">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/05/20/vendmachine/image-20240520144102043.png">
+
+<link rel="canonical" href="http://example.com/2024/05/20/vendmachine/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>vendmachine | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/20/vendmachine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vendmachine
+        </h1>
+
+        <div class="post-meta">
+	
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-20 14:37:46 / 修改时间：16:14:38" itemprop="dateCreated datePublished" datetime="2024-05-20T14:37:46+08:00">2024-05-20</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/05/20/vendmachine/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/05/20/vendmachine/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>15k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>14 分钟</span>
+            </span>
+            <div class="post-description">数字逻辑和数字系统第二次实验</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="实验三、自动贩售机的设计和实现"><a href="#实验三、自动贩售机的设计和实现" class="headerlink" title="实验三、自动贩售机的设计和实现"></a>实验三、自动贩售机的设计和实现</h1><h2 id="一．-实验目的"><a href="#一．-实验目的" class="headerlink" title="一． 实验目的"></a><strong>一． 实验目的</strong></h2><ol>
+<li><p>掌握有限状态机的设计方法。；</p>
+</li>
+<li><p>能够使用 SystemVerilog 进行三段式状态机的建模。</p>
+</li>
+</ol>
+<h2 id="二．-实验环境"><a href="#二．-实验环境" class="headerlink" title="二． 实验环境"></a><strong>二． 实验环境</strong></h2><ol>
+<li><p>操作系统：Windows 10 或 Ubuntu 16.04</p>
+</li>
+<li><p>开发环境：Xilinx Vivado 2018.2</p>
+</li>
+<li><p>硬件平台：远程 FPGA 云平台</p>
+</li>
+</ol>
+<h2 id="三．-实验原理"><a href="#三．-实验原理" class="headerlink" title="三． 实验原理"></a><strong>三． 实验原理</strong></h2><p>有限状态机分为 Moore 型状态机和 Mealy 型状态机。前者，状态机的输出仅由当前状态决定，如图 4-1 所示，在状态转换图的绘制中，输出信息标在状态（圆圈）中。</p>
+<p><img src="/2024/05/20/vendmachine/image-20240520144102043.png" alt="image-20240520144102043"></p>
+<p>采用硬件描述语言进行状态机建模时，建议使用 3 段式。第一段描述状态的转换（即对状态机中的寄存器进行建模），采用时序逻辑实现；第二段描述状态转换条件和规律（即对状态机中的次态逻辑进行建模），采用组合逻辑实现；第三段描述输出逻辑，根据实际设计需要可采用组合逻辑或时序逻辑实现。三段式状态机建模的模板如下所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">//第一段，同步时序 always 模块，描述状态的转换</span><br><span class="line">always_ff (posedge clk) begin //同步复位</span><br><span class="line">if(!rst_n)</span><br><span class="line">current_state &lt;= S0;</span><br><span class="line">else</span><br><span class="line">current_state &lt;= next_state; //注意，使用的是非阻塞赋值</span><br><span class="line">end</span><br><span class="line">//第二段，组合逻辑 always 模块，描述状态转移条件判断</span><br><span class="line">always_comb begin</span><br><span class="line">case(current_state)</span><br><span class="line">S1: if(...)</span><br><span class="line">next_state = S2; //阻塞赋值</span><br><span class="line">...</span><br><span class="line">endcase</span><br><span class="line">end</span><br><span class="line">//第三段，同步时序 always 模块（组合逻辑也可以），描述状态机的输出</span><br><span class="line">always @ (posedge clk) begin</span><br><span class="line">...//初始化</span><br><span class="line">case(next_state)</span><br><span class="line">S1: out1 &lt;= 1&#x27;b1; //注意是非阻塞逻辑</span><br><span class="line">S2: out2 &lt;= 1&#x27;b1;</span><br><span class="line">default:... //default 的作用是免除综合工具综合出锁存器</span><br><span class="line">endcase</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<h2 id="四．-实验内容"><a href="#四．-实验内容" class="headerlink" title="四． 实验内容"></a><strong>四． 实验内容</strong></h2><p>采用有限状态机，基于 SystemVerilog HDL 设计并实现一个报纸自动贩售机。整个工程的顶层模块如图 4-3 所示，输入&#x2F;输出端口如表 4-1 所示。使用 <strong>4 个七段数码管</strong>实时显示已付款和找零情况。其中，两个数码管对应“已付款”，另两个数码管对应“找零”，单位为分。通过 <strong>1 个拨动开关</strong>对数字钟进行复位控制。使用<strong>两个按键</strong>模拟投币，其中一个按键对应 5 分，另一个按键对应 1 角。使用 <strong>1 个LED 灯</strong>标识出售是否成功，灯亮表示出售成功，否则表示已付款不够，出售失败。</p>
+<p>假设报纸价格为 15 分，合法的投币组合包括：</p>
+<p>⚫ 1 个 5 分的硬币和一个 1 角的硬币，不找零</p>
+<p>⚫ 3 个五分的硬币，不找零</p>
+<p>⚫ 1 个 1 角的硬币和一个 5 分的硬币，不找零</p>
+<p>⚫ 两个 1 角的硬币是合法的，找零 5 分。</p>
+<p>当投入硬币的组合为上面 4 种之一时，则购买成功，LED 灯亮。<strong>购买成功后，LED灯持续亮 10 秒，然后自动熄灭，同时 4 个数码管也恢复为 0</strong>。</p>
+<p><img src="/2024/05/20/vendmachine/image-20240520144232012.png" alt="image-20240520144232012"></p>
+<p>报纸自动贩售机由 4 部分构成。</p>
+<p>⚫ 第一部分是<strong>计时器模块</strong>，该模块又由 3 个子模块构成，分别是计数器电路、使能时钟生成电路和边沿检测电路。</p>
+<p>⚫ 第二部分是整个自动贩售机电路的核心——<strong>贩售机状态机</strong>。状态机根据投币情况产生“已付款”和“找零”输出。此外，如果已付款超过 15 分，则将 LED 灯点亮，表示出售成功。</p>
+<p>⚫ 第三部分是两个 <strong>8 位二进制转 BCD 模块</strong>，分别将二进制的“已付款”和“找零”值转化为 BCD 编码，即 10 进制数。<strong>本实验中，该模块不需要实现，由教师直接提供 IP 使用</strong>。</p>
+<p>⚫ 第四部分是 <strong>7 段数码管动态扫描显示模块</strong>，它实现“已付款”和“找零”值的最终显示。</p>
+<p><img src="/2024/05/20/vendmachine/image-20240520144412271.png" alt="image-20240520144412271"></p>
+<p><strong>完成上述分秒数字钟的设计，需要有以下几点需要注意：</strong></p>
+<ol>
+<li><p>7 段数码管动态扫描必须采用<strong>使能时钟</strong>实现，扫描频率为 <strong>1KHz</strong>（1ms）。</p>
+</li>
+<li><p>必须通过边沿检测电路识别<strong>“5 分”和“1 角”</strong>按键按下产生的上升沿，以用于后续处理。</p>
+</li>
+<li><p>用于计时的时钟频率为 <strong>25MHz</strong>（40ns）。</p>
+</li>
+<li><p>由于 7 段数码管扫描周期是 1ms，购买成功后需要等待 10s，从而造成仿真时间过长。<strong>为了加快仿真速度，可以在仿真的时候使用较大的计时单位和扫描速度</strong>。</p>
+</li>
+</ol>
+<h2 id="五-实验步骤"><a href="#五-实验步骤" class="headerlink" title="五.  实验步骤"></a>五.  实验步骤</h2><h3 id="第一部分、计时器模块"><a href="#第一部分、计时器模块" class="headerlink" title="第一部分、计时器模块"></a>第一部分、计时器模块</h3><h4 id="1-使能时钟生成器"><a href="#1-使能时钟生成器" class="headerlink" title="1.使能时钟生成器"></a><a id = "enable_1ms">1.使能时钟生成器</a></h4><p>首先系统的时钟主频为25MHz，所以时钟周期为1&#x2F;25MHz &#x3D; 40ns</p>
+<p>我们要产生1ms的使能信号，只需经过1ms&#x2F;40ns &#x3D; 25000个时钟周期</p>
+<p>因此可以定义一个计时器，每当counter &#x3D;&#x3D; 24999时，就产生一个使能信号，并把counter重置为0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">module enable_clock(</span><br><span class="line">    input logic sys_clk,</span><br><span class="line">    input logic sys_rst_n,</span><br><span class="line">    output logic enable_1ms</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    logic [14:0] counter;</span><br><span class="line">    //为了加快仿真速度，从25000调整到24</span><br><span class="line">    parameter integer ONE_MS = 25000;       //输入时钟频率为25MHz</span><br><span class="line">    </span><br><span class="line">    always_ff @(posedge sys_clk)</span><br><span class="line">        if(~sys_rst_n)</span><br><span class="line">            counter &lt;= 15&#x27;d0;</span><br><span class="line">        else if(counter == ONE_MS -1)</span><br><span class="line">            counter &lt;= 15&#x27;d0;</span><br><span class="line">        else</span><br><span class="line">            counter &lt;= counter + 1;</span><br><span class="line">            </span><br><span class="line">    assign enable_1ms = (counter == ONE_MS -1);</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-边沿检测电路"><a href="#2-边沿检测电路" class="headerlink" title="2.边沿检测电路"></a>2.边沿检测电路</h4><p>在头歌中已经联系过了边沿检测的书写，主要的原理就是保存上一时刻的信号值，如果上一时刻的信号为0，下一时刻的信号为1，那么就可以检测到一个上升沿。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">module edge_detection(</span><br><span class="line">    input logic sys_clk,</span><br><span class="line">    input logic sys_rst_n,</span><br><span class="line">    input logic signal_in,</span><br><span class="line">    output logic edge_detection</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    logic signal_in_d;          //上一时刻的signal_in</span><br><span class="line">    </span><br><span class="line">    always_ff @(posedge sys_clk)</span><br><span class="line">        if(~sys_rst_n)</span><br><span class="line">            signal_in_d &lt;= 0;</span><br><span class="line">        else</span><br><span class="line">            signal_in_d &lt;= signal_in;</span><br><span class="line">     </span><br><span class="line">     assign edge_detection = ~signal_in_d &amp; signal_in;          //上升沿</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>通过边沿检测电路，我们可以检测到硬币被投入的时机，并且防止投币被多次计算</p>
+<h4 id="3-计数器"><a href="#3-计数器" class="headerlink" title="3.计数器"></a>3.计数器</h4><p>这一部分主要是为了在售出成功后保持10s的LED灯亮起，所以要设计一个10s的计数器。我们可以借鉴上面的1ms使能信号的产生，这里无非是250000000个时钟周期。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">module timer_10s(</span><br><span class="line">    input logic sys_clk,</span><br><span class="line">    input logic sys_rst_n,</span><br><span class="line">    input logic start,</span><br><span class="line">    output logic done</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    logic[31:0] count;</span><br><span class="line">    parameter integer TEN_SECONDS = 250000000;</span><br><span class="line">    </span><br><span class="line">    always_ff @(posedge sys_clk)</span><br><span class="line">        if(~sys_rst_n)</span><br><span class="line">            count &lt;= 0;</span><br><span class="line">        else if(start)</span><br><span class="line">            count &lt;= (count == TEN_SECONDS-1) ? 0 : count + 1;</span><br><span class="line">        else</span><br><span class="line">            count &lt;= 0;</span><br><span class="line">    </span><br><span class="line">    assign done = (count == TEN_SECONDS-1);</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二部分、贩售状态机"><a href="#第二部分、贩售状态机" class="headerlink" title="第二部分、贩售状态机"></a>第二部分、贩售状态机</h3><p>我们首先定义如下几个状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">typedef enum logic [2:0] &#123;</span><br><span class="line">        IDLE = 3&#x27;b000,      //空闲</span><br><span class="line">        PAID5 = 3&#x27;b001,</span><br><span class="line">        PAID10 = 3&#x27;b010,</span><br><span class="line">        PAID15 = 3&#x27;b011,</span><br><span class="line">        PAID20 = 3&#x27;b100,</span><br><span class="line">        WAIT_RESET = 3&#x27;b101</span><br><span class="line">    &#125; state_t;</span><br></pre></td></tr></table></figure>
+
+<p>首先我们根据题目的描述，给出贩售状态机的状态转换图</p>
+<img src="./image-20240520145948080.png" alt="image-20240520145948080" style="zoom:50%;" />
+
+<p>状态转移比较简单，每一次都是从次态变为现态，代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// State transition</span><br><span class="line">always_ff @(posedge sys_clk) begin</span><br><span class="line">    if (~sys_rst_n)</span><br><span class="line">        state &lt;= IDLE;</span><br><span class="line">    else</span><br><span class="line">        state &lt;= next_state;        //次态变为现态</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>次态逻辑里面定义了每种状态下的下一时刻的状态，代码如下</p>
+<p>其中timer_done表示10s已经到了，那么就把PAID15和PAID20下一时刻的状态设置为WAIT_RESET</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">// Next state logic</span><br><span class="line">always_comb begin</span><br><span class="line">    case (state)</span><br><span class="line">        IDLE: begin</span><br><span class="line">            if (edge_detected_coin5)</span><br><span class="line">                next_state = PAID5;</span><br><span class="line">            else if (edge_detected_coin10)</span><br><span class="line">                next_state = PAID10;</span><br><span class="line">            else</span><br><span class="line">                next_state = state;</span><br><span class="line">        end</span><br><span class="line">        PAID5: begin</span><br><span class="line">            if (edge_detected_coin5)</span><br><span class="line">                next_state = PAID10;</span><br><span class="line">            else if (edge_detected_coin10)</span><br><span class="line">                next_state = PAID15;</span><br><span class="line">            else</span><br><span class="line">                next_state = state;</span><br><span class="line">        end</span><br><span class="line">        PAID10: begin</span><br><span class="line">            if (edge_detected_coin5)</span><br><span class="line">                next_state = PAID15;</span><br><span class="line">            else if (edge_detected_coin10)</span><br><span class="line">                next_state = PAID20;</span><br><span class="line">            else</span><br><span class="line">                next_state = state;</span><br><span class="line">        end</span><br><span class="line">        PAID15: begin</span><br><span class="line">            // 保持住现在的状态</span><br><span class="line">            if(timer_done)</span><br><span class="line">                next_state = WAIT_RESET;</span><br><span class="line">            else</span><br><span class="line">                next_state = state;</span><br><span class="line">        end</span><br><span class="line">        PAID20: begin</span><br><span class="line">            // 保持住现在的状态</span><br><span class="line">            if(timer_done)</span><br><span class="line">                next_state = WAIT_RESET;</span><br><span class="line">            else</span><br><span class="line">                next_state = state;</span><br><span class="line">        end</span><br><span class="line">        WAIT_RESET: next_state = IDLE;</span><br><span class="line">        default: next_state = IDLE;</span><br><span class="line">    endcase</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>输出逻辑分别定义了price，change，open（表示LED灯是否亮起），这里我多定义了一个LED状态，用led表示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// Output logic</span><br><span class="line">assign price =  (state == WAIT_RESET) ? 8&#x27;d0 : total_paid; // Price represents the total paid amount</span><br><span class="line">assign change = (state == WAIT_RESET) ? 8&#x27;d0 : change_amount;</span><br><span class="line">assign open = (state == PAID15 || state == PAID20);</span><br><span class="line">assign led = (state == PAID15 || state == PAID20); // LED on for 10 seconds after successful purchase</span><br></pre></td></tr></table></figure>
+
+<p>然后再分别定义total_paid和change_amount</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Total paid logic</span><br><span class="line">always_ff @(posedge sys_clk) begin</span><br><span class="line">    if (~sys_rst_n)</span><br><span class="line">        total_paid &lt;= 8&#x27;d0;</span><br><span class="line">    else if(state == WAIT_RESET)			//这句话保证了在出售成功后10s能够自动清零</span><br><span class="line">        total_paid &lt;= 8&#x27;d0;</span><br><span class="line">    else if (edge_detected_coin5)</span><br><span class="line">        total_paid &lt;= total_paid + 8&#x27;d5;</span><br><span class="line">    else if (edge_detected_coin10)</span><br><span class="line">        total_paid &lt;= total_paid + 8&#x27;d10;</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">// Change calculation logic</span><br><span class="line">always_ff @(posedge sys_clk) begin</span><br><span class="line">    if (~sys_rst_n)</span><br><span class="line">        change_amount &lt;= 8&#x27;d0;</span><br><span class="line">    else if (state == PAID20)			//因为只有PAID20状态为合法状态，所以只需要定义固定的找零值为5</span><br><span class="line">        change_amount &lt;= 8&#x27;d5;</span><br><span class="line">    else</span><br><span class="line">        change_amount &lt;= 8&#x27;d0;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>vending_machine_fsm模块代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br></pre></td><td class="code"><pre><span class="line">module vending_machine_fsm(</span><br><span class="line">    input logic sys_clk,</span><br><span class="line">    input logic sys_rst_n,</span><br><span class="line">    input logic coin5,</span><br><span class="line">    input logic coin10,</span><br><span class="line">    output logic [7:0] change,</span><br><span class="line">    output logic [7:0] price,</span><br><span class="line">    output logic open,</span><br><span class="line">    output logic led</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    // 定义枚举类——状态</span><br><span class="line">    typedef enum logic [2:0] &#123;</span><br><span class="line">        IDLE = 3&#x27;b000,      //空闲</span><br><span class="line">        PAID5 = 3&#x27;b001,</span><br><span class="line">        PAID10 = 3&#x27;b010,</span><br><span class="line">        PAID15 = 3&#x27;b011,</span><br><span class="line">        PAID20 = 3&#x27;b100,</span><br><span class="line">        WAIT_RESET = 3&#x27;b101</span><br><span class="line">    &#125; state_t;</span><br><span class="line"></span><br><span class="line">    state_t state, next_state;</span><br><span class="line">    logic [7:0] total_paid;</span><br><span class="line">    logic [7:0] change_amount;</span><br><span class="line">    logic timer_done;</span><br><span class="line">    logic enable_1ms;</span><br><span class="line">    logic edge_detected_coin5, edge_detected_coin10;</span><br><span class="line">    </span><br><span class="line">    timer_10s timer_10s_inst(</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .start(state == PAID15 || state == PAID20),</span><br><span class="line">        .done(timer_done)</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    // Instantiate timer module for edge detection and 1ms enable signal</span><br><span class="line">    timer_module timer_module_inst(</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .coin5(coin5),</span><br><span class="line">        .coin10(coin10),</span><br><span class="line">        .enable_1ms(enable_1ms),</span><br><span class="line">        .edge_detected_coin5(edge_detected_coin5),</span><br><span class="line">        .edge_detected_coin10(edge_detected_coin10)</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    // Output logic</span><br><span class="line">    assign price =  (state == WAIT_RESET) ? 8&#x27;d0 : total_paid; // Price represents the total paid amount</span><br><span class="line">    assign change = (state == WAIT_RESET) ? 8&#x27;d0 : change_amount;</span><br><span class="line">    assign open = (state == PAID15 || state == PAID20);</span><br><span class="line">    assign led = (state == PAID15 || state == PAID20); // LED on for 10 seconds after successful purchase</span><br><span class="line"></span><br><span class="line">    // State transition</span><br><span class="line">    always_ff @(posedge sys_clk) begin</span><br><span class="line">        if (~sys_rst_n)</span><br><span class="line">            state &lt;= IDLE;</span><br><span class="line">        else</span><br><span class="line">            state &lt;= next_state;        //次态变为现态</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Next state logic</span><br><span class="line">    always_comb begin</span><br><span class="line">        case (state)</span><br><span class="line">            IDLE: begin</span><br><span class="line">                if (edge_detected_coin5)</span><br><span class="line">                    next_state = PAID5;</span><br><span class="line">                else if (edge_detected_coin10)</span><br><span class="line">                    next_state = PAID10;</span><br><span class="line">                else</span><br><span class="line">                    next_state = state;</span><br><span class="line">            end</span><br><span class="line">            PAID5: begin</span><br><span class="line">                if (edge_detected_coin5)</span><br><span class="line">                    next_state = PAID10;</span><br><span class="line">                else if (edge_detected_coin10)</span><br><span class="line">                    next_state = PAID15;</span><br><span class="line">                else</span><br><span class="line">                    next_state = state;</span><br><span class="line">            end</span><br><span class="line">            PAID10: begin</span><br><span class="line">                if (edge_detected_coin5)</span><br><span class="line">                    next_state = PAID15;</span><br><span class="line">                else if (edge_detected_coin10)</span><br><span class="line">                    next_state = PAID20;</span><br><span class="line">                else</span><br><span class="line">                    next_state = state;</span><br><span class="line">            end</span><br><span class="line">            PAID15: begin</span><br><span class="line">                // 保持住现在的状态</span><br><span class="line">                if(timer_done)</span><br><span class="line">                    next_state = WAIT_RESET;</span><br><span class="line">                else</span><br><span class="line">                    next_state = state;</span><br><span class="line">            end</span><br><span class="line">            PAID20: begin</span><br><span class="line">                // 保持住现在的状态</span><br><span class="line">                if(timer_done)</span><br><span class="line">                    next_state = WAIT_RESET;</span><br><span class="line">                else</span><br><span class="line">                    next_state = state;</span><br><span class="line">            end</span><br><span class="line">            WAIT_RESET: next_state = IDLE;</span><br><span class="line">            default: next_state = IDLE;</span><br><span class="line">        endcase</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Total paid logic</span><br><span class="line">    always_ff @(posedge sys_clk) begin</span><br><span class="line">        if (~sys_rst_n)</span><br><span class="line">            total_paid &lt;= 8&#x27;d0;</span><br><span class="line">        else if(state == WAIT_RESET)</span><br><span class="line">            total_paid &lt;= 8&#x27;d0;</span><br><span class="line">        else if (edge_detected_coin5)</span><br><span class="line">            total_paid &lt;= total_paid + 8&#x27;d5;</span><br><span class="line">        else if (edge_detected_coin10)</span><br><span class="line">            total_paid &lt;= total_paid + 8&#x27;d10;</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">    // Change calculation logic</span><br><span class="line">    always_ff @(posedge sys_clk) begin</span><br><span class="line">        if (~sys_rst_n)</span><br><span class="line">            change_amount &lt;= 8&#x27;d0;</span><br><span class="line">        else if (state == PAID20)</span><br><span class="line">            change_amount &lt;= 8&#x27;d5;</span><br><span class="line">        else</span><br><span class="line">            change_amount &lt;= 8&#x27;d0;</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三部分、8为二进制转BCD模块"><a href="#第三部分、8为二进制转BCD模块" class="headerlink" title="第三部分、8为二进制转BCD模块"></a>第三部分、8为二进制转BCD模块</h3><p><strong>本实验中，该模块不需要实现，由教师直接提供 IP 使用</strong>。</p>
+<p>IP核实例化后结构如下</p>
+<img src="./image-20240520152501255.png" alt="image-20240520152501255" style="zoom:50%;" />
+
+<h3 id="第四部分、7段数码管动态扫描显示模块"><a href="#第四部分、7段数码管动态扫描显示模块" class="headerlink" title="第四部分、7段数码管动态扫描显示模块"></a>第四部分、7段数码管动态扫描显示模块</h3><p>为了实现动态扫描，还是要利用到之前定义的<a href="#enable_1ms">使能时钟生成器</a>。</p>
+<p>此外，还需要实现七段数码管的译码器，即把十进制0~9翻译成对应的8位数码管电路（本实验是8位，最高位始终无效），注意是共阳极低电平有效，代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">module seven_segment_decoder(</span><br><span class="line">    input logic [3:0] digit,</span><br><span class="line">    output logic [7:0] seg</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    always_comb begin</span><br><span class="line">        case (digit)</span><br><span class="line">            4&#x27;d0: seg = 8&#x27;b11000000; // 0</span><br><span class="line">            4&#x27;d1: seg = 8&#x27;b11111001; // 1</span><br><span class="line">            4&#x27;d2: seg = 8&#x27;b10100100; // 2</span><br><span class="line">            4&#x27;d3: seg = 8&#x27;b10110000; // 3</span><br><span class="line">            4&#x27;d4: seg = 8&#x27;b10011001; // 4</span><br><span class="line">            4&#x27;d5: seg = 8&#x27;b10010010; // 5</span><br><span class="line">            4&#x27;d6: seg = 8&#x27;b10000010; // 6</span><br><span class="line">            4&#x27;d7: seg = 8&#x27;b11111000; // 7</span><br><span class="line">            4&#x27;d8: seg = 8&#x27;b10000000; // 8</span><br><span class="line">            4&#x27;d9: seg = 8&#x27;b10010000; // 9</span><br><span class="line">            default: seg = 8&#x27;b11111111; // Blank</span><br><span class="line">        endcase</span><br><span class="line">    end</span><br><span class="line">    </span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>在实现4位七段数码管显示模块时，应当实例化上面的两个模块。由于是4位需要来回扫描，因此可以定义一个scan_state来表示扫描到的位置，每次扫描到对应的位置，都使能相应的数码管，从而显示不同位置上的数字。这些数字从左到右分别是change_bcd[7:4], change_bcd[3:0], paid_bcd[7:4], paid_bcd[3:0]。</p>
+<p>模块代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">module seven_segment_display(</span><br><span class="line">    input logic sys_clk,</span><br><span class="line">    input logic sys_rst_n,</span><br><span class="line">    input logic [7:0] paid_bcd,</span><br><span class="line">    input logic [7:0] change_bcd,</span><br><span class="line">    output logic [7:0] a_to_g,</span><br><span class="line">    output logic [3:0] an</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    // Internal signals</span><br><span class="line">    logic [1:0] scan_state;</span><br><span class="line">    logic [3:0] digit;</span><br><span class="line">    logic [7:0] seg;</span><br><span class="line">    logic enable_1ms;</span><br><span class="line">    </span><br><span class="line">    // Instantiate the enable clock module to generate 1ms enable signal</span><br><span class="line">    enable_clock enable_clock_inst (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .enable_1ms(enable_1ms)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Instantiate the segment decoder</span><br><span class="line">    seven_segment_decoder decoder (</span><br><span class="line">        .digit(digit),</span><br><span class="line">        .seg(seg)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Scan state machine</span><br><span class="line">    always_ff @(posedge sys_clk) begin</span><br><span class="line">        if (~sys_rst_n)</span><br><span class="line">            scan_state &lt;= 2&#x27;d0;</span><br><span class="line">            //为了加快仿真速度，这里调整为50个时钟周期（1/10 时间）</span><br><span class="line">        else if (enable_1ms) // 25MHz clock / 1KHz = 25000   如果计数器 counter 达到24999（即1ms），则将 scan_state 加1。</span><br><span class="line">            scan_state &lt;= (scan_state == 2&#x27;d3) ? 2&#x27;d0 : scan_state + 2&#x27;d1;//该变量用于跟踪当前正在扫描的数码管，2&#x27;d0到2&#x27;d3分别表示4个数码管。</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Digit and anode control</span><br><span class="line">    always_comb begin</span><br><span class="line">        case (scan_state)</span><br><span class="line">            2&#x27;d0: begin</span><br><span class="line">                digit = paid_bcd[3:0];</span><br><span class="line">                an = 4&#x27;b0001; // Enable AN0</span><br><span class="line">            end</span><br><span class="line">            2&#x27;d1: begin</span><br><span class="line">                digit = paid_bcd[7:4];</span><br><span class="line">                an = 4&#x27;b0010; // Enable AN1</span><br><span class="line">            end</span><br><span class="line">            2&#x27;d2: begin</span><br><span class="line">                digit = change_bcd[3:0];</span><br><span class="line">                an = 4&#x27;b0100; // Enable AN2</span><br><span class="line">            end</span><br><span class="line">            2&#x27;d3: begin</span><br><span class="line">                digit = change_bcd[7:4];</span><br><span class="line">                an = 4&#x27;b1000; // Enable AN3</span><br><span class="line">            end</span><br><span class="line">            default: begin</span><br><span class="line">                digit = 4&#x27;d0;</span><br><span class="line">                an = 4&#x27;b0000;</span><br><span class="line">            end</span><br><span class="line">        endcase</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Assign segment output</span><br><span class="line">    assign a_to_g = seg;</span><br><span class="line"></span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>以上，便完成了所有子模块的实现，现在可以构造顶层模块vend</p>
+<h3 id="第五部分、顶层模块"><a href="#第五部分、顶层模块" class="headerlink" title="第五部分、顶层模块"></a>第五部分、顶层模块</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">module vend(</span><br><span class="line">    input sys_clk, sys_rst_n,</span><br><span class="line">    input coin5, coin10,</span><br><span class="line">    output [3 : 0] an,</span><br><span class="line">    output [7 : 0] a_to_g,</span><br><span class="line">    output open</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    logic led;</span><br><span class="line">    logic [7:0] paid_bin, change_bin;</span><br><span class="line">    logic [7:0] paid_bcd, change_bcd;</span><br><span class="line"></span><br><span class="line">    // Instantiate FSM</span><br><span class="line">    vending_machine_fsm fsm (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .coin5(coin5),</span><br><span class="line">        .coin10(coin10),</span><br><span class="line">        .change(change_bin),</span><br><span class="line">        .price(paid_bin),</span><br><span class="line">        .open(open),</span><br><span class="line">        .led(led)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Instantiate bin2bcd for paid and change</span><br><span class="line">    bin2bcd bin2bcd_paid (</span><br><span class="line">        .bin(paid_bin),</span><br><span class="line">        .bcd(paid_bcd)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    bin2bcd bin2bcd_change (</span><br><span class="line">        .bin(change_bin),</span><br><span class="line">        .bcd(change_bcd)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Instantiate 7-segment display</span><br><span class="line">    seven_segment_display display (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .paid_bcd(paid_bcd),</span><br><span class="line">        .change_bcd(change_bcd),</span><br><span class="line">        .a_to_g(a_to_g),</span><br><span class="line">        .an(an)</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h3 id="第六部分、仿真测试"><a href="#第六部分、仿真测试" class="headerlink" title="第六部分、仿真测试"></a>第六部分、仿真测试</h3><p>由于本实验的模块过多，所以我采用了单元测试的方法，分别测试了timer_module, vending_machine_fsm, seven_segment_display, vend模块，以下便写出测试的代码和仿真结果</p>
+<h4 id="1-timer-module"><a href="#1-timer-module" class="headerlink" title="1.timer_module"></a>1.timer_module</h4><p>为了加快仿真速度，我们把SIMULATION_CLK_PERIOD设置为4，仿真等待时间设置为20（总仿真时间仅有1000ns），把使能时钟中的25000改为24</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns / 1ps</span><br><span class="line"></span><br><span class="line">module timer_module_tb;</span><br><span class="line"></span><br><span class="line">    // Parameters for simulation</span><br><span class="line">    localparam integer SIMULATION_CLK_PERIOD = 4; // 4ns for 250MHz clock to speed up simulation</span><br><span class="line">    localparam integer SIMULATION_WAIT_TIME = 20; // 20ns for each test case observation</span><br><span class="line"></span><br><span class="line">    // Inputs</span><br><span class="line">    logic sys_clk;</span><br><span class="line">    logic sys_rst_n;</span><br><span class="line">    logic coin5;</span><br><span class="line">    logic coin10;</span><br><span class="line"></span><br><span class="line">    // Outputs</span><br><span class="line">    logic enable_1ms;</span><br><span class="line">    logic edge_detected_coin5;</span><br><span class="line">    logic edge_detected_coin10;</span><br><span class="line"></span><br><span class="line">    // Instantiate the timer module</span><br><span class="line">    timer_module uut (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .coin5(coin5),</span><br><span class="line">        .coin10(coin10),</span><br><span class="line">        .enable_1ms(enable_1ms),</span><br><span class="line">        .edge_detected_coin5(edge_detected_coin5),</span><br><span class="line">        .edge_detected_coin10(edge_detected_coin10)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Clock generation</span><br><span class="line">    initial begin</span><br><span class="line">        sys_clk = 0;</span><br><span class="line">        forever #(SIMULATION_CLK_PERIOD / 2) sys_clk = ~sys_clk;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Stimulus process</span><br><span class="line">    initial begin</span><br><span class="line">        // Initialize Inputs</span><br><span class="line">        sys_rst_n = 0;</span><br><span class="line">        coin5 = 0;</span><br><span class="line">        coin10 = 0;</span><br><span class="line"></span><br><span class="line">        // Apply reset</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        sys_rst_n = 1;</span><br><span class="line"></span><br><span class="line">        // Test edge detection for coin5</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 1;</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 0;</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 5); // Wait to observe edge detection</span><br><span class="line"></span><br><span class="line">        // Test edge detection for coin10</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin10 = 1;</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin10 = 0;</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 5); // Wait to observe edge detection</span><br><span class="line"></span><br><span class="line">        // Observe enable_1ms signal (accelerated to observe in short time)</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 20); // Short wait to observe 1ms signal</span><br><span class="line"></span><br><span class="line">        // End of simulation</span><br><span class="line">        $stop;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>仿真结果</p>
+<img src="./image-20240520154650111.png" alt="image-20240520154650111" style="zoom:80%;" />
+
+<p>可以看到，在检测到coin5和coin10上升沿的时候，边沿检测的值为1</p>
+<h4 id="2-vending-machine-fsm"><a href="#2-vending-machine-fsm" class="headerlink" title="2.vending_machine_fsm"></a>2.vending_machine_fsm</h4><p>这里可以分四种情况来测，我这里只列举出一种情况（5+5+10）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns / 1ps</span><br><span class="line"></span><br><span class="line">module vending_machine_fsm_tb;</span><br><span class="line"></span><br><span class="line">    // Parameters for simulation</span><br><span class="line">    localparam integer SIMULATION_CLK_PERIOD = 4; // 4ns for 250MHz clock to speed up simulation</span><br><span class="line">    localparam integer SIMULATION_WAIT_TIME = 20; // 20ns for each test case observation</span><br><span class="line"></span><br><span class="line">    // Inputs</span><br><span class="line">    logic sys_clk;</span><br><span class="line">    logic sys_rst_n;</span><br><span class="line">    logic coin5;</span><br><span class="line">    logic coin10;</span><br><span class="line"></span><br><span class="line">    // Outputs</span><br><span class="line">    logic [7:0] change;</span><br><span class="line">    logic [7:0] price;</span><br><span class="line">    logic open;</span><br><span class="line">    logic led;</span><br><span class="line"></span><br><span class="line">    // Instantiate the vending machine FSM module</span><br><span class="line">    vending_machine_fsm uut (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .coin5(coin5),</span><br><span class="line">        .coin10(coin10),</span><br><span class="line">        .change(change),</span><br><span class="line">        .price(price),</span><br><span class="line">        .open(open),</span><br><span class="line">        .led(led)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Clock generation</span><br><span class="line">    initial begin</span><br><span class="line">        sys_clk = 0;</span><br><span class="line">        forever #(SIMULATION_CLK_PERIOD / 2) sys_clk = ~sys_clk;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Stimulus process</span><br><span class="line">    initial begin</span><br><span class="line">        // Initialize Inputs</span><br><span class="line">        sys_rst_n = 0;</span><br><span class="line">        coin5 = 0;</span><br><span class="line">        coin10 = 0;</span><br><span class="line"></span><br><span class="line">        // Apply reset</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        sys_rst_n = 1;</span><br><span class="line"></span><br><span class="line">        // Test case 4: Insert 5 cents, then another 5 cents, and then 10 cents to reach 20 cents</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 1;</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 0;</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 2); // Short wait to observe state change</span><br><span class="line"></span><br><span class="line">        // Insert second 5 cents</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 1;</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin5 = 0;</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 2); // Short wait to observe state change</span><br><span class="line"></span><br><span class="line">        // Insert 10 cents</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin10 = 1;</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        coin10 = 0;</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 2); // Short wait to observe state change</span><br><span class="line"></span><br><span class="line">        // End of simulation</span><br><span class="line">        $stop;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>仿真结果</p>
+<img src="./image-20240520155139873.png" alt="image-20240520155139873" style="zoom:80%;" />
+
+<h4 id="3-seven-segment-display"><a href="#3-seven-segment-display" class="headerlink" title="3.seven_segment_display"></a>3.seven_segment_display</h4><p>我分别测试了paid_bcd &#x3D; 15, change_bcd &#x3D; 5 和 paid_bcd &#x3D; 20, change_bcd &#x3D; 10，两种情况，这两种情况真实中并不能出现，该测试仅仅是为了观察动态扫描的每一位是否正常显示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns / 1ps</span><br><span class="line"></span><br><span class="line">module seven_segment_display_tb;</span><br><span class="line"></span><br><span class="line">    // Parameters for simulation</span><br><span class="line">    localparam integer SIMULATION_CLK_PERIOD = 4; // 1ns for 1GHz clock to speed up simulation</span><br><span class="line">    localparam integer SIMULATION_WAIT_TIME = 20; // 10ns for each test case observation</span><br><span class="line"></span><br><span class="line">    // Inputs</span><br><span class="line">    logic sys_clk;</span><br><span class="line">    logic sys_rst_n;</span><br><span class="line">    logic [7:0] paid_bcd;</span><br><span class="line">    logic [7:0] change_bcd;</span><br><span class="line"></span><br><span class="line">    // Outputs</span><br><span class="line">    logic [7:0] a_to_g;</span><br><span class="line">    logic [3:0] an;</span><br><span class="line"></span><br><span class="line">    // Instantiate the seven segment display module</span><br><span class="line">    seven_segment_display uut (</span><br><span class="line">        .sys_clk(sys_clk),</span><br><span class="line">        .sys_rst_n(sys_rst_n),</span><br><span class="line">        .paid_bcd(paid_bcd),</span><br><span class="line">        .change_bcd(change_bcd),</span><br><span class="line">        .a_to_g(a_to_g),</span><br><span class="line">        .an(an)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    // Clock generation</span><br><span class="line">    initial begin</span><br><span class="line">        sys_clk = 0;</span><br><span class="line">        forever #(SIMULATION_CLK_PERIOD / 2) sys_clk = ~sys_clk;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    // Stimulus process</span><br><span class="line">    initial begin</span><br><span class="line">        // Initialize Inputs</span><br><span class="line">        sys_rst_n = 0;</span><br><span class="line">        paid_bcd = 8&#x27;h00;</span><br><span class="line">        change_bcd = 8&#x27;h00;</span><br><span class="line"></span><br><span class="line">        // Apply reset</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        sys_rst_n = 1;</span><br><span class="line"></span><br><span class="line">        // Test case: Display paid amount = 15, change amount = 5</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        paid_bcd = 8&#x27;h15; // 15 in BCD</span><br><span class="line">        change_bcd = 8&#x27;h05; // 5 in BCD</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 10); // Observe for a while</span><br><span class="line"></span><br><span class="line">        // Test case: Display paid amount = 20, change amount = 10</span><br><span class="line">        #(SIMULATION_WAIT_TIME);</span><br><span class="line">        paid_bcd = 8&#x27;h20; // 20 in BCD</span><br><span class="line">        change_bcd = 8&#x27;h10; // 10 in BCD</span><br><span class="line">        #(SIMULATION_WAIT_TIME * 10); // Observe for a while</span><br><span class="line"></span><br><span class="line">        // End of simulation</span><br><span class="line">        $stop;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p>仿真结果</p>
+<p><img src="/2024/05/20/vendmachine/image-20240520155531944.png" alt="image-20240520155531944"></p>
+<p>将对应的a_to_g还原，可以发现这里的实现逻辑是正确的</p>
+<h4 id="4-vend"><a href="#4-vend" class="headerlink" title="4.vend"></a>4.vend</h4><p>这里我测试了两种情况，投入15分和投入20分，两种情况都能实现动态扫描（an[3:0]），且每位动态扫描的过程中都能够正确的显示，并且实现了投入15分后等待10s后（仿真时将时间加快了）会自动清零重新开始计数。</p>
+<p>仿真结果</p>
+<p><img src="/2024/05/20/vendmachine/image-20240520160354874.png" alt="image-20240520160354874"></p>
+<p>至此，所有模块的仿真测试均通过。</p>
+<h2 id="六-实验结果"><a href="#六-实验结果" class="headerlink" title="六.  实验结果"></a>六.  实验结果</h2><img src="./image-20240520161341223.png" alt="image-20240520161341223" style="zoom:50%;" />
+
+<img src="./image-20240520161355079.png" alt="image-20240520161355079" style="zoom:50%;" />
+
+<img src="./image-20240520161402310.png" alt="image-20240520161402310" style="zoom:50%;" />
+
+<img src="./image-20240520161411064.png" alt="image-20240520161411064" style="zoom:50%;" />
+
+<img src="./image-20240520161420887.png" alt="image-20240520161420887" style="zoom:50%;" />
+
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/05/20/vendmachine/" title="vendmachine">http://example.com/2024/05/20/vendmachine/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E7%94%B5/" rel="tag"># 数电</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/05/AlgorithmPractice/" rel="prev" title="AlgorithmPractice">
+      <i class="fa fa-chevron-left"></i> AlgorithmPractice
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/20/openGauss-lab2/" rel="next" title="openGauss-lab2">
+      openGauss-lab2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%E3%80%81%E8%87%AA%E5%8A%A8%E8%B4%A9%E5%94%AE%E6%9C%BA%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">实验三、自动贩售机的设计和实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%EF%BC%8E-%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">一． 实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%EF%BC%8E-%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">二． 实验环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%EF%BC%8E-%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">三． 实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%EF%BC%8E-%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="nav-number">1.4.</span> <span class="nav-text">四． 实验内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.</span> <span class="nav-text">五.  实验步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%E3%80%81%E8%AE%A1%E6%97%B6%E5%99%A8%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.1.</span> <span class="nav-text">第一部分、计时器模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BD%BF%E8%83%BD%E6%97%B6%E9%92%9F%E7%94%9F%E6%88%90%E5%99%A8"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">1.使能时钟生成器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%BE%B9%E6%B2%BF%E6%A3%80%E6%B5%8B%E7%94%B5%E8%B7%AF"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">2.边沿检测电路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">3.计数器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%E3%80%81%E8%B4%A9%E5%94%AE%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">1.5.2.</span> <span class="nav-text">第二部分、贩售状态机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%E3%80%818%E4%B8%BA%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%BD%ACBCD%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.3.</span> <span class="nav-text">第三部分、8为二进制转BCD模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%E3%80%817%E6%AE%B5%E6%95%B0%E7%A0%81%E7%AE%A1%E5%8A%A8%E6%80%81%E6%89%AB%E6%8F%8F%E6%98%BE%E7%A4%BA%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.4.</span> <span class="nav-text">第四部分、7段数码管动态扫描显示模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86%E3%80%81%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.5.</span> <span class="nav-text">第五部分、顶层模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86%E3%80%81%E4%BB%BF%E7%9C%9F%E6%B5%8B%E8%AF%95"><span class="nav-number">1.5.6.</span> <span class="nav-text">第六部分、仿真测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-timer-module"><span class="nav-number">1.5.6.1.</span> <span class="nav-text">1.timer_module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-vending-machine-fsm"><span class="nav-number">1.5.6.2.</span> <span class="nav-text">2.vending_machine_fsm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-seven-segment-display"><span class="nav-number">1.5.6.3.</span> <span class="nav-text">3.seven_segment_display</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-vend"><span class="nav-number">1.5.6.4.</span> <span class="nav-text">4.vend</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.6.</span> <span class="nav-text">六.  实验结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">215k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:16</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数据库原理第五次实验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openGauss-lab5">
+<meta property="og:url" content="http://example.com/2024/05/24/openGauss-lab5/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="数据库原理第五次实验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524010323857.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524010413363.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524010452402.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524010800429.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524011428902.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524011333904.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524011533824.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524011828576.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524011906190.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012034129.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012121580.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012315829.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012436900.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012527876.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012731003.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012831395.png">
+<meta property="og:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524012912900.png">
+<meta property="article:published_time" content="2024-05-23T16:56:24.000Z">
+<meta property="article:modified_time" content="2024-05-23T17:30:22.327Z">
+<meta property="article:author" content="Charoneo">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/05/24/openGauss-lab5/image-20240524010323857.png">
+
+<link rel="canonical" href="http://example.com/2024/05/24/openGauss-lab5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>openGauss-lab5 | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/24/openGauss-lab5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          openGauss-lab5
+        </h1>
+
+        <div class="post-meta">
+	
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-24 00:56:24 / 修改时间：01:30:22" itemprop="dateCreated datePublished" datetime="2024-05-24T00:56:24+08:00">2024-05-24</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/05/24/openGauss-lab5/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/05/24/openGauss-lab5/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+            <div class="post-description">数据库原理第五次实验</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><font color = "red" size = "6">本次实验由于华为云服务器欠费，没有使用openGauss数据库，而使用的是自己电脑的postgresql</font></p>
+<h1 id="一、实验介绍"><a href="#一、实验介绍" class="headerlink" title="一、实验介绍"></a>一、实验介绍</h1><p>与日志和恢复机制相同，并发控制与锁机制是 openGauss 数据库实现事务处理 ACID 特性的另一重要部分。目前数据库原理教学中对于并发控制与锁机制模块缺乏行之有效的实践教学手段，部分原因归咎于并发控制与锁机制在数据库管理系统中涉及到的相关代码复杂繁复。本实验旨在借助 openGauss 的开源代码，一方面对于并发控制与锁机制的原理进行落地的代码工程实践，另一方面最大限度地减小源代码繁复程度的影响。本章实验原理主要包括 openGauss 的事务处理和锁机制。首先，通过实验查看 openGauss 数据库中表上的加锁信息；然后，通过复现的方式分别验证 Share 锁、Access Share 锁、Row Exclusive 锁和 Access Exclusive 锁。</p>
+<p>并发控制与锁机制也是数据库管理系统实现中最为复杂和精妙部分之一。与日志和恢复部分类似，会涉及到若干系统层面的实现代码。希望通过本实验的实践内容，提升对于并发控制与锁机制的理解程度，更好地认识系统软件在工程实现方面的复杂性。</p>
+<h1 id="二、实验目的"><a href="#二、实验目的" class="headerlink" title="二、实验目的"></a>二、实验目的</h1><ol>
+<li><p>理解 openGauss 事务处理原理。</p>
+</li>
+<li><p>了解 openGauss 事务处理模块的实现机制。</p>
+</li>
+<li><p>理解 openGauss 锁机制原理。</p>
+</li>
+<li><p>了解 openGauss 锁机制的若干实现过程。</p>
+</li>
+<li><p>掌握 openGauss 中 Share 锁的复现方法。</p>
+</li>
+<li><p>掌握 openGauss 中 Access Share 锁的复现方法。</p>
+</li>
+<li><p>掌握 openGauss 中 Row Exclusive 锁的复现方法。</p>
+</li>
+<li><p>掌握 openGauss 中 Access Exclusive 锁的复现方法。</p>
+</li>
+<li><p>了解与本实验相关的函数与结构体的源代码。</p>
+</li>
+</ol>
+<h1 id="三、实验步骤和结果"><a href="#三、实验步骤和结果" class="headerlink" title="三、实验步骤和结果"></a>三、实验步骤和结果</h1><h2 id="（一）查看锁信息"><a href="#（一）查看锁信息" class="headerlink" title="（一）查看锁信息"></a>（一）查看锁信息</h2><p>1.创建表</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users</span><br><span class="line">(</span><br><span class="line"> u_id <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 用户 id，用于系统登录账户名（主键）</span></span><br><span class="line"> u_passwd <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 密码，用于系统登录密码</span></span><br><span class="line"> u_name <span class="type">varchar</span>(<span class="number">10</span>), <span class="comment">-- 真实姓名</span></span><br><span class="line"> u_idnum <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 证件号码</span></span><br><span class="line"> u_regtime <span class="type">timestamp</span>, <span class="comment">-- 注册时间</span></span><br><span class="line"> <span class="keyword">CONSTRAINT</span> pk_users <span class="keyword">PRIMARY KEY</span> (u_id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>2.插入一些随机数据（postgresql版）</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users <span class="keyword">VALUES</span> (</span><br><span class="line"> to_char(generate_series(<span class="number">100</span>, <span class="number">199</span>), <span class="string">&#x27;FM999&#x27;</span>),</span><br><span class="line"> to_char(floor(random() * <span class="number">100000000</span>), <span class="string">&#x27;09999999&#x27;</span>),</span><br><span class="line"> to_char(<span class="number">10000</span> + floor(random() * <span class="number">10000</span>), <span class="string">&#x27;09999&#x27;</span>),</span><br><span class="line"> to_char(<span class="number">10000000000</span> + floor(random() * <span class="number">10000000000</span>), <span class="string">&#x27;09999999999&#x27;</span>),</span><br><span class="line"> <span class="built_in">CURRENT_DATE</span> + floor(random() * <span class="number">15</span>)::<span class="type">int</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>3.首先通过 SELECT pg_backend_pid();命令，我们可以查看当前会话的会话 id，实验结果如下；</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_backend_pid( );</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524010323857.png" alt="image-20240524010323857" style="zoom:80%;" />
+
+<p>4.再从系统表中查找到当前会话所添加的锁</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524010413363.png" alt="image-20240524010413363" style="zoom:80%;" />
+
+<p>5.接下来找到我们所创建的表 users 的 relation id。</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="type">oid</span> <span class="keyword">FROM</span> pg_class <span class="keyword">WHERE</span> relname=<span class="string">&#x27;users&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524010452402.png" alt="image-20240524010452402" style="zoom:80%;" />
+
+<p>Users表对应的id为16736</p>
+<h2 id="（二）复现Share锁"><a href="#（二）复现Share锁" class="headerlink" title="（二）复现Share锁"></a>（二）复现Share锁</h2><p>1.生成事务，添加 Share 锁。</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> idx_idnum <span class="keyword">ON</span> users(u_idnum);</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524010800429.png" alt="image-20240524010800429" style="zoom:80%;" />
+
+<p>2.进行 INSERT 操作</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users <span class="keyword">VALUES</span> (<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;asdzxc&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;2000-04-20&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>打开另一个会话窗口，进行 INSERT 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。如下：</p>
+<img src="./image-20240524011428902.png" alt="image-20240524011428902" style="zoom:80%;" />
+
+<p>打开另一个会话窗口，进行 SELECT 操作，执行结果如下：</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;100&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524011333904.png" alt="image-20240524011333904" style="zoom:80%;" />
+
+<p>4.提交事务，释放 Share 锁</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<p>第二个会话INSERT操作执行成功</p>
+<img src="./image-20240524011533824.png" alt="image-20240524011533824" style="zoom:80%;" />
+
+<h2 id="（三）复现Access-Share锁"><a href="#（三）复现Access-Share锁" class="headerlink" title="（三）复现Access Share锁"></a>（三）复现Access Share锁</h2><p>1.生成锁</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;100&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524011828576.png" alt="image-20240524011828576" style="zoom:80%;" />
+
+<p>2.进行 SELECT 操作</p>
+<p>打开另一个会话窗口，进行 SELECT 操作，顺利执行完成。执行结果如下</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id = <span class="string">&#x27;120&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/05/24/openGauss-lab5/image-20240524011906190.png" alt="image-20240524011906190"></p>
+<p>3.进行 ALTER 操作</p>
+<p>打开另一个会话窗口，进行 ALTER 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> users <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> address <span class="type">varchar</span>(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下：</p>
+<img src="./image-20240524012034129.png" alt="image-20240524012034129" style="zoom:80%;" />
+
+<p>4.提交事务，释放锁</p>
+<p>在第一个会话中提交事务，发现第三个会话中的 ALTER 成功执行。执行结果如下</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524012121580.png" alt="image-20240524012121580" style="zoom:80%;" />
+
+<h2 id="（四）复现Row-Exclusive锁"><a href="#（四）复现Row-Exclusive锁" class="headerlink" title="（四）复现Row Exclusive锁"></a>（四）复现Row Exclusive锁</h2><p>1.生成锁</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">UPDATE</span> users <span class="keyword">SET</span> u_passwd=<span class="string">&#x27;123asd&#x27;</span> <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;120&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524012315829.png" alt="image-20240524012315829" style="zoom:80%;" />
+
+<p>2.此时打开另一个会话窗口，进行 CREATE INDEX 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。执行结果如下：</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> idx_name <span class="keyword">ON</span> users(u_name);</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524012436900.png" alt="image-20240524012436900" style="zoom:80%;" />
+
+<p>3.再在第一个会话中提交事务，发现第二个会话中的 CREATE INDEX 操作成功执行。第二个会话执行结果如下：</p>
+<img src="./image-20240524012527876.png" alt="image-20240524012527876" style="zoom:80%;" />
+
+<h2 id="（五）复现-Access-Exclusive-锁"><a href="#（五）复现-Access-Exclusive-锁" class="headerlink" title="（五）复现 Access Exclusive 锁"></a>（五）复现 Access Exclusive 锁</h2><p>1.生成锁执行结果如下</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> users <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> sex <span class="type">varchar</span>(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="./image-20240524012731003.png" alt="image-20240524012731003" style="zoom:80%;" />
+
+<p>2.此时打开另一个会话窗口，进行 SELECT 操作，发现该命令<strong>被堵塞</strong>，无法执行完成</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
+
+<p>执行结果如下</p>
+<img src="./image-20240524012831395.png" alt="image-20240524012831395" style="zoom:80%;" />
+
+<p>3.再在第一个会话中提交事务，发现第二个会话中的 SELECT 操作成功执行。</p>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
+
+<p>提交第一个会话执行结果如下：</p>
+<p><img src="/2024/05/24/openGauss-lab5/image-20240524012912900.png" alt="image-20240524012912900"></p>
+<h2 id="（六）添加代码：输出获取与释放锁的信息"><a href="#（六）添加代码：输出获取与释放锁的信息" class="headerlink" title="（六）添加代码：输出获取与释放锁的信息"></a>（六）添加代码：输出获取与释放锁的信息</h2><p><font color = "red">由于华为云欠费，本部分暂未完成</font></p>
+
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/05/24/openGauss-lab5/" title="openGauss-lab5">http://example.com/2024/05/24/openGauss-lab5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/23/openGauss-lab3/" rel="prev" title="openGauss-lab3">
+      <i class="fa fa-chevron-left"></i> openGauss-lab3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/06/07/wireSharkLab/" rel="next" title="wireSharkLab">
+      wireSharkLab <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%9F%A5%E7%9C%8B%E9%94%81%E4%BF%A1%E6%81%AF"><span class="nav-number">3.1.</span> <span class="nav-text">（一）查看锁信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%A4%8D%E7%8E%B0Share%E9%94%81"><span class="nav-number">3.2.</span> <span class="nav-text">（二）复现Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%A4%8D%E7%8E%B0Access-Share%E9%94%81"><span class="nav-number">3.3.</span> <span class="nav-text">（三）复现Access Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E5%A4%8D%E7%8E%B0Row-Exclusive%E9%94%81"><span class="nav-number">3.4.</span> <span class="nav-text">（四）复现Row Exclusive锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E5%A4%8D%E7%8E%B0-Access-Exclusive-%E9%94%81"><span class="nav-number">3.5.</span> <span class="nav-text">（五）复现 Access Exclusive 锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%85%AD%EF%BC%89%E6%B7%BB%E5%8A%A0%E4%BB%A3%E7%A0%81%EF%BC%9A%E8%BE%93%E5%87%BA%E8%8E%B7%E5%8F%96%E4%B8%8E%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">3.6.</span> <span class="nav-text">（六）添加代码：输出获取与释放锁的信息</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">215k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:16</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>

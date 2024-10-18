@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="数字逻辑和数字系统最后一次实验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单周期MIPS处理器的设计与实现">
+<meta property="og:url" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="数字逻辑和数字系统最后一次实验">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617163813747.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617163833476.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617164020561.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617164130074.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617190516561.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617190725392.png">
+<meta property="og:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617190758172.png">
+<meta property="article:published_time" content="2024-06-17T08:29:21.000Z">
+<meta property="article:modified_time" content="2024-06-17T11:08:30.807Z">
+<meta property="article:author" content="Charoneo">
+<meta property="article:tag" content="数电">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/image-20240617163813747.png">
+
+<link rel="canonical" href="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>单周期MIPS处理器的设计与实现 | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          单周期MIPS处理器的设计与实现
+        </h1>
+
+        <div class="post-meta">
+	
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-06-17 16:29:21 / 修改时间：19:08:30" itemprop="dateCreated datePublished" datetime="2024-06-17T16:29:21+08:00">2024-06-17</time>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/06/17/单周期MIPS处理器的设计与实现/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+            <div class="post-description">数字逻辑和数字系统最后一次实验</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="实验四、单周期MIPS处理器的设计与实现"><a href="#实验四、单周期MIPS处理器的设计与实现" class="headerlink" title="实验四、单周期MIPS处理器的设计与实现"></a>实验四、单周期MIPS处理器的设计与实现</h1><h2 id="一、实验目的"><a href="#一、实验目的" class="headerlink" title="一、实验目的"></a>一、实验目的</h2><ol>
+<li><p>熟悉 MIPS 处理器的常用指令集（10 条）</p>
+</li>
+<li><p>掌握单周期处理器数据通路和控制单元的设计方法</p>
+</li>
+<li><p>基于增量方式，实现单周期 MIPS 处理器；</p>
+</li>
+<li><p>基于测试用例对所设计的单周期 MIPS 处理器进行功能验证。</p>
+</li>
+</ol>
+<h2 id="二、实验环境"><a href="#二、实验环境" class="headerlink" title="二、实验环境"></a>二、实验环境</h2><ol>
+<li><p>操作系统：Windows 10 或 Ubuntu 16.04</p>
+</li>
+<li><p>开发环境：Xilinx Vivado 2018.2</p>
+</li>
+<li><p>硬件平台：远程 FPGA 硬件云平台</p>
+</li>
+</ol>
+<h2 id="三、实验原理"><a href="#三、实验原理" class="headerlink" title="三、实验原理"></a>三、实验原理</h2><p>处理器（CPU）本质上是一个复杂的数字时序电路。通常，时序电路由记忆部件（如寄存器、存储器等）和组合逻辑构成。记忆部件用于保存电路的工作状态，而组合逻辑则由逻辑门组成，提供电路的所有逻辑功能。在组合逻辑的作用下，电路从一个状态转化为另一个状态，这样的电路也称为“状态机”。因此，单周期 MIPS 处理器在概念上也可以被看作一个大规模的状态机，如下图所示。其中，组合逻辑依据当前记忆部件中的值（即电路的现态）对指令进行处理，这个处理过程将再次修改记忆部件的值，使电路达到新状态（即电路的次态）。</p>
+<img src="./image-20240617163813747.png" alt="image-20240617163813747" style="zoom:50%;" />
+
+<p>在设计单周期 CPU 这样复杂的时序电路系统时，通常的方法是从包含记忆部件的硬件开始。这些元件包括<strong>存储器</strong>和<strong>寄存器</strong>，寄存器又可分为<strong>程序计数器</strong>和<strong>寄存器文件</strong>。然后，在这些存储元件之间增加组合逻辑基于当前状态计算新的状态。从指令存储器中读取指令，然后译码时访问寄存器文件获取操作数，再使用加载和存储指令从数据存储器中读取和写入数据。下面给出了具有 4 种状态元件（<strong>程序计数器 PC</strong>、<strong>寄存器文件</strong>、<strong>指令存储器</strong>和<strong>数据存储器</strong>）的框图。</p>
+<img src="./image-20240617163833476.png" alt="image-20240617163833476" style="zoom:80%;" />
+
+<h2 id="四、实验内容"><a href="#四、实验内容" class="headerlink" title="四、实验内容"></a>四、实验内容</h2><p>基于 SystemVerilog HDL 设计并实现单周期 MIPS 处理器——MiniMIPS32。</p>
+<p>该处理器具有如下特点：</p>
+<p>⚫ 32 位数据通路</p>
+<p>⚫ 小端模式</p>
+<p>⚫ 支持 10 条指令：<strong>lw、sw、lui、ori、addiu、addu、slt、beq、bne 和 j</strong></p>
+<p>⚫ 寄存器文件由 32 个 32 位寄存器组成，采用异步读&#x2F;同步写工作模式</p>
+<p>⚫ 采用哈佛结构（即分离的指令存储器和数据存储器），指令存储器由ROM构成，采用异步读工作模式；数据存储器由 RAM 构成，采用异步读&#x2F;同步写工作模式。</p>
+<p>顶层模块MiniMIPS32_SYS结构图如下：</p>
+<img src="./image-20240617164020561.png" alt="image-20240617164020561" style="zoom: 67%;" />
+
+<p>下表给出了给出了顶层模块 MiniMIPS32_SYS 的输入&#x2F;输出端口。</p>
+<img src="./image-20240617164130074.png" alt="image-20240617164130074" style="zoom:67%;" />
+
+<p>最终设计实现的单周期MIPS处理器能够运行所提供的6个测试用例 <strong>mem.S，i-type.S，r-type.S，branch.S，sort_sim.S 和 sort_board.S</strong>。其中，前 5 个只能用于功能仿真；最后一个可以上传到远程 FPGA 硬件云平台完成功能验证，如果测试通过则 LED 灯 led_g 被点亮为绿色，否则 LED 灯 led_r 被点亮为红色。</p>
+<h2 id="五、实验步骤"><a href="#五、实验步骤" class="headerlink" title="五、实验步骤"></a>五、实验步骤</h2><h3 id="（一）MiniMIPS的总体设计"><a href="#（一）MiniMIPS的总体设计" class="headerlink" title="（一）MiniMIPS的总体设计"></a>（一）MiniMIPS的总体设计</h3><p>由于MiniMIPS32模块较为复杂，所以我划分为了6个子模块，对应不同的功能</p>
+<p>由于CPU的执行指令过程为：<strong>取指、译码、执行、访存、写回（、更新PC）</strong>，因此我划分为<code>ControlUnit</code> 、<code>Register_File</code>、<code>ALUOps</code>、<code>RegWriteDataSelect</code>、<code>AddressCalculation</code>、<code>pc</code>这六个子模块，功能如下：</p>
+<p><strong>指令获取</strong>：从指令存储器中获取当前指令，并将指令传递给 <code>ControlUnit</code> 进行译码。</p>
+<p><strong>译码</strong>：<code>ControlUnit</code> 根据指令的操作码和功能码，生成相应的控制信号，指导各个模块的操作。</p>
+<p><strong>寄存器读写</strong>：<code>Register_File</code> 根据控制信号和指令中的寄存器地址，进行寄存器的读写操作。</p>
+<p><strong>ALU 操作</strong>：<code>ALUOps</code> 根据控制信号，对操作数进行相应的运算，并输出结果。</p>
+<p><strong>数据选择</strong>：<code>RegWriteDataSelect</code> 根据控制信号，选择写回寄存器的数据和目标地址。</p>
+<p><strong>地址计算</strong>：<code>AddressCalculation</code> 根据控制信号和指令，计算下一条指令的地址。</p>
+<p><strong>程序计数器更新</strong>：<code>pc</code> 模块在时钟上升沿更新程序计数器的值。</p>
+<h4 id="1-ControlUnit-sv"><a href="#1-ControlUnit-sv" class="headerlink" title="1. ControlUnit.sv"></a>1. ControlUnit.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>控制单元模块根据指令操作码 (<code>op</code>) 和功能码 (<code>funct</code>)，生成各种控制信号，以指导处理器的不同部分如何操作。</li>
+<li>该模块输入操作码和功能码，并输出多个控制信号。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>op</code>：指令的操作码。</li>
+<li><code>funct</code>：指令的功能码（仅对 R 型指令有用）。</li>
+<li><code>RD1</code>、<code>RD2</code>：来自寄存器文件的两个操作数。</li>
+<li><code>daddr</code>：数据存储器地址。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>we</code>：数据存储器写使能信号。</li>
+<li><code>we3</code>：寄存器文件写使能信号。</li>
+<li><code>pcflag</code>：程序计数器更新标志。</li>
+<li><code>regdst</code>：寄存器目标选择信号。</li>
+<li><code>mem_to_reg</code>：内存到寄存器数据选择信号。</li>
+<li><code>j_flag</code>：跳转指令标志。</li>
+<li><code>alusrc</code>：ALU 第二操作数选择信号。</li>
+<li><code>AluControl</code>：ALU 控制信号。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>根据指令类型和具体功能，生成相应的控制信号，确保处理器各个部分按照预期的方式操作。例如，<code>lw</code> 和 <code>sw</code> 指令需要访问数据存储器，<code>ControlUnit</code> 生成的信号会指示数据存储器进行读或写操作。</li>
+</ul>
+<h4 id="2-Register-File-sv"><a href="#2-Register-File-sv" class="headerlink" title="2. Register_File.sv"></a>2. Register_File.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>寄存器文件模块实现了一个包含 32 个 32 位寄存器的存储结构。提供对寄存器的读写功能。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>sys_clk</code>：系统时钟信号。</li>
+<li><code>WE3</code>：写使能信号。</li>
+<li><code>sys_rst_n</code>：系统复位信号（低电平有效）。</li>
+<li><code>A1</code>、<code>A2</code>、<code>A3</code>：要读取或写入的寄存器地址。</li>
+<li><code>WD3</code>：要写入寄存器的数据。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>RD1</code>、<code>RD2</code>：从寄存器读取的数据。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>在时钟上升沿或复位时，更新寄存器值。根据输入地址和控制信号，实现对寄存器的读写操作。</li>
+</ul>
+<h4 id="3-ALUOps-sv"><a href="#3-ALUOps-sv" class="headerlink" title="3. ALUOps.sv"></a>3. ALUOps.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>ALU 操作模块实现算术逻辑单元 (ALU) 的功能。根据控制信号执行不同的运算，如加法、减法、与、或等。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>alu1</code>：ALU 的第一个操作数。</li>
+<li><code>alu2</code>：ALU 的第二个操作数。</li>
+<li><code>AluControl</code>：控制信号，决定 ALU 要执行的具体操作。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>aluresult</code>：ALU 运算结果。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>根据 <code>AluControl</code> 信号，对 <code>alu1</code> 和 <code>alu2</code> 进行相应的运算，并输出结果。例如，如果 <code>AluControl</code> 信号指示加法操作，ALU 就会对 <code>alu1</code> 和 <code>alu2</code> 进行加法运算，并将结果输出到 <code>aluresult</code>。</li>
+</ul>
+<h4 id="4-RegWriteDataSelect-sv"><a href="#4-RegWriteDataSelect-sv" class="headerlink" title="4. RegWriteDataSelect.sv"></a>4. RegWriteDataSelect.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>该模块负责选择写回寄存器的数据和目标寄存器地址。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>regdst</code>：寄存器目标选择信号，决定写回寄存器地址是 <code>rd</code> 还是 <code>rt</code>。</li>
+<li><code>mem_to_reg</code>：内存到寄存器数据选择信号，决定写回的数据是来自 ALU 还是数据存储器。</li>
+<li><code>rt</code>、<code>rd</code>：指令中的寄存器地址字段。</li>
+<li><code>aluresult</code>：ALU 运算结果。</li>
+<li><code>dout</code>：从数据存储器读取的数据。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>A3</code>：要写入的寄存器地址。</li>
+<li><code>WD3</code>：要写入寄存器的数据。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>根据 <code>regdst</code> 信号，决定要写入的寄存器地址是 <code>rd</code> 还是 <code>rt</code>。根据 <code>mem_to_reg</code> 信号，决定写入寄存器的数据是 ALU 结果还是从内存读取的数据。</li>
+</ul>
+<h4 id="5-AddressCalculation-sv"><a href="#5-AddressCalculation-sv" class="headerlink" title="5. AddressCalculation.sv"></a>5. AddressCalculation.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>地址计算模块负责计算下一条指令的程序计数器 (PC) 值。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>pcflag</code>：程序计数器更新标志。</li>
+<li><code>j_flag</code>：跳转指令标志。</li>
+<li><code>next_addr</code>：当前的程序计数器值。</li>
+<li><code>extend</code>：符号扩展后的立即数。</li>
+<li><code>instr_index</code>：跳转指令的目标地址。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>current_addr</code>：计算后的下一条指令地址。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>根据 <code>pcflag</code> 和 <code>j_flag</code> 信号，决定程序计数器的更新方式。处理顺序执行、条件分支和无条件跳转等情况，计算出下一条指令的地址。</li>
+</ul>
+<h4 id="6-pc-sv"><a href="#6-pc-sv" class="headerlink" title="6. pc.sv"></a>6. pc.sv</h4><p><strong>功能描述</strong>：</p>
+<ul>
+<li>程序计数器 (PC) 模块实现程序计数器的功能。</li>
+</ul>
+<p><strong>输入信号</strong>：</p>
+<ul>
+<li><code>cpu_clk</code>：系统时钟信号。</li>
+<li><code>cpu_rst_n</code>：系统复位信号（低电平有效）。</li>
+<li><code>current_addr</code>：当前的程序计数器值。</li>
+</ul>
+<p><strong>输出信号</strong>：</p>
+<ul>
+<li><code>next_addr</code>：更新后的程序计数器值。</li>
+</ul>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>在时钟上升沿，根据复位信号和输入的 <code>current_addr</code>，更新程序计数器的值。确保处理器按照正确的指令地址执行。</li>
+</ul>
+<h3 id="（二）lw-和-sw（访存类指令）"><a href="#（二）lw-和-sw（访存类指令）" class="headerlink" title="（二）lw 和 sw（访存类指令）"></a>（二）lw 和 sw（访存类指令）</h3><h4 id="1-ControllerUnit-sv"><a href="#1-ControllerUnit-sv" class="headerlink" title="1.ControllerUnit.sv"></a>1.ControllerUnit.sv</h4><p>在 <code>ControlUnit</code> 模块中添加 <code>lw</code> 和 <code>sw</code> 指令的控制逻辑。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">module ControlUnit(</span><br><span class="line">    input  logic [5:0]  op,</span><br><span class="line">    input  logic [5:0]  funct,</span><br><span class="line">    input  logic [31:0] RD1,</span><br><span class="line">    input  logic [31:0] RD2,</span><br><span class="line">    input  logic [31:0] daddr,</span><br><span class="line">    output logic        we,</span><br><span class="line">    output logic        we3,</span><br><span class="line">    output logic        pcflag,</span><br><span class="line">    output logic        regdst,</span><br><span class="line">    output logic        mem_to_reg,</span><br><span class="line">    output logic        j_flag,</span><br><span class="line">    output logic [1:0]  alusrc,</span><br><span class="line">    output logic [1:0]  AluControl</span><br><span class="line">);</span><br><span class="line">    always_comb begin</span><br><span class="line">        we = 0;</span><br><span class="line">        we3 = 0;</span><br><span class="line">        pcflag = 0;</span><br><span class="line">        regdst = 0;</span><br><span class="line">        mem_to_reg = 0;</span><br><span class="line">        j_flag = 0;</span><br><span class="line">        alusrc = 2&#x27;b00;</span><br><span class="line">        AluControl = 2&#x27;b00;</span><br><span class="line"></span><br><span class="line">        case(op)</span><br><span class="line">            6&#x27;b100011: begin // lw</span><br><span class="line">                we = 0;</span><br><span class="line">                we3 = 1;</span><br><span class="line">                pcflag = 0;</span><br><span class="line">                regdst = 0;</span><br><span class="line">                alusrc = 2&#x27;b01;</span><br><span class="line">                mem_to_reg = 1;</span><br><span class="line">                j_flag = 0;</span><br><span class="line">                AluControl = 2&#x27;b00;</span><br><span class="line">            end</span><br><span class="line">            6&#x27;b101011: begin // sw</span><br><span class="line">                we = (daddr[31:16] != 16&#x27;h8000 &amp;&amp; daddr[31:16] != 16&#x27;h8004);</span><br><span class="line">                we3 = 0;</span><br><span class="line">                pcflag = 0;</span><br><span class="line">                regdst = 0;</span><br><span class="line">                alusrc = 2&#x27;b01;</span><br><span class="line">                mem_to_reg = 0;</span><br><span class="line">                j_flag = 0;</span><br><span class="line">                AluControl = 2&#x27;b00;</span><br><span class="line">            end</span><br><span class="line">            default: pcflag = 0;</span><br><span class="line">        endcase</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<p><code>lw</code> 指令：控制信号 <code>we</code> 设为 <code>0</code>（不写数据存储器），<code>we3</code> 设为 <code>1</code>（写寄存器文件），<code>alusrc</code> 设为 <code>2&#39;b01</code>（选择符号扩展后的立即数作为 ALU 的第二个操作数），<code>mem_to_reg</code> 设为 <code>1</code>（选择从数据存储器读取的数据写回寄存器），<code>AluControl</code> 设为 <code>2&#39;b00</code>（执行加法操作）。</p>
+<p><code>sw</code> 指令：控制信号 <code>we</code> 根据地址判断是否写数据存储器（避免与特定地址冲突），<code>we3</code> 设为 <code>0</code>（不写寄存器文件），<code>alusrc</code> 设为 <code>2&#39;b01</code>，<code>mem_to_reg</code> 设为 <code>0</code>，<code>AluControl</code> 设为 <code>2&#39;b00</code>。</p>
+<h4 id="2-Register-File-sv-1"><a href="#2-Register-File-sv-1" class="headerlink" title="2.Register_File.sv"></a>2.Register_File.sv</h4><p>寄存器文件模块，读取和写入寄存器。</p>
+<p>在时钟上升沿或复位时，更新寄存器文件的值。</p>
+<p>根据 <code>WE3</code> 信号，决定是否将 <code>WD3</code> 写入到地址 <code>A3</code> 对应的寄存器。</p>
+<p>读取地址 <code>A1</code> 和 <code>A2</code> 对应的寄存器值，并分别输出到 <code>RD1</code> 和 <code>RD2</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">module Register_File(</span><br><span class="line">    input               sys_clk,</span><br><span class="line">    input               WE3,</span><br><span class="line">    input               sys_rst_n,</span><br><span class="line">    input        [4:0]  A1,</span><br><span class="line">    input        [4:0]  A2,</span><br><span class="line">    input        [4:0]  A3,</span><br><span class="line">    input        [31:0] WD3,</span><br><span class="line">    output logic [31:0] RD1,</span><br><span class="line">    output logic [31:0] RD2</span><br><span class="line">);</span><br><span class="line">    logic [31:0] r [31:0];</span><br><span class="line"></span><br><span class="line">    always_ff @(posedge sys_clk) begin</span><br><span class="line">        if (!sys_rst_n) begin</span><br><span class="line">            for (int i = 0; i &lt; 32; i++) begin</span><br><span class="line">                r[i] &lt;= 32&#x27;d0;</span><br><span class="line">            end</span><br><span class="line">        end</span><br><span class="line">        else if (WE3) begin</span><br><span class="line">            r[A3] &lt;= WD3;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    assign RD1 = r[A1];</span><br><span class="line">    assign RD2 = r[A2];</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-ALUOps-sv-1"><a href="#3-ALUOps-sv-1" class="headerlink" title="3.ALUOps.sv"></a>3.ALUOps.sv</h4><p>实现加法操作,根据 <code>AluControl</code> 信号，执行加法操作。对于 <code>lw</code> 和 <code>sw</code> 指令，ALU 需要执行加法操作，将基址寄存器的值与立即数相加，得到内存访问地址。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">module ALUOps(</span><br><span class="line">    input  logic [31:0] alu1,</span><br><span class="line">    input  logic [31:0] alu2,</span><br><span class="line">    input  logic [1:0]  AluControl,</span><br><span class="line">    output logic [31:0] aluresult</span><br><span class="line">);</span><br><span class="line">    always_comb begin</span><br><span class="line">        case (AluControl)</span><br><span class="line">            2&#x27;b00: aluresult = alu1 + alu2; // 加法操作</span><br><span class="line">            default: aluresult = 32&#x27;b0;</span><br><span class="line">        endcase</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-RegWriteDataSelect-sv-1"><a href="#4-RegWriteDataSelect-sv-1" class="headerlink" title="4.RegWriteDataSelect.sv"></a>4.RegWriteDataSelect.sv</h4><p>选择写回寄存器的数据和目标寄存器地址。具体来讲</p>
+<p>根据 <code>regdst</code> 信号，决定写回的寄存器地址是 <code>rd</code> 还是 <code>rt</code>。</p>
+<p>根据 <code>mem_to_reg</code> 信号，决定写回的数据是来自内存还是 ALU 运算结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">module RegWriteDataSelect(</span><br><span class="line">    input  logic        regdst,</span><br><span class="line">    input  logic        mem_to_reg,</span><br><span class="line">    input  logic [4:0]  rt,</span><br><span class="line">    input  logic [4:0]  rd,</span><br><span class="line">    input  logic [31:0] aluresult,</span><br><span class="line">    input  logic [31:0] dout,</span><br><span class="line">    output logic [4:0]  A3,</span><br><span class="line">    output logic [31:0] WD3</span><br><span class="line">);</span><br><span class="line">    assign A3 = regdst ? rd : rt;</span><br><span class="line">    assign WD3 = mem_to_reg ? &#123;dout[7:0], dout[15:8], dout[23:16], dout[31:24]&#125; : aluresult;</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-AddressCalculation-sv-1"><a href="#5-AddressCalculation-sv-1" class="headerlink" title="5.AddressCalculation.sv"></a>5.AddressCalculation.sv</h4><p>计算下一条指令的程序计数器 (PC) 值。处理顺序执行和条件分支指令，计算下一条指令的地址。</p>
+<p>对于 <code>lw</code> 和 <code>sw</code> 指令，程序计数器顺序递增。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">module AddressCalculation(</span><br><span class="line">    input  logic        pcflag,</span><br><span class="line">    input  logic        j_flag,</span><br><span class="line">    input  logic [31:0] next_addr,</span><br><span class="line">    input  logic [31:0] extend,</span><br><span class="line">    input  logic [25:0] instr_index,</span><br><span class="line">    output logic [31:0] current_addr</span><br><span class="line">);</span><br><span class="line">    always_comb begin</span><br><span class="line">        if (!j_flag) begin</span><br><span class="line">            if (!pcflag)</span><br><span class="line">                current_addr = next_addr + 4;</span><br><span class="line">            else</span><br><span class="line">                current_addr = next_addr + 4 + (extend &lt;&lt; 2);</span><br><span class="line">        end else begin</span><br><span class="line">            logic [31:0] mid = next_addr + 4;</span><br><span class="line">            current_addr = &#123;mid[31:28], instr_index, 2&#x27;b00&#125;;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-pc-sv-1"><a href="#6-pc-sv-1" class="headerlink" title="6.pc.sv"></a>6.pc.sv</h4><p>程序计数器模块,在时钟上升沿，根据复位信号和输入的 <code>current_addr</code>，更新程序计数器的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">module pc(</span><br><span class="line">    input logic cpu_clk,</span><br><span class="line">    input logic cpu_rst_n,</span><br><span class="line">    input logic [31:0] current_addr,</span><br><span class="line">    output logic [31:0] next_addr</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">    always_ff @(posedge cpu_clk) begin</span><br><span class="line">        if (!cpu_rst_n)</span><br><span class="line">            next_addr &lt;= 32&#x27;d0;</span><br><span class="line">        else</span><br><span class="line">            next_addr &lt;= current_addr;</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h4 id="7-顶层模块"><a href="#7-顶层模块" class="headerlink" title="7.顶层模块"></a>7.顶层模块</h4><p>将各个子模块联系起来构成完整的系统</p>
+<p>从指令存储器获取当前指令，传递给 <code>ControlUnit</code> 进行译码，生成控制信号。</p>
+<p>根据控制信号，<code>Register_File</code> 模块读取或写入寄存器。</p>
+<p><code>ALUOps</code> 模块执行相应的运算，并输出结果。</p>
+<p><code>RegWriteDataSelect</code> 模块选择写回寄存器的数据和目标地址。</p>
+<p><code>AddressCalculation</code> 模块计算下一条指令的地址。</p>
+<p><code>pc</code> 模块在时钟上升沿更新程序计数器的值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br></pre></td><td class="code"><pre><span class="line">`include &quot;defines.sv&quot;</span><br><span class="line"></span><br><span class="line">module MiniMIPS32(</span><br><span class="line">    input  logic        cpu_clk,</span><br><span class="line">    input  logic        cpu_rst_n,</span><br><span class="line">    output logic [31:0] iaddr,</span><br><span class="line">    input  logic [31:0] inst,</span><br><span class="line">    output logic [31:0] daddr, </span><br><span class="line">    output logic        we,   </span><br><span class="line">    output logic [31:0] din,     </span><br><span class="line">    input  logic [31:0] dout    </span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">    logic [31:0] Instruction;</span><br><span class="line">    logic [5:0] op, funct;</span><br><span class="line">    logic [4:0] rs, rt, rd;</span><br><span class="line">    logic [15:0] imm;</span><br><span class="line">    logic [25:0] instr_index;</span><br><span class="line"></span><br><span class="line">    logic [31:0] current_addr;</span><br><span class="line">    logic [31:0] next_addr;  </span><br><span class="line">    logic [31:0] aluresult;</span><br><span class="line">    logic [31:0] extend;</span><br><span class="line">    logic [31:0] extend_0;</span><br><span class="line">    logic [31:0] alu1;</span><br><span class="line">    logic [31:0] alu2;</span><br><span class="line">    logic [31:0] RD1;</span><br><span class="line">    logic [31:0] RD2;</span><br><span class="line">    logic [31:0] WD3;</span><br><span class="line">    logic [4:0]  A3;</span><br><span class="line"></span><br><span class="line">    logic we3, pcflag, regdst, mem_to_reg, j_flag;</span><br><span class="line">    logic [1:0] alusrc, AluControl;</span><br><span class="line"></span><br><span class="line">    assign Instruction = &#123;inst[7:0], inst[15:8], inst[23:16], inst[31:24]&#125;;</span><br><span class="line">    assign op = Instruction[31:26];</span><br><span class="line">    assign rs = Instruction[25:21];</span><br><span class="line">    assign rt = Instruction[20:16];</span><br><span class="line">    assign rd = Instruction[15:11];</span><br><span class="line">    assign imm = Instruction[15:0];</span><br><span class="line">    assign funct = Instruction[5:0];</span><br><span class="line">    assign instr_index = Instruction[25:0];</span><br><span class="line"></span><br><span class="line">    ControlUnit cu(</span><br><span class="line">        .op(op),</span><br><span class="line">        .funct(funct),</span><br><span class="line">        .RD1(RD1),</span><br><span class="line">        .RD2(RD2),</span><br><span class="line">        .daddr(daddr),</span><br><span class="line">        .we(we),</span><br><span class="line">        .we3(we3),</span><br><span class="line">        .pcflag(pcflag),</span><br><span class="line">        .regdst(regdst),</span><br><span class="line">        .mem_to_reg(mem_to_reg),</span><br><span class="line">        .j_flag(j_flag),</span><br><span class="line">        .alusrc(alusrc),</span><br><span class="line">        .AluControl(AluControl)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    Register_File rf(</span><br><span class="line">        .sys_clk(cpu_clk),</span><br><span class="line">        .WE3(we3),</span><br><span class="line">        .sys_rst_n(cpu_rst_n),</span><br><span class="line">        .A1(rs),</span><br><span class="line">        .A2(rt),</span><br><span class="line">        .RD1(RD1), </span><br><span class="line">        .RD2(RD2),</span><br><span class="line">        .A3(A3),</span><br><span class="line">        .WD3(WD3)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    always_comb begin</span><br><span class="line">        extend = &#123;&#123;16&#123;imm[15]&#125;&#125;, imm&#125;;</span><br><span class="line">        extend_0 = &#123;16&#x27;b0, imm&#125;;</span><br><span class="line">        alu1 = RD1;</span><br><span class="line">        alu2 = (alusrc == 2&#x27;b00) ? RD2 : (alusrc == 2&#x27;b01) ? extend : extend_0;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    ALUOps alu_ops(</span><br><span class="line">        .alu1(alu1),</span><br><span class="line">        .alu2(alu2),</span><br><span class="line">        .AluControl(AluControl),</span><br><span class="line">        .aluresult(aluresult)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    RegWriteDataSelect reg_write_data_select(</span><br><span class="line">        .regdst(regdst),</span><br><span class="line">        .mem_to_reg(mem_to_reg),</span><br><span class="line">        .rt(rt),</span><br><span class="line">        .rd(rd),</span><br><span class="line">        .aluresult(aluresult),</span><br><span class="line">        .dout(dout),</span><br><span class="line">        .A3(A3),</span><br><span class="line">        .WD3(WD3)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    AddressCalculation addr_calc(</span><br><span class="line">        .pcflag(pcflag),</span><br><span class="line">        .j_flag(j_flag),</span><br><span class="line">        .next_addr(next_addr),</span><br><span class="line">        .extend(extend),</span><br><span class="line">        .instr_index(instr_index),</span><br><span class="line">        .current_addr(current_addr)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    assign daddr = aluresult;</span><br><span class="line">    assign &#123;din[7:0], din[15:8], din[23:16], din[31:24]&#125; = RD2;</span><br><span class="line"></span><br><span class="line">    pc pc_count(</span><br><span class="line">        .cpu_clk(cpu_clk),</span><br><span class="line">        .cpu_rst_n(cpu_rst_n),</span><br><span class="line">        .current_addr(current_addr),</span><br><span class="line">        .next_addr(next_addr)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    assign iaddr = next_addr;</span><br><span class="line"></span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
+
+<h3 id="（二）lui、ori-和-addiu（I-型指令）"><a href="#（二）lui、ori-和-addiu（I-型指令）" class="headerlink" title="（二）lui、ori 和 addiu（I-型指令）"></a>（二）lui、ori 和 addiu（I-型指令）</h3><h4 id="1-ControllerUnit-sv-1"><a href="#1-ControllerUnit-sv-1" class="headerlink" title="1.ControllerUnit.sv"></a>1.ControllerUnit.sv</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">6&#x27;b101011: begin // sw</span><br><span class="line">    we = (daddr[31:16] != 16&#x27;h8000 &amp;&amp; daddr[31:16] != 16&#x27;h8004);</span><br><span class="line">    we3 = 0;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b01;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">6&#x27;b001111: begin // lui</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 1;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b10;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b10;</span><br><span class="line">end</span><br><span class="line">6&#x27;b001101: begin // ori</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 1;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b10;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b01;</span><br><span class="line">end</span><br><span class="line">6&#x27;b001001: begin // addiu</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 1;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b01;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-ALUOps-sv"><a href="#2-ALUOps-sv" class="headerlink" title="2.ALUOps.sv"></a>2.ALUOps.sv</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">always_comb begin</span><br><span class="line">    case (AluControl)</span><br><span class="line">        2&#x27;b00: aluresult = alu1 + alu2; // 加法操作</span><br><span class="line">        2&#x27;b01: aluresult = alu1 | alu2; // ORI 操作</span><br><span class="line">        2&#x27;b10: aluresult = alu2 &lt;&lt; 16;  // LUI 操作</span><br><span class="line">        default: aluresult = 32&#x27;b0;</span><br><span class="line">    endcase</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-顶层模块"><a href="#3-顶层模块" class="headerlink" title="3.顶层模块"></a>3.顶层模块</h4><p>为了使 <code>lui</code> 指令工作，需要确保立即数在 <code>lui</code> 指令中的扩展方式正确。以下代码片段应在顶层模块的 <code>always_comb</code> 块中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">always_comb begin</span><br><span class="line">    extend = &#123;&#123;16&#123;imm[15]&#125;&#125;, imm&#125;;</span><br><span class="line">    extend_0 = &#123;imm, 16&#x27;b0&#125;; // 对于LUI指令，高16位是立即数，低16位为0</span><br><span class="line">    alu1 = RD1;</span><br><span class="line">    alu2 = (alusrc == 2&#x27;b00) ? RD2 : (alusrc == 2&#x27;b01) ? extend : extend_0;</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<p>以上增加的代码片段在 <code>ControlUnit.sv</code> 和 <code>ALUOps.sv</code> 中添加了对 <code>lui</code>、<code>ori</code> 和 <code>addiu</code> 指令的控制逻辑和操作，实现了对这三条 I-型指令的支持。在顶层模块中添加了立即数的扩展方式以支持 <code>lui</code> 指令。</p>
+<h3 id="（三）addu-和-slt（R-型指令）"><a href="#（三）addu-和-slt（R-型指令）" class="headerlink" title="（三）addu 和 slt（R-型指令）"></a>（三）addu 和 slt（R-型指令）</h3><h4 id="1-ControllerUnit-sv-2"><a href="#1-ControllerUnit-sv-2" class="headerlink" title="1.ControllerUnit.sv"></a>1.ControllerUnit.sv</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">6&#x27;b001001: begin // addiu</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 1;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b01;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">6&#x27;b000000: begin // R-type</span><br><span class="line">    if(funct == 6&#x27;b100001) begin // addu</span><br><span class="line">        we = 0;</span><br><span class="line">        we3 = 1;</span><br><span class="line">        pcflag = 0;</span><br><span class="line">        regdst = 1;</span><br><span class="line">        alusrc = 2&#x27;b00;</span><br><span class="line">        mem_to_reg = 0;</span><br><span class="line">        j_flag = 0;</span><br><span class="line">        AluControl = 2&#x27;b00;</span><br><span class="line">    end</span><br><span class="line">    else if(funct == 6&#x27;b101010) begin // slt</span><br><span class="line">        we = 0;</span><br><span class="line">        we3 = 1;</span><br><span class="line">        pcflag = 0;</span><br><span class="line">        regdst = 1;</span><br><span class="line">        alusrc = 2&#x27;b00;</span><br><span class="line">        mem_to_reg = 0;</span><br><span class="line">        j_flag = 0;</span><br><span class="line">        AluControl = 2&#x27;b11;</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-ALUOps-sv-1"><a href="#2-ALUOps-sv-1" class="headerlink" title="2.ALUOps.sv"></a>2.ALUOps.sv</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">always_comb begin</span><br><span class="line">    case (AluControl)</span><br><span class="line">        2&#x27;b00: aluresult = alu1 + alu2; // 加法操作</span><br><span class="line">        2&#x27;b01: aluresult = alu1 | alu2; // ORI 操作</span><br><span class="line">        2&#x27;b10: aluresult = alu2 &lt;&lt; 16;  // LUI 操作</span><br><span class="line">        2&#x27;b11: aluresult = (alu1 &lt; alu2) ? 32&#x27;b1 : 32&#x27;b0; // SLT 操作</span><br><span class="line">        default: aluresult = 32&#x27;b0;</span><br><span class="line">    endcase</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-顶层模块-1"><a href="#3-顶层模块-1" class="headerlink" title="3.顶层模块"></a>3.顶层模块</h4><p>顶层模块中，已包含了立即数扩展的代码，现需确保 <code>funct</code> 字段的操作也被正确处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">assign funct = Instruction[5:0];</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h3 id="（四）beq、bne-和-j（转移指令）"><a href="#（四）beq、bne-和-j（转移指令）" class="headerlink" title="（四）beq、bne 和 j（转移指令）"></a>（四）beq、bne 和 j（转移指令）</h3><h4 id="1-ControllerUnit-sv-3"><a href="#1-ControllerUnit-sv-3" class="headerlink" title="1.ControllerUnit.sv"></a>1.ControllerUnit.sv</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">6&#x27;b000000: begin // R-type</span><br><span class="line">    if(funct == 6&#x27;b100001) begin // addu</span><br><span class="line">        we = 0;</span><br><span class="line">        we3 = 1;</span><br><span class="line">        pcflag = 0;</span><br><span class="line">        regdst = 1;</span><br><span class="line">        alusrc = 2&#x27;b00;</span><br><span class="line">        mem_to_reg = 0;</span><br><span class="line">        j_flag = 0;</span><br><span class="line">        AluControl = 2&#x27;b00;</span><br><span class="line">    end</span><br><span class="line">    else if(funct == 6&#x27;b101010) begin // slt</span><br><span class="line">        we = 0;</span><br><span class="line">        we3 = 1;</span><br><span class="line">        pcflag = 0;</span><br><span class="line">        regdst = 1;</span><br><span class="line">        alusrc = 2&#x27;b00;</span><br><span class="line">        mem_to_reg = 0;</span><br><span class="line">        j_flag = 0;</span><br><span class="line">        AluControl = 2&#x27;b11;</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">6&#x27;b000100: begin // beq</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 0;</span><br><span class="line">    pcflag = (RD1 == RD2);</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b00;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">6&#x27;b000101: begin // bne</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 0;</span><br><span class="line">    pcflag = (RD1 != RD2);</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b00;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 0;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">6&#x27;b000010: begin // j</span><br><span class="line">    we = 0;</span><br><span class="line">    we3 = 0;</span><br><span class="line">    pcflag = 0;</span><br><span class="line">    regdst = 0;</span><br><span class="line">    alusrc = 2&#x27;b00;</span><br><span class="line">    mem_to_reg = 0;</span><br><span class="line">    j_flag = 1;</span><br><span class="line">    AluControl = 2&#x27;b00;</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-AddressCalculation-sv"><a href="#2-AddressCalculation-sv" class="headerlink" title="2.AddressCalculation.sv"></a>2.AddressCalculation.sv</h4><p>在 <code>AddressCalculation</code> 模块中已处理条件分支和无条件跳转的逻辑，无需增加新的代码，只需确保现有代码正确计算跳转地址：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">always_comb begin</span><br><span class="line">    if (!j_flag) begin</span><br><span class="line">        if (!pcflag)</span><br><span class="line">            current_addr = next_addr + 4;</span><br><span class="line">        else</span><br><span class="line">            current_addr = next_addr + 4 + (extend &lt;&lt; 2);</span><br><span class="line">    end else begin</span><br><span class="line">        logic [31:0] mid = next_addr + 4;</span><br><span class="line">        current_addr = &#123;mid[31:28], instr_index, 2&#x27;b00&#125;;</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-顶层模块-2"><a href="#3-顶层模块-2" class="headerlink" title="3.顶层模块"></a>3.顶层模块</h4><p>顶层模块中，已包含了对 <code>instr_index</code> 的处理代码，现需确保 <code>pcflag</code> 和 <code>j_flag</code> 信号被正确使用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">..........</span><br><span class="line">assign instr_index = Instruction[25:0];</span><br><span class="line">..........</span><br><span class="line">always_comb begin</span><br><span class="line">    extend = &#123;&#123;16&#123;imm[15]&#125;&#125;, imm&#125;;</span><br><span class="line">    extend_0 = &#123;imm, 16&#x27;b0&#125;; // 对于LUI指令，高16位是立即数，低16位为0</span><br><span class="line">    alu1 = RD1;</span><br><span class="line">    alu2 = (alusrc == 2&#x27;b00) ? RD2 : (alusrc == 2&#x27;b01) ? extend : extend_0;</span><br><span class="line">    pc_src = pcflag;</span><br><span class="line">    next_pc = (j_flag) ? &#123;next_pc[31:28], instr_index, 2&#x27;b00&#125; : (pc_src ? (next_pc + 4 + (extend &lt;&lt; 2)) : (next_pc + 4));</span><br><span class="line">end</span><br><span class="line">..........</span><br></pre></td></tr></table></figure>
+
+<h2 id="（六）实验结果"><a href="#（六）实验结果" class="headerlink" title="（六）实验结果"></a>（六）实验结果</h2><p>仿真前加载相应的指令和数据，即分别加载XXX_inst.coe和XXX_data.coe</p>
+<img src="./image-20240617190516561.png" alt="image-20240617190516561" style="zoom:80%;" />
+
+<p>我对仿真测试的代码进行了略微的修改，以便于测试重置后是否能够再次正常运行，修改部分如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">initial begin</span><br><span class="line">    // Initialize Inputs</span><br><span class="line">    sys_clk = 0;</span><br><span class="line">    sys_rst_n = 0;</span><br><span class="line">    #400</span><br><span class="line">    sys_rst_n = 1;     </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    //#15000 $stop;</span><br><span class="line">    #12000</span><br><span class="line">    sys_rst_n = 0;</span><br><span class="line">    #400</span><br><span class="line">    sys_rst_n = 1;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+<p>仿真结果：</p>
+<img src="./image-20240617190725392.png" alt="image-20240617190725392" style="zoom:80%;" />
+
+<p>远程平台验证结果：</p>
+<img src="./image-20240617190758172.png" alt="image-20240617190758172" style="zoom:80%;" />
+
+
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/06/17/%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" title="单周期MIPS处理器的设计与实现">http://example.com/2024/06/17/单周期MIPS处理器的设计与实现/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E7%94%B5/" rel="tag"># 数电</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/" rel="prev" title="计网socket实验week4">
+      <i class="fa fa-chevron-left"></i> 计网socket实验week4
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/09/17/%E5%85%A5%E6%89%8Bmac%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="next" title="入手mac初体验">
+      入手mac初体验 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9B%E3%80%81%E5%8D%95%E5%91%A8%E6%9C%9FMIPS%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">实验四、单周期MIPS处理器的设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">一、实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">二、实验环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">三、实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="nav-number">1.4.</span> <span class="nav-text">四、实验内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.</span> <span class="nav-text">五、实验步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89MiniMIPS%E7%9A%84%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.5.1.</span> <span class="nav-text">（一）MiniMIPS的总体设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ControlUnit-sv"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">1. ControlUnit.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Register-File-sv"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">2. Register_File.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-ALUOps-sv"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">3. ALUOps.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-RegWriteDataSelect-sv"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">4. RegWriteDataSelect.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-AddressCalculation-sv"><span class="nav-number">1.5.1.5.</span> <span class="nav-text">5. AddressCalculation.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-pc-sv"><span class="nav-number">1.5.1.6.</span> <span class="nav-text">6. pc.sv</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89lw-%E5%92%8C-sw%EF%BC%88%E8%AE%BF%E5%AD%98%E7%B1%BB%E6%8C%87%E4%BB%A4%EF%BC%89"><span class="nav-number">1.5.2.</span> <span class="nav-text">（二）lw 和 sw（访存类指令）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ControllerUnit-sv"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">1.ControllerUnit.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Register-File-sv-1"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">2.Register_File.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-ALUOps-sv-1"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">3.ALUOps.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-RegWriteDataSelect-sv-1"><span class="nav-number">1.5.2.4.</span> <span class="nav-text">4.RegWriteDataSelect.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-AddressCalculation-sv-1"><span class="nav-number">1.5.2.5.</span> <span class="nav-text">5.AddressCalculation.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-pc-sv-1"><span class="nav-number">1.5.2.6.</span> <span class="nav-text">6.pc.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.2.7.</span> <span class="nav-text">7.顶层模块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89lui%E3%80%81ori-%E5%92%8C-addiu%EF%BC%88I-%E5%9E%8B%E6%8C%87%E4%BB%A4%EF%BC%89"><span class="nav-number">1.5.3.</span> <span class="nav-text">（二）lui、ori 和 addiu（I-型指令）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ControllerUnit-sv-1"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">1.ControllerUnit.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-ALUOps-sv"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">2.ALUOps.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">3.顶层模块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89addu-%E5%92%8C-slt%EF%BC%88R-%E5%9E%8B%E6%8C%87%E4%BB%A4%EF%BC%89"><span class="nav-number">1.5.4.</span> <span class="nav-text">（三）addu 和 slt（R-型指令）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ControllerUnit-sv-2"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">1.ControllerUnit.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-ALUOps-sv-1"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">2.ALUOps.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97-1"><span class="nav-number">1.5.4.3.</span> <span class="nav-text">3.顶层模块</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89beq%E3%80%81bne-%E5%92%8C-j%EF%BC%88%E8%BD%AC%E7%A7%BB%E6%8C%87%E4%BB%A4%EF%BC%89"><span class="nav-number">1.5.5.</span> <span class="nav-text">（四）beq、bne 和 j（转移指令）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ControllerUnit-sv-3"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">1.ControllerUnit.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-AddressCalculation-sv"><span class="nav-number">1.5.5.2.</span> <span class="nav-text">2.AddressCalculation.sv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%A1%B6%E5%B1%82%E6%A8%A1%E5%9D%97-2"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">3.顶层模块</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%85%AD%EF%BC%89%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.6.</span> <span class="nav-text">（六）实验结果</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">215k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:16</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>
