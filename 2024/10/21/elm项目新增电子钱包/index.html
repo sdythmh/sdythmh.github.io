@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="软工中级实践报告1，延续elm项目，新增电子钱包的功能”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="elm项目新增电子钱包">
+<meta property="og:url" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="软工中级实践报告1，延续elm项目，新增电子钱包的功能”">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241021235219505.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241021235412096.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022014546059.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241021235851395.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022001841772.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022001912365.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022001938568.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022002014950.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022002102031.png">
+<meta property="og:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241022002217781.png">
+<meta property="article:published_time" content="2024-10-21T11:50:20.000Z">
+<meta property="article:modified_time" content="2024-10-21T17:46:23.758Z">
+<meta property="article:author" content="Charoneo">
+<meta property="article:tag" content="软工中级实践">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/image-20241021235219505.png">
+
+<link rel="canonical" href="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>elm项目新增电子钱包 | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          elm项目新增电子钱包
+        </h1>
+
+        <div class="post-meta">
+	
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-10-21 19:50:20" itemprop="dateCreated datePublished" datetime="2024-10-21T19:50:20+08:00">2024-10-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-10-22 01:46:23" itemprop="dateModified" datetime="2024-10-22T01:46:23+08:00">2024-10-22</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/10/21/elm项目新增电子钱包/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>15 分钟</span>
+            </span>
+            <div class="post-description">软工中级实践报告1，延续elm项目，新增电子钱包的功能”</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="“饿了吧“项目电子钱包实验报告"><a href="#“饿了吧“项目电子钱包实验报告" class="headerlink" title="“饿了吧“项目电子钱包实验报告"></a>“饿了吧“项目电子钱包实验报告</h1><h2 id="一、需求分析：增加电子钱包功能"><a href="#一、需求分析：增加电子钱包功能" class="headerlink" title="一、需求分析：增加电子钱包功能"></a>一、<strong>需求分析：增加电子钱包功能</strong></h2><h3 id="1-背景"><a href="#1-背景" class="headerlink" title="1. 背景"></a><strong>1. 背景</strong></h3><p>饿了吧项目原先没有电子钱包功能，支付都是通过银行卡或第三方支付（如支付宝、微信支付）完成。这种方式的局限性在于系统无法实现充值返点、退款暂存、透支、收款等功能，因此增加一个电子钱包功能变得必要。大部分电商平台都有钱包功能用于管理平台内的资金，提高用户黏性，方便资金流动。此次新增电子钱包功能以提升系统的灵活性和功能的丰富度。</p>
+<h3 id="2-功能需求"><a href="#2-功能需求" class="headerlink" title="2. 功能需求"></a><strong>2. 功能需求</strong></h3><ul>
+<li><strong>充值和提现功能</strong>：<ul>
+<li>用户可以向钱包充值和从钱包中提现。</li>
+<li>为鼓励用户将资金存入平台，充值时应有一定奖励。例如，充值满1000元赠送100元。提现时，充值时所得的奖励部分需扣除，以防止利用奖励规则的“薅羊毛”行为。</li>
+<li>奖励和手续费规则应支持动态设置，以应对不同的市场情况。</li>
+</ul>
+</li>
+<li><strong>支付和转账功能</strong>：<ul>
+<li>用户可以使用钱包进行支付和向其他钱包转账。</li>
+<li>支付过程应保证交易的原子性，确保支付成功后资金准确从付款方钱包转入收款方钱包，避免因网络或系统问题造成资金丢失或不一致。</li>
+</ul>
+</li>
+<li><strong>余额查询和交易流水查询功能</strong>：<ul>
+<li>用户可以随时查询电子钱包的当前余额。</li>
+<li>用户可以查看电子钱包的所有交易流水，了解资金的流动情况。</li>
+</ul>
+</li>
+<li><strong>冻结和透支功能</strong>：<ul>
+<li><strong>冻结功能</strong>：买家支付后，货款进入卖家账户但处于冻结状态，待买家确认收货后方可解冻，以保障买卖双方的权益。</li>
+<li><strong>透支功能</strong>：为VIP用户提供一定的透支额度。如果用户未在规定时间内归还透支款项，则需支付一定利息，这类似于小额贷款或支付宝花呗的功能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-系统设计和划分"><a href="#3-系统设计和划分" class="headerlink" title="3. 系统设计和划分"></a><strong>3. 系统设计和划分</strong></h3><ul>
+<li><strong>虚拟钱包系统</strong>：负责管理用户在平台内的虚拟账户。所有与虚拟资金相关的功能，如充值、提现、支付、转账、冻结、透支等，均由该系统处理。</li>
+<li><strong>三方支付系统</strong>：负责与用户的银行账户或第三方支付平台交互。当用户进行充值或提现操作时，三方支付系统与银行账户进行交互，将资金转入或转出平台内的虚拟钱包。</li>
+</ul>
+<p>通过这种系统的划分，可以有效解耦虚拟钱包和外部资金的交互，减少系统的耦合度，提升可维护性和安全性。虚拟钱包系统聚焦于平台内资金的管理，而三方支付系统则专注于与外部支付渠道的对接。</p>
+<h2 id="二、方案设计"><a href="#二、方案设计" class="headerlink" title="二、方案设计"></a>二、<strong>方案设计</strong></h2><h3 id="1、总体设计方案"><a href="#1、总体设计方案" class="headerlink" title="1、总体设计方案"></a>1、总体设计方案</h3><p>在“饿了吧”项目中增加电子钱包功能，旨在实现平台内的资金管理，包括充值、提现、支付、查询余额、查询交易流水等核心功能。钱包功能被拆分为虚拟钱包系统和第三方支付系统两个子系统。虚拟钱包系统主要负责用户资金的存储和管理，而第三方支付系统负责与外部银行账户或支付渠道的对接。为了更好地实现面向对象的封装和业务逻辑集中管理，本次设计采用了基于充血模型的领域驱动设计（DDD）方法，特别在虚拟钱包模块中应用了充血模型。</p>
+<h3 id="2、充血模型的应用"><a href="#2、充血模型的应用" class="headerlink" title="2、充血模型的应用"></a>2、充血模型的应用</h3><p>在本次方案中，虚拟钱包模块采用充血模型来管理钱包的业务逻辑和数据状态。与传统贫血模型相比，充血模型将数据与相关业务逻辑封装到同一个类中。这种设计符合面向对象编程的封装特性，能够提高代码的聚合度和内聚性，从而更好地保证业务逻辑的一致性。</p>
+<p>具体地，在“饿了吧”项目中，<code>VirtualWallet</code>类被设计为充血模型：</p>
+<ul>
+<li><code>VirtualWallet</code>类不仅保存用户钱包的基本信息（如余额、冻结金额、透支额度等），还直接包含了充值、提现、转账、冻结资金、解冻资金等业务方法。</li>
+<li>例如，在用户充值的场景中，<code>recharge</code>方法被封装在<code>VirtualWallet</code>类中，业务逻辑包括增加余额、计算奖励金额并存入奖励余额字段，这些操作都集中在领域对象中完成，而不是分散到服务层中。</li>
+</ul>
+<p>这种设计方式的优势在于：</p>
+<ul>
+<li><strong>高内聚性</strong>：数据和操作紧密结合，减少了业务逻辑分散于多个类的情况，使代码结构更加简洁。</li>
+<li><strong>清晰的职责划分</strong>：将钱包管理的核心逻辑放在领域对象中，服务层的职责被简化为调用领域对象的方法，起到协调控制的作用，而非直接处理业务逻辑。</li>
+<li><strong>增强可维护性</strong>：充血模型使得业务逻辑的更新集中在一个地方，减少了代码维护的难度和可能出现的错误。</li>
+</ul>
+<h3 id="3、模块设计与接口方案"><a href="#3、模块设计与接口方案" class="headerlink" title="3、模块设计与接口方案"></a>3、模块设计与接口方案</h3><ol>
+<li><strong>VirtualWallet领域模型类</strong><ul>
+<li>封装钱包的核心数据和操作，包括余额、冻结金额、透支额度、奖励余额等字段，以及<code>recharge</code>、<code>withdraw</code>、<code>transferTo</code>、<code>freeze</code>、<code>unfreeze</code>等方法。</li>
+<li>通过充血模型，将余额管理、奖励计算、资金冻结等逻辑放入领域对象中，减少了代码分散的情况。</li>
+</ul>
+</li>
+<li><strong>数据访问层（Mapper层）</strong><ul>
+<li>使用<code>MyBatis</code>作为ORM工具，通过注解的方式实现对数据库的访问。</li>
+<li>例如，<code>VirtualWalletMapper</code>用于从数据库中获取钱包信息、保存或更新钱包状态，<code>TransactionLogMapper</code>用于保存和查询交易日志。</li>
+<li>每个方法与数据库中的操作保持一致，以确保数据的完整性与一致性。</li>
+</ul>
+</li>
+<li><strong>服务层（Service层）</strong><ul>
+<li><code>VirtualWalletService</code>接口定义了钱包的主要操作，如充值、提现、转账、冻结和解冻资金等，<code>VirtualWalletServiceImpl</code>实现了具体的逻辑。</li>
+<li>服务层的主要职责是协调领域模型对象，调用<code>VirtualWallet</code>的业务方法，处理操作的事务管理以及与数据访问层的交互。</li>
+</ul>
+</li>
+<li><strong>控制器层（Controller层）</strong><ul>
+<li><code>VirtualWalletController</code>用于暴露API接口，供前端或其他服务调用。</li>
+<li>控制器层接收用户的请求，解析参数并调用服务层方法。控制器仅负责用户请求的处理和响应的生成，具体的业务逻辑则委托给服务层和领域模型对象处理。</li>
+<li>例如，充值接口通过调用<code>walletService.recharge()</code>方法完成，服务层再进一步调用<code>VirtualWallet</code>的充血模型方法实现核心业务逻辑。</li>
+</ul>
+</li>
+</ol>
+<h3 id="4、接口实现与流程"><a href="#4、接口实现与流程" class="headerlink" title="4、接口实现与流程"></a>4、接口实现与流程</h3><p>本次钱包功能中实现的主要接口包括：</p>
+<ol>
+<li><strong>充值接口</strong>：<ul>
+<li>路径：<code>POST /wallet/recharge</code></li>
+<li>参数：<code>walletId</code>、<code>amount</code>、<code>rewardRate</code></li>
+<li>流程：控制器层调用服务层的<code>recharge</code>方法，服务层获取钱包对象并调用<code>VirtualWallet</code>的<code>recharge</code>方法更新余额和奖励。</li>
+</ul>
+</li>
+<li><strong>提现接口</strong>：<ul>
+<li>路径：<code>POST /wallet/withdraw</code></li>
+<li>参数：<code>walletId</code>、<code>amount</code>、<code>feeRate</code></li>
+<li>流程：调用服务层的<code>withdraw</code>方法，服务层从数据库获取钱包对象并调用<code>withdraw</code>方法处理扣款逻辑，并在完成后更新数据库。</li>
+</ul>
+</li>
+<li><strong>转账接口</strong>：<ul>
+<li>路径：<code>POST /wallet/transfer</code></li>
+<li>参数：<code>fromWalletId</code>、<code>toWalletId</code>、<code>amount</code></li>
+<li>流程：控制器接收参数，服务层获取两个钱包对象，通过调用<code>VirtualWallet</code>的<code>transferTo</code>方法完成资金的转移。</li>
+</ul>
+</li>
+<li><strong>交易日志查询接口</strong>：<ul>
+<li>路径：<code>GET /wallet/&#123;walletId&#125;/transactions</code></li>
+<li>参数：<code>walletId</code></li>
+<li>流程：服务层调用<code>TransactionLogMapper</code>查询指定钱包的所有交易日志，返回给调用方。</li>
+</ul>
+</li>
+</ol>
+<h2 id="三、代码实现"><a href="#三、代码实现" class="headerlink" title="三、代码实现"></a>三、代码实现</h2><p>首先，根据需求，我们需要新增VirtualWallet类和TransactionLog类，并且在这两个类中实现各自的方法</p>
+<h3 id="VirtualWallet"><a href="#VirtualWallet" class="headerlink" title="VirtualWallet"></a>VirtualWallet</h3><p>VirtualWallet类的实体属性</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> String walletId;</span><br><span class="line"><span class="keyword">private</span> String userId;</span><br><span class="line"><span class="keyword">private</span> BigDecimal balance; <span class="comment">// 可用余额</span></span><br><span class="line">BigDecimal frozenAmount; <span class="comment">// 冻结金额</span></span><br><span class="line"><span class="keyword">private</span> BigDecimal overdraftLimit; <span class="comment">// 透支额度</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> BigDecimal <span class="title function_">getFrozenAmount</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> frozenAmount;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setFrozenAmount</span><span class="params">(BigDecimal frozenAmount)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.frozenAmount = frozenAmount;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">BigDecimal rewardBalance; <span class="comment">// 奖励余额</span></span><br></pre></td></tr></table></figure>
+
+<p>然后写出相应的构造函数和getter和setter方法</p>
+<p>实现充值、提现、支付和接收金额的基本操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 充值操作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">recharge</span><span class="params">(BigDecimal amount, BigDecimal rewardRate)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (amount.compareTo(BigDecimal.ZERO) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;充值金额必须大于零&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">BigDecimal</span> <span class="variable">reward</span> <span class="operator">=</span> amount.multiply(rewardRate);</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.add(amount);</span><br><span class="line">    <span class="built_in">this</span>.rewardBalance = reward;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 提现操作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">withdraw</span><span class="params">(BigDecimal amount, BigDecimal feeRate)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="type">BigDecimal</span> <span class="variable">fee</span> <span class="operator">=</span> amount.multiply(feeRate);</span><br><span class="line">    <span class="type">BigDecimal</span> <span class="variable">totalAmount</span> <span class="operator">=</span> amount.add(fee);</span><br><span class="line">    <span class="keyword">if</span> (totalAmount.compareTo(BigDecimal.ZERO) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;提现金额必须大于零&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.balance.compareTo(totalAmount) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;余额不足&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.subtract(totalAmount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 支付操作</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transferTo</span><span class="params">(VirtualWallet targetWallet, BigDecimal amount)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (amount.compareTo(BigDecimal.ZERO) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;转账金额必须大于零&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.getAvailableBalance().compareTo(amount) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;可用余额不足&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.subtract(amount);</span><br><span class="line">    targetWallet.receive(amount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收金额操作</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">receive</span><span class="params">(BigDecimal amount)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.add(amount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取可用余额</span></span><br><span class="line"><span class="keyword">public</span> BigDecimal <span class="title function_">getAvailableBalance</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.balance.add(<span class="built_in">this</span>.overdraftLimit).subtract(<span class="built_in">this</span>.frozenAmount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> BigDecimal <span class="title function_">getBalance</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.balance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现冻结资金、解冻资金等高级操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 冻结资金</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">freeze</span><span class="params">(BigDecimal amount)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">if</span> (amount.compareTo(BigDecimal.ZERO) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;冻结金额必须大于零&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.balance.compareTo(amount) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;余额不足以冻结&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">this</span>.frozenAmount = <span class="built_in">this</span>.frozenAmount.add(amount);</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.subtract(amount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解冻资金</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">unfreeze</span><span class="params">(BigDecimal amount)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (amount.compareTo(BigDecimal.ZERO) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;解冻金额必须大于零&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印日志查看 frozenAmount 和 amount 的值</span></span><br><span class="line">    System.out.println(<span class="string">&quot;Frozen Amount: &quot;</span> + <span class="built_in">this</span>.frozenAmount);</span><br><span class="line">    System.out.println(<span class="string">&quot;Unfreeze Amount: &quot;</span> + amount);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.frozenAmount.compareTo(amount) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;解冻金额超过冻结金额&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">this</span>.frozenAmount = <span class="built_in">this</span>.frozenAmount.subtract(amount);</span><br><span class="line">    <span class="built_in">this</span>.balance = <span class="built_in">this</span>.balance.add(amount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后写出相应的Controller层、Service层和ServiceImpl层，由于篇幅原因只给出一部分</p>
+<p>VirtualWalletController</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/wallet&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VirtualWalletController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> VirtualWalletService walletService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 充值接口</span></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/recharge&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title function_">recharge</span><span class="params">(<span class="meta">@RequestParam</span> String walletId, <span class="meta">@RequestParam</span> BigDecimal amount, <span class="meta">@RequestParam</span> BigDecimal rewardRate)</span> &#123;</span><br><span class="line">        walletService.recharge(walletId, amount, rewardRate);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.ok(<span class="string">&quot;充值成功&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提现接口</span></span><br><span class="line">    <span class="meta">@PostMapping(&quot;/withdraw&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;String&gt; <span class="title function_">withdraw</span><span class="params">(<span class="meta">@RequestParam</span> String walletId, <span class="meta">@RequestParam</span> BigDecimal amount, <span class="meta">@RequestParam</span> BigDecimal feeRate)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            walletService.withdraw(walletId, amount, feeRate);</span><br><span class="line">            <span class="keyword">return</span> ResponseEntity.ok(<span class="string">&quot;提现成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    .....</span><br></pre></td></tr></table></figure>
+
+<p>Service层</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">VirtualWalletService</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">recharge</span><span class="params">(String walletId, BigDecimal amount, BigDecimal rewardRate)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">withdraw</span><span class="params">(String walletId, BigDecimal amount, BigDecimal feeRate)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(String fromWalletId, String toWalletId, BigDecimal amount)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">    .....</span><br></pre></td></tr></table></figure>
+
+<p>ServiceImpl层</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VirtualWalletServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">VirtualWalletService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> VirtualWalletMapper walletMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TransactionLogMapper transactionLogMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">recharge</span><span class="params">(String walletId, BigDecimal amount, BigDecimal rewardRate)</span> &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">wallet</span> <span class="operator">=</span> walletMapper.findById(walletId);</span><br><span class="line">        wallet.recharge(amount, rewardRate);</span><br><span class="line">        walletMapper.update(wallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(walletId, amount, <span class="string">&quot;充值&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">withdraw</span><span class="params">(String walletId, BigDecimal amount, BigDecimal feeRate)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">wallet</span> <span class="operator">=</span> walletMapper.findById(walletId);</span><br><span class="line">        wallet.withdraw(amount, feeRate);</span><br><span class="line">        walletMapper.update(wallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(walletId, amount, <span class="string">&quot;提现&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(String fromWalletId, String toWalletId, BigDecimal amount)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">fromWallet</span> <span class="operator">=</span> walletMapper.findById(fromWalletId);</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">toWallet</span> <span class="operator">=</span> walletMapper.findById(toWalletId);</span><br><span class="line">        fromWallet.transferTo(toWallet, amount);</span><br><span class="line">        walletMapper.update(fromWallet);</span><br><span class="line">        walletMapper.update(toWallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(fromWalletId, amount, <span class="string">&quot;转账&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br><span class="line">    ....</span><br></pre></td></tr></table></figure>
+
+<p>最后完成VirtualWalletMapper层的撰写，注意，这里的实体类和数据库中的字段名不一致，应当用@Result来进行一一对应</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VirtualWalletServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">VirtualWalletService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> VirtualWalletMapper walletMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> TransactionLogMapper transactionLogMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">recharge</span><span class="params">(String walletId, BigDecimal amount, BigDecimal rewardRate)</span> &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">wallet</span> <span class="operator">=</span> walletMapper.findById(walletId);</span><br><span class="line">        wallet.recharge(amount, rewardRate);</span><br><span class="line">        walletMapper.update(wallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(walletId, amount, <span class="string">&quot;充值&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">withdraw</span><span class="params">(String walletId, BigDecimal amount, BigDecimal feeRate)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">wallet</span> <span class="operator">=</span> walletMapper.findById(walletId);</span><br><span class="line">        wallet.withdraw(amount, feeRate);</span><br><span class="line">        walletMapper.update(wallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(walletId, amount, <span class="string">&quot;提现&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">transfer</span><span class="params">(String fromWalletId, String toWalletId, BigDecimal amount)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">fromWallet</span> <span class="operator">=</span> walletMapper.findById(fromWalletId);</span><br><span class="line">        <span class="type">VirtualWallet</span> <span class="variable">toWallet</span> <span class="operator">=</span> walletMapper.findById(toWalletId);</span><br><span class="line">        fromWallet.transferTo(toWallet, amount);</span><br><span class="line">        walletMapper.update(fromWallet);</span><br><span class="line">        walletMapper.update(toWallet);</span><br><span class="line">        <span class="type">TransactionLog</span> <span class="variable">log</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(fromWalletId, amount, <span class="string">&quot;转账&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">        transactionLogMapper.save(log);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="TransactionLog"><a href="#TransactionLog" class="headerlink" title="TransactionLog"></a>TransactionLog</h3><p>TransactionLog实体类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">int</span> transactionId; <span class="comment">// 交易唯一标识</span></span><br><span class="line"><span class="keyword">private</span> String walletId;   <span class="comment">// 钱包ID</span></span><br><span class="line"><span class="keyword">private</span> LocalDateTime transactionTime; <span class="comment">// 交易时间</span></span><br><span class="line"><span class="keyword">private</span> BigDecimal amount; <span class="comment">// 交易金额</span></span><br><span class="line"><span class="keyword">private</span> String transactionType; <span class="comment">// 交易类型（充值、提现、支付等）</span></span><br><span class="line"><span class="keyword">private</span> String fromWalletId; <span class="comment">// 支付来源钱包ID（可为空）</span></span><br><span class="line"><span class="keyword">private</span> String toWalletId; <span class="comment">// 支付目标钱包ID（可为空）</span></span><br><span class="line"><span class="keyword">private</span> String status; <span class="comment">// 交易状态（成功、失败、处理中）</span></span><br></pre></td></tr></table></figure>
+
+<p>然后给出相应的构造函数、getter和setter方法，注意这里需要新增一个无参构造的方法，具体原因见</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_37822085/article/details/125894706">记Mybatis的坑，解决Error attempting to get column ‘name‘ from result set，Cannot determine value type from_org.springframework.dao.dataintegrityviolationexce-CSDN博客</a></p>
+<p>然后要更新交易状态并获取交易详细信息的简化展示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更新交易状态</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateStatus</span><span class="params">(String newStatus)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (newStatus == <span class="literal">null</span> || newStatus.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;交易状态不能为空&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">this</span>.status = newStatus;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取交易详细信息的简化展示</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getTransactionSummary</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Transaction &quot;</span> + transactionId + <span class="string">&quot;: &quot;</span> + transactionType + <span class="string">&quot; of &quot;</span> + amount + <span class="string">&quot; at &quot;</span> + transactionTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>TransactionLogMapper</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">TransactionLogMapper</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 保存交易记录</span></span><br><span class="line">    <span class="meta">@Insert(&quot;INSERT INTO transaction_log (wallet_id, transaction_time, amount, transaction_type, from_wallet_id, to_wallet_id, status) &quot; +</span></span><br><span class="line"><span class="meta">            &quot;VALUES (#&#123;walletId&#125;, #&#123;transactionTime&#125;, #&#123;amount&#125;, #&#123;transactionType&#125;, #&#123;fromWalletId&#125;, #&#123;toWalletId&#125;, #&#123;status&#125;)&quot;)</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">save</span><span class="params">(TransactionLog transactionLog)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 根据钱包ID查找所有交易记录</span></span><br><span class="line">    <span class="meta">@Select(&quot;SELECT transaction_id, wallet_id, transaction_time, amount, transaction_type, from_wallet_id, to_wallet_id, status FROM transaction_log WHERE wallet_id = #&#123;walletId&#125;&quot;)</span></span><br><span class="line">    <span class="meta">@Results(&#123;</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;transactionId&quot;, column = &quot;transaction_id&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;walletId&quot;, column = &quot;wallet_id&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;transactionTime&quot;, column = &quot;transaction_time&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;amount&quot;, column = &quot;amount&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;transactionType&quot;, column = &quot;transaction_type&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;fromWalletId&quot;, column = &quot;from_wallet_id&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;toWalletId&quot;, column = &quot;to_wallet_id&quot;),</span></span><br><span class="line"><span class="meta">            @Result(property = &quot;status&quot;, column = &quot;status&quot;)</span></span><br><span class="line"><span class="meta">    &#125;)</span></span><br><span class="line">    List&lt;TransactionLog&gt; <span class="title function_">findByWalletId</span><span class="params">(<span class="meta">@Param(&quot;walletId&quot;)</span> String walletId)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、单元测试"><a href="#四、单元测试" class="headerlink" title="四、单元测试"></a>四、单元测试</h2><h3 id="VirtualWalletTest"><a href="#VirtualWalletTest" class="headerlink" title="VirtualWalletTest"></a>VirtualWalletTest</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">VirtualWalletTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> VirtualWallet wallet;</span><br><span class="line">    <span class="keyword">private</span> VirtualWallet targetWallet;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setUp</span><span class="params">()</span> &#123;</span><br><span class="line">        wallet = <span class="keyword">new</span> <span class="title class_">VirtualWallet</span>(<span class="string">&quot;wallet1&quot;</span>, <span class="string">&quot;user1&quot;</span>, <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;1000.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;500.00&quot;</span>));</span><br><span class="line">        targetWallet = <span class="keyword">new</span> <span class="title class_">VirtualWallet</span>(<span class="string">&quot;wallet2&quot;</span>, <span class="string">&quot;user2&quot;</span>, <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;500.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testRecharge</span><span class="params">()</span> &#123;</span><br><span class="line">        wallet.recharge(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;500.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.1&quot;</span>));</span><br><span class="line">        assertEquals(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;1500.00&quot;</span>), wallet.getBalance()); <span class="comment">// 余额增加</span></span><br><span class="line">        assertTrue(wallet.rewardBalance.compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;50.00&quot;</span>)) == <span class="number">0</span>);<span class="comment">// 奖励余额增加</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testRechargeNegativeAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; wallet.recharge(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;-100.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.1&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testWithdraw</span><span class="params">()</span> &#123;</span><br><span class="line">        assertDoesNotThrow(() -&gt; wallet.withdraw(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;200.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.05&quot;</span>)));</span><br><span class="line">        assertTrue(wallet.getBalance().compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;790.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 余额减去 200 + 10（手续费）</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testWithdrawInsufficientBalance</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(Exception.class, () -&gt; wallet.withdraw(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;2000.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.05&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testTransferTo</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        wallet.transferTo(targetWallet, <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>));</span><br><span class="line">        assertTrue(wallet.getBalance().compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;700.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 余额减去 300</span></span><br><span class="line">        assertTrue(targetWallet.getBalance().compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;800.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 目标钱包增加 300</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testTransferToInsufficientBalance</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(Exception.class, () -&gt; wallet.transferTo(targetWallet, <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;2000.00&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testFreeze</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        wallet.freeze(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>));</span><br><span class="line">        assertTrue(wallet.getBalance().compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;700.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 冻结 300, 1000-300 = 700</span></span><br><span class="line">        assertTrue(wallet.frozenAmount.compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 冻结金额增加 300</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUnfreeze</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        wallet.freeze(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>));</span><br><span class="line">        wallet.unfreeze(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;300.00&quot;</span>));</span><br><span class="line">        assertTrue(wallet.getBalance().compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;1000.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 解冻后恢复到原余额</span></span><br><span class="line">        assertTrue(wallet.frozenAmount.compareTo(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.00&quot;</span>)) == <span class="number">0</span>); <span class="comment">// 冻结金额为 0</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testWithdrawWithInvalidAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; wallet.withdraw(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;-100.00&quot;</span>), <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.1&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testFreezeWithInvalidAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; wallet.freeze(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;-100.00&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUnfreezeWithInvalidAmount</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; wallet.unfreeze(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;-100.00&quot;</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果<br><img src="./image-20241021235219505.png" alt="image-20241021235219505" style="zoom: 80%;" /></p>
+<h3 id="TransactionLogTest"><a href="#TransactionLogTest" class="headerlink" title="TransactionLogTest"></a>TransactionLogTest</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TransactionLogTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> TransactionLog transactionLog;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@BeforeEach</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">setUp</span><span class="params">()</span> &#123;</span><br><span class="line">        transactionLog = <span class="keyword">new</span> <span class="title class_">TransactionLog</span>(<span class="string">&quot;wallet1&quot;</span>, <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;500.00&quot;</span>), <span class="string">&quot;充值&quot;</span>, <span class="string">&quot;成功&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testConstructor</span><span class="params">()</span> &#123;</span><br><span class="line">        assertNotNull(transactionLog);</span><br><span class="line">        assertEquals(<span class="string">&quot;wallet1&quot;</span>, transactionLog.getWalletId());</span><br><span class="line">        assertEquals(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;500.00&quot;</span>), transactionLog.getAmount());</span><br><span class="line">        assertEquals(<span class="string">&quot;充值&quot;</span>, transactionLog.getTransactionType());</span><br><span class="line">        assertEquals(<span class="string">&quot;成功&quot;</span>, transactionLog.getStatus());</span><br><span class="line">        assertNotNull(transactionLog.getTransactionTime());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUpdateStatus</span><span class="params">()</span> &#123;</span><br><span class="line">        transactionLog.updateStatus(<span class="string">&quot;失败&quot;</span>);</span><br><span class="line">        assertEquals(<span class="string">&quot;失败&quot;</span>, transactionLog.getStatus());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUpdateStatusWithEmptyString</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; transactionLog.updateStatus(<span class="string">&quot;&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUpdateStatusWithNull</span><span class="params">()</span> &#123;</span><br><span class="line">        assertThrows(IllegalArgumentException.class, () -&gt; transactionLog.updateStatus(<span class="literal">null</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testGetTransactionSummary</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">summary</span> <span class="operator">=</span> transactionLog.getTransactionSummary();</span><br><span class="line">        assertTrue(summary.contains(<span class="string">&quot;Transaction&quot;</span>));</span><br><span class="line">        assertTrue(summary.contains(<span class="string">&quot;充值&quot;</span>));</span><br><span class="line">        assertTrue(summary.contains(<span class="string">&quot;500.00&quot;</span>));</span><br><span class="line">        assertTrue(summary.contains(String.valueOf(transactionLog.getTransactionTime().getYear())));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果</p>
+<img src="./image-20241021235412096.png" alt="image-20241021235412096" style="zoom:80%;" />
+
+<h2 id="五、集成测试"><a href="#五、集成测试" class="headerlink" title="五、集成测试"></a>五、集成测试</h2><p>使用apifox进行集成测试，注意测试的时候需要在在8080后面加入&#x2F;elm</p>
+<p>先在IDEA中启动好springboot项目</p>
+<img src="./image-20241022014546059.png" alt="image-20241022014546059" style="zoom:80%;" />
+
+<h3 id="1、钱包充值"><a href="#1、钱包充值" class="headerlink" title="1、钱包充值"></a>1、钱包充值</h3><img src="./image-20241021235851395.png" alt="image-20241021235851395" style="zoom:80%;" />
+
+<h3 id="2-钱包提现"><a href="#2-钱包提现" class="headerlink" title="2.钱包提现"></a>2.钱包提现</h3><img src="./image-20241022001841772.png" alt="image-20241022001841772" style="zoom:80%;" />
+
+<h3 id="3-钱包转账"><a href="#3-钱包转账" class="headerlink" title="3.钱包转账"></a>3.钱包转账</h3><img src="./image-20241022001912365.png" alt="image-20241022001912365" style="zoom:80%;" />
+
+<h3 id="4-冻结资金"><a href="#4-冻结资金" class="headerlink" title="4.冻结资金"></a>4.冻结资金</h3><img src="./image-20241022001938568.png" alt="image-20241022001938568" style="zoom:80%;" />
+
+<h3 id="5-解冻资金"><a href="#5-解冻资金" class="headerlink" title="5.解冻资金"></a>5.解冻资金</h3><img src="./image-20241022002014950.png" alt="image-20241022002014950" style="zoom:80%;" />
+
+<h3 id="6-查询余额接口"><a href="#6-查询余额接口" class="headerlink" title="6.查询余额接口"></a>6.查询余额接口</h3><img src="./image-20241022002102031.png" alt="image-20241022002102031" style="zoom:80%;" />
+
+<h3 id="7-获取交易日志接口"><a href="#7-获取交易日志接口" class="headerlink" title="7.获取交易日志接口"></a>7.获取交易日志接口</h3><img src="./image-20241022002217781.png" alt="image-20241022002217781" style="zoom:80%;" />
+
+
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/" title="elm项目新增电子钱包">http://example.com/2024/10/21/elm项目新增电子钱包/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E5%B7%A5%E4%B8%AD%E7%BA%A7%E5%AE%9E%E8%B7%B5/" rel="tag"># 软工中级实践</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/09/17/%E4%BA%BA%E7%94%9F%E4%B8%AD%E7%9A%84%E9%87%8D%E5%A4%A7%E7%BB%8F%E5%8E%86/" rel="prev" title="人生中的重大经历">
+      <i class="fa fa-chevron-left"></i> 人生中的重大经历
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E2%80%9C%E9%A5%BF%E4%BA%86%E5%90%A7%E2%80%9C%E9%A1%B9%E7%9B%AE%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A"><span class="nav-number">1.</span> <span class="nav-text">“饿了吧“项目电子钱包实验报告</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90%EF%BC%9A%E5%A2%9E%E5%8A%A0%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.</span> <span class="nav-text">一、需求分析：增加电子钱包功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%83%8C%E6%99%AF"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8A%9F%E8%83%BD%E9%9C%80%E6%B1%82"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 功能需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%88%92%E5%88%86"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 系统设计和划分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%96%B9%E6%A1%88%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.2.</span> <span class="nav-text">二、方案设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.1.</span> <span class="nav-text">1、总体设计方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E5%85%85%E8%A1%80%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">2、充血模型的应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E6%A8%A1%E5%9D%97%E8%AE%BE%E8%AE%A1%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.3.</span> <span class="nav-text">3、模块设计与接口方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0%E4%B8%8E%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">4、接口实现与流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">三、代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VirtualWallet"><span class="nav-number">1.3.1.</span> <span class="nav-text">VirtualWallet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TransactionLog"><span class="nav-number">1.3.2.</span> <span class="nav-text">TransactionLog</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="nav-number">1.4.</span> <span class="nav-text">四、单元测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VirtualWalletTest"><span class="nav-number">1.4.1.</span> <span class="nav-text">VirtualWalletTest</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TransactionLogTest"><span class="nav-number">1.4.2.</span> <span class="nav-text">TransactionLogTest</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95"><span class="nav-number">1.5.</span> <span class="nav-text">五、集成测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E9%92%B1%E5%8C%85%E5%85%85%E5%80%BC"><span class="nav-number">1.5.1.</span> <span class="nav-text">1、钱包充值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%92%B1%E5%8C%85%E6%8F%90%E7%8E%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">2.钱包提现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%92%B1%E5%8C%85%E8%BD%AC%E8%B4%A6"><span class="nav-number">1.5.3.</span> <span class="nav-text">3.钱包转账</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%86%BB%E7%BB%93%E8%B5%84%E9%87%91"><span class="nav-number">1.5.4.</span> <span class="nav-text">4.冻结资金</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E8%A7%A3%E5%86%BB%E8%B5%84%E9%87%91"><span class="nav-number">1.5.5.</span> <span class="nav-text">5.解冻资金</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%9F%A5%E8%AF%A2%E4%BD%99%E9%A2%9D%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.5.6.</span> <span class="nav-text">6.查询余额接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E8%8E%B7%E5%8F%96%E4%BA%A4%E6%98%93%E6%97%A5%E5%BF%97%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.5.7.</span> <span class="nav-text">7.获取交易日志接口</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">232k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:31</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>
