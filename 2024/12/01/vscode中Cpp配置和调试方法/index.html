@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false,"labels":{"input_placeholder":"Search for Posts","hits_empty":"抱歉哦，没有找到你要查找的内容: ${query}"}},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="详细描述了mac端和win端在vscode环境下如何配置C++，并调试运行的操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vscode中Cpp配置和调试方法">
+<meta property="og:url" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Charoneo&#39;s Blog">
+<meta property="og:description" content="详细描述了mac端和win端在vscode环境下如何配置C++，并调试运行的操作">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201175307715.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201175607677.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201180107718.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201180251558.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201180420945.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201180639449.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201181237025.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201181556832.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201181617332.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201183536753.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201183753942.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241202142825996.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241202143555768.png">
+<meta property="og:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241202151915830.png">
+<meta property="article:published_time" content="2024-12-01T09:44:16.000Z">
+<meta property="article:modified_time" content="2024-12-02T07:21:07.181Z">
+<meta property="article:author" content="Charoneo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241201175307715.png">
+
+<link rel="canonical" href="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>vscode中Cpp配置和调试方法 | Charoneo's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+	<a target="_blank" rel="noopener" href="https://your-url" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charoneo's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-resources">
+
+    <a href="/resources/" rel="section"><i class="fa fa-download fa-fw"></i>资源</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.webp">
+      <meta itemprop="name" content="Charoneo">
+      <meta itemprop="description" content="个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charoneo's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          vscode中Cpp配置和调试方法
+        </h1>
+
+        <div class="post-meta">
+	
+  <i class="fa fa-thumb-tack"></i>
+  <font color=7D26CD>置顶</font>
+  <span class="post-meta-divider">|</span>
+
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-01 17:44:16" itemprop="dateCreated datePublished" datetime="2024-12-01T17:44:16+08:00">2024-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-02 15:21:07" itemprop="dateModified" datetime="2024-12-02T15:21:07+08:00">2024-12-02</time>
+              </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Changyan：</span>
+    
+    
+      <a title="changyan" href="/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/#SOHUCS" itemprop="discussionUrl">
+        <span id="changyan_count_unit" class="post-comments-count hc-comment-count" data-xid="2024/12/01/vscode中Cpp配置和调试方法/" itemprop="commentCount"></span>
+      </a>
+    
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+            <div class="post-description">详细描述了mac端和win端在vscode环境下如何配置C++，并调试运行的操作</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这个话题网上有很多说法，csdn上的教程也很多，但是我看了大多数的教程，大部分是win，且是老版本的vscode，每个人的情况不同，配置的信息不同，我的这个教程也不一定能够包含所有的情况，所以还是以参考为主</p>
+<p>首先就是扩展插件部分安装C&#x2F;C++插件，Chinese simplify等等插件，这两个就够用，可以根据需求装C&#x2F;C++ Extention和code runner等</p>
+<h1 id="MAC版"><a href="#MAC版" class="headerlink" title="MAC版"></a>MAC版</h1><h2 id="一、c-cpp-properties-json"><a href="#一、c-cpp-properties-json" class="headerlink" title="一、c_cpp_properties.json"></a>一、c_cpp_properties.json</h2><p>command + shift + p或者左下角设置-&gt;命令面板，输入C&#x2F;C++，选择Edit Configuration(UI)，</p>
+<img src="./image-20241201175307715.png" alt="image-20241201175307715" style="zoom:50%;" />
+
+<img src="./image-20241201175607677.png" alt="image-20241201175607677" style="zoom:50%;" />
+
+<p>在这幅图片中要确保<code>编译器路径</code>和<code>IntelliSense模式</code>这两个配置是符合你的电脑要求的，编译器路径部分g++是C++的编译器，gcc是c语言的编译器，IntelliSense默认就行。</p>
+<p>在设置完这些后，会出现一个<code>c_cpp_properties.json</code>文件，是你刚刚配置的相关信息，具体代码如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;configurations&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;name&quot;: &quot;Mac&quot;,</span><br><span class="line">            &quot;includePath&quot;: [</span><br><span class="line">                &quot;$&#123;workspaceFolder&#125;/**&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;defines&quot;: [],</span><br><span class="line">            &quot;macFrameworkPath&quot;: [</span><br><span class="line">           &quot;/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;cStandard&quot;: &quot;c17&quot;,</span><br><span class="line">            &quot;cppStandard&quot;: &quot;c++17&quot;,</span><br><span class="line">            &quot;intelliSenseMode&quot;: &quot;macos-clang-arm64&quot;,</span><br><span class="line">            &quot;compilerPath&quot;: &quot;/usr/bin/g++&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    &quot;version&quot;: 4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里的编译器是xcode自带的g++。</p>
+<h2 id="二、launch-json"><a href="#二、launch-json" class="headerlink" title="二、launch.json"></a>二、launch.json</h2><p>左上角点击运行-&gt;添加配置…，这时会出现一个launch.json文件，点击这个文件右下角的添加配置，选择<code>&#123;&#125;C/C++: (lldb)启动</code>（这里和win不同，mac只有lldb启动）</p>
+<img src="./image-20241201180107718.png" alt="image-20241201180107718" style="zoom:50%;" />
+
+<img src="./image-20241201180251558.png" alt="image-20241201180251558" style="zoom:50%;" />
+
+<img src="./image-20241201180420945.png" alt="image-20241201180420945" style="zoom:50%;" />
+
+<p>一开始的<code>launch.json</code>只有上图这个最基本的，建议修改为以下内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;version&quot;: &quot;0.2.0&quot;,</span><br><span class="line">    &quot;configurations&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;name&quot;: &quot;(lldb) 启动——生成调试文件&quot;,</span><br><span class="line">            &quot;type&quot;: &quot;cppdbg&quot;,</span><br><span class="line">            &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">            &quot;program&quot;: &quot;$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;&quot;,  // 当前文件的输出路径</span><br><span class="line">            &quot;args&quot;: [],</span><br><span class="line">            &quot;stopAtEntry&quot;: false,</span><br><span class="line">            &quot;cwd&quot;: &quot;$&#123;fileDirname&#125;&quot;,</span><br><span class="line">            &quot;environment&quot;: [],</span><br><span class="line">            &quot;externalConsole&quot;: false,</span><br><span class="line">            &quot;MIMode&quot;: &quot;lldb&quot;,</span><br><span class="line">            &quot;setupCommands&quot;: [</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;description&quot;: &quot;为 gdb 启用整齐打印&quot;,</span><br><span class="line">                    &quot;text&quot;: &quot;-enable-pretty-printing&quot;,</span><br><span class="line">                    &quot;ignoreFailures&quot;: true</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;preLaunchTask&quot;: &quot;debug test&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有几点需要注意：</p>
+<ol>
+<li><code>name</code>是右侧调试列出现的名称，如下图</li>
+</ol>
+<img src="./image-20241201180639449.png" alt="image-20241201180639449" style="zoom:50%;" />
+
+<ol start="2">
+<li><code>program</code>是当前文件的输出路径，<code>$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;</code>表示在当前文件的目录下生成一个名字和cpp文件名字一样的可执行文件（如test.cpp生成test），注意这是mac版，不需要加后缀名。</li>
+<li><code>stopAtEntry</code>，这一项控制是否在入口处暂停，默认false不暂停</li>
+<li><code>externalConsole</code>，这一项控制是否启动外部控制台（独立的黑框）运行程序，默认false表示在集成终端中运行</li>
+<li><code>preLaunchTask</code>，调试前的预执行任务，这里的值是tasks.json文件中对应的编译任务</li>
+<li><code>cwd</code>，<code>cwd</code> 是 <strong>Current Working Directory</strong>（当前工作目录）的缩写。它指定了调试时程序的工作目录，也就是程序运行时查找文件和相对路径的起始目录。只有这个配置对了，类似<code>$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;</code>这种才不会出现问题</li>
+</ol>
+<p>其他的默认就好</p>
+<h2 id="三、tasks-json"><a href="#三、tasks-json" class="headerlink" title="三、tasks.json"></a>三、tasks.json</h2><p>左上角点击终端-&gt;配置任务…，这里提示用模版创建，这里由于我没有现成的任务模版，只能自己新建一个tasks.json</p>
+<img src="./image-20241201181237025.png" alt="image-20241201181237025" style="zoom:50%;" />
+
+<img src="./image-20241201181556832.png" alt="image-20241201181556832" style="zoom:50%;" />
+
+<img src="./image-20241201181617332.png" alt="image-20241201181617332" style="zoom:50%;" />
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;tasks&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;type&quot;: &quot;shell&quot;,</span><br><span class="line">            &quot;label&quot;: &quot;debug test&quot;,  // 编译任务的名称，跟上面preLaunchTask的值对应</span><br><span class="line">            &quot;command&quot;: &quot;/usr/bin/g++&quot;,  // g++路径</span><br><span class="line">            &quot;args&quot;: [</span><br><span class="line">                &quot;-g&quot;,</span><br><span class="line">                &quot;$&#123;file&#125;&quot;,</span><br><span class="line">                &quot;-o&quot;,</span><br><span class="line">                &quot;$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;&quot; </span><br><span class="line">            ],</span><br><span class="line">            &quot;options&quot;: &#123;</span><br><span class="line">                &quot;cwd&quot;: &quot;$&#123;fileDirname&#125;&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;problemMatcher&quot;: [</span><br><span class="line">                &quot;$gcc&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;group&quot;: &#123;</span><br><span class="line">                &quot;kind&quot;: &quot;build&quot;,</span><br><span class="line">                &quot;isDefault&quot;: true</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    &quot;version&quot;: &quot;2.0.0&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意一下几点：</p>
+<ol>
+<li><code>type</code>，这里是shell表明我是在终端运行的（也就是zsh）</li>
+<li><code>label</code>，编译任务的名称，<font color = "red">跟上面preLaunchTask的值一致</font></li>
+<li><code>command</code>，这里是系统的c++编译器路径</li>
+<li><code>args</code>，<code>$&#123;file&#125;</code>表示在当前文件下运行，即要<font color = "red">点击到对应运行的cpp文件下</font>，点击开始绿色箭头的<code>开始与调试</code>. <code>$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;</code>表示<font color = "red">生成的文件的路径和名称，注意这个要和<code>launch.json</code>中的<code>program</code>一致</font></li>
+<li><code>cwd</code>，重要性见launch.json所述。</li>
+</ol>
+<p>其他默认就好</p>
+<h2 id="四、运行和调试"><a href="#四、运行和调试" class="headerlink" title="四、运行和调试"></a>四、运行和调试</h2><p>配置好上面三个文件后（在.vscode文件夹里，默认隐藏，在访达中command + shift + .即可显示，在vscode中海会自动创建），在右侧选择运行和调试，<font color = "red">选择到对应的要编译运行的cpp文件下</font>，注意如果有多个cpp文件需要同时编译，修改<code>tasks.json</code>中的<code>args</code>即可。点击运行与调试旁边的“绿色箭头”，就可以成功运行。</p>
+<img src="./image-20241201183536753.png" alt="image-20241201183536753" style="zoom:50%;" />
+
+<p>结果如下<br><img src="./image-20241201183753942.png" alt="image-20241201183753942" style="zoom:50%;" /></p>
+<p>如果不习惯调试控制台输出，把<code>externalConsole</code>改为<code>true</code>即可.</p>
+<h2 id="五、解决终端将被任务重用，按任意键关闭的问题"><a href="#五、解决终端将被任务重用，按任意键关闭的问题" class="headerlink" title="五、解决终端将被任务重用，按任意键关闭的问题"></a>五、解决终端将被任务重用，按任意键关闭的问题</h2><p>在上面的叙述中，如果每一步都按照我的来，最终会在集成终端中出现“终端将被任务重用，按任意键关闭”的字样。这个还好，如果只是简单的输出程序，还可以在调试控制台中看到，但是如果是包含输入相关的程序（如cin），那么程序会被彻底阻塞。你无法在调试控制台输入，更没法在集成终端中输入（因为集成终端只会显示终端任务将被重用、或者生成已完成等等字样，按任意键就会关闭）。</p>
+<p>这时你或许还可以把<code>launch.json</code>中的externalConsole改成true，但是这样会使你在全屏显示的情况下，每次都要跳回到桌面显示终端得到结果，而不能简单的在集成终端中显示。</p>
+<p>解决方案如下：<br>在vscode插件中下载一个CodeLLDB扩展，如下图所示</p>
+<img src="./image-20241202142825996.png" alt="image-20241202142825996" style="zoom:50%;" />
+
+<p>通过访问其github官网<a target="_blank" rel="noopener" href="https://github.com/vadimcn/codelldb/blob/v1.11.1/MANUAL.md%EF%BC%8C%E6%9C%89%E8%BF%99%E4%B9%88%E4%B8%80%E6%AE%B5">https://github.com/vadimcn/codelldb/blob/v1.11.1/MANUAL.md，有这么一段</a><br>Starting a New Debug Session</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;: &quot;Launch&quot;,</span><br><span class="line">    &quot;type&quot;: &quot;lldb&quot;,</span><br><span class="line">    &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">    &quot;program&quot;: &quot;$&#123;workspaceFolder&#125;/&lt;executable file&gt;&quot;,</span><br><span class="line">    &quot;args&quot;: [&quot;-arg1&quot;, &quot;-arg2&quot;],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，你只需要把<code>&lt;executable file&gt;</code>部分换成你的输出文件即可，如<code>$&#123;fileBasenameNoExtension&#125;</code>，参数部分不需要，cwd可以是<code>$&#123;workspaceFolder&#125;</code>，也可以是<code>$&#123;fileDirname&#125;</code>，我的具体配置如下（将之前的注释掉即可）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;version&quot;</span>: <span class="string">&quot;0.2.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;configurations&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;lldb&quot;</span>,</span><br><span class="line">            <span class="string">&quot;request&quot;</span>: <span class="string">&quot;launch&quot;</span>,</span><br><span class="line">            <span class="string">&quot;name&quot;</span>: <span class="string">&quot;Launch&quot;</span>,</span><br><span class="line">            <span class="string">&quot;program&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;/$&#123;fileBasenameNoExtension&#125;&quot;</span>,</span><br><span class="line">            <span class="string">&quot;args&quot;</span>: [],</span><br><span class="line">            <span class="string">&quot;cwd&quot;</span>: <span class="string">&quot;$&#123;workspaceFolder&#125;&quot;</span>,</span><br><span class="line">            <span class="string">&quot;preLaunchTask&quot;</span>: <span class="string">&quot;C/C++: g++ 生成活动文件&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// &#123;</span></span><br><span class="line">        <span class="comment">//     &quot;name&quot;: &quot;(lldb) 启动——生成调试文件&quot;,</span></span><br><span class="line">        <span class="comment">//     &quot;type&quot;: &quot;cppdbg&quot;,</span></span><br><span class="line">        <span class="comment">//     &quot;request&quot;: &quot;launch&quot;,</span></span><br><span class="line">        <span class="comment">//     &quot;program&quot;: &quot;$&#123;fileDirname&#125;/$&#123;fileBasenameNoExtension&#125;&quot;,  </span></span><br><span class="line">        <span class="comment">//     &quot;args&quot;: [],</span></span><br><span class="line">        <span class="comment">//     &quot;stopAtEntry&quot;: false,</span></span><br><span class="line">        <span class="comment">//     &quot;cwd&quot;: &quot;$&#123;fileDirname&#125;&quot;,</span></span><br><span class="line">        <span class="comment">//     &quot;environment&quot;: [],</span></span><br><span class="line">        <span class="comment">//     &quot;externalConsole&quot;: false,</span></span><br><span class="line">        <span class="comment">//     &quot;MIMode&quot;: &quot;lldb&quot;,</span></span><br><span class="line">        <span class="comment">//     &quot;setupCommands&quot;: [</span></span><br><span class="line">        <span class="comment">//         &#123;</span></span><br><span class="line">        <span class="comment">//             &quot;description&quot;: &quot;为 gdb 启用整齐打印&quot;,</span></span><br><span class="line">        <span class="comment">//             &quot;text&quot;: &quot;-enable-pretty-printing&quot;,</span></span><br><span class="line">        <span class="comment">//             &quot;ignoreFailures&quot;: true</span></span><br><span class="line">        <span class="comment">//         &#125;</span></span><br><span class="line">        <span class="comment">//     ],</span></span><br><span class="line">        <span class="comment">//     &quot;preLaunchTask&quot;: &quot;C/C++: g++ 生成活动文件&quot;</span></span><br><span class="line">        <span class="comment">// &#125;</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意，上面这一部分代码也可以通过<code>launch.json</code>文件右下角的<code>添加配置...</code>中选择<code>&#123;&#125;CodeLLDB : launch</code>来直接配置</p>
+<p>另外，这里<font color = "red">要自己加上<code>preLaunchTask</code></font>，这样就能确保在调试之前能够先执行<code>tasks.json</code>中的任务（也就是编译生成可执行文件），紧接着则集成终端中调试即可，结果如下<br><img src="/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/image-20241202143555768.png" alt="image-20241202143555768"></p>
+<p>现在，你可以尽情用mac来写c++代码了！</p>
+<p>补充一个有意思的问题：这篇文章原来的题目是：<code>vscode中C++配置和调试方法</code>，我在<code>hexo g</code>的时候会报错如下<br><img src="./image-20241202151915830.png" alt="image-20241202151915830" style="zoom:50%;" /></p>
+<p>可能是<code>node_modules</code>中的<code>hexo-asset-img</code>这个包的<code>index.js</code>没有正确处理标题中含有<code>++</code>这种的情况</p>
+
+    </div>
+
+    
+    
+    
+
+ 
+   <div>
+     <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+   </div>
+ 
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>charoneo
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2024/12/01/vscode%E4%B8%ADCpp%E9%85%8D%E7%BD%AE%E5%92%8C%E8%B0%83%E8%AF%95%E6%96%B9%E6%B3%95/" title="vscode中Cpp配置和调试方法">http://example.com/2024/12/01/vscode中Cpp配置和调试方法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/21/elm%E9%A1%B9%E7%9B%AE%E6%96%B0%E5%A2%9E%E7%94%B5%E5%AD%90%E9%92%B1%E5%8C%85/" rel="prev" title="elm项目新增电子钱包">
+      <i class="fa fa-chevron-left"></i> elm项目新增电子钱包
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="SOHUCS"></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MAC%E7%89%88"><span class="nav-number">1.</span> <span class="nav-text">MAC版</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81c-cpp-properties-json"><span class="nav-number">1.1.</span> <span class="nav-text">一、c_cpp_properties.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81launch-json"><span class="nav-number">1.2.</span> <span class="nav-text">二、launch.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81tasks-json"><span class="nav-number">1.3.</span> <span class="nav-text">三、tasks.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%90%E8%A1%8C%E5%92%8C%E8%B0%83%E8%AF%95"><span class="nav-number">1.4.</span> <span class="nav-text">四、运行和调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%A7%A3%E5%86%B3%E7%BB%88%E7%AB%AF%E5%B0%86%E8%A2%AB%E4%BB%BB%E5%8A%A1%E9%87%8D%E7%94%A8%EF%BC%8C%E6%8C%89%E4%BB%BB%E6%84%8F%E9%94%AE%E5%85%B3%E9%97%AD%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.</span> <span class="nav-text">五、解决终端将被任务重用，按任意键关闭的问题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Charoneo"
+      src="/images/avatar.webp">
+  <p class="site-author-name" itemprop="name">Charoneo</p>
+  <div class="site-description" itemprop="description">个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/sdythmh" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;sdythmh" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:sdythmh@gmail.com" title="E-Mail → mailto:sdythmh@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.weibo.com/u/7788881505" title="Weibo → https:&#x2F;&#x2F;www.weibo.com&#x2F;u&#x2F;7788881505" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      链接网站
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://baidu.com/" title="https:&#x2F;&#x2F;baidu.com" rel="noopener" target="_blank">百度</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://pornhub.com/" title="https:&#x2F;&#x2F;pornhub.com" rel="noopener" target="_blank">学习资料1</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xvideos.com/" title="https:&#x2F;&#x2F;xvideos.com" rel="noopener" target="_blank">学习资料2</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2024-03 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Charoneo</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">239k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">3:37</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  <script>
+  NexT.utils.loadComments(document.querySelector('#SOHUCS'), () => {
+    var appid = 'cyxdgXkVT';
+    var conf = '20f2cb29a4fd310a7e302dcb02e3bbe0';
+    var width = window.innerWidth || document.documentElement.clientWidth;
+    if (width < 960) {
+      window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>');
+    } else {
+      var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})});
+    }
+  });
+  </script>
+  <script src="https://assets.changyan.sohu.com/upload/plugins/plugins.count.js"></script>
+
+</body>
+</html>
