@@ -295,101 +295,75 @@
 
       
         <p><font color = "red" size = "6">本次实验由于华为云服务器欠费，没有使用openGauss数据库，而借用同学的服务器完成实验</font></p>
-<h1 id="一、实验介绍"><a href="#一、实验介绍" class="headerlink" title="一、实验介绍"></a>一、实验介绍</h1><p>日志与恢复是 openGauss 数据库实现事务处理和确保 ACID 特性的重要组成部分。本实验尝试打通目前数据库日志与恢复模块在原理学习与系统实现上的鸿沟。通过 openGauss数据库中日志与恢复部分的实现源代码，分析与验证相关原理与机制，包括：WAL 日志文件、XLOG 日志记录、日志写入过程、检查点机制、数据库恢复、数据库备份与 PITR 恢复。</p>
+<h1 id="一实验介绍">一、实验介绍</h1>
+<p>日志与恢复是 openGauss 数据库实现事务处理和确保 ACID 特性的重要组成部分。本实验尝试打通目前数据库日志与恢复模块在原理学习与系统实现上的鸿沟。通过 openGauss数据库中日志与恢复部分的实现源代码，分析与验证相关原理与机制，包括：WAL 日志文件、XLOG 日志记录、日志写入过程、检查点机制、数据库恢复、数据库备份与 PITR 恢复。</p>
 <p>首先，通过实验查看 WAL 日志文件的基本信息与命名方式；然后，通过“立即”关闭模式验证数据库在重启时的恢复过程；通过添加代码的方法，在数据库恢复过程中输出调试信息，结合源代码阅读，更加详细地分析 WAL 日志恢复过程；最后，验证数据库备份与 PITR恢复机制。</p>
 <p>日志与恢复机制是数据库系统最为繁杂的功能模块之一，数据库日志与恢复功能的实现需要考虑众多原理中忽略的细节，大量涉及较为底层的系统机制。本实验的实践内容包括较多的源代码阅读与分析，具有较大的挑战性。</p>
-<h1 id="二、实验目的"><a href="#二、实验目的" class="headerlink" title="二、实验目的"></a>二、实验目的</h1><ol>
-<li><p>理解 WAL 日志文件的工作原理。</p>
-</li>
-<li><p>理解 XLOG 日志记录的组织。</p>
-</li>
-<li><p>理解 WAL 日志写入过程。</p>
-</li>
-<li><p>理解 WAL 日志检查点机制。</p>
-</li>
-<li><p>理解利用 WAL 日志重做 XLOG 记录进行数据库恢复的原理。</p>
-</li>
-<li><p>掌握数据库备份与 PITR 恢复方法。</p>
-</li>
-<li><p>了解与本实验相关的函数与结构体的源代码。</p>
-</li>
+<h1 id="二实验目的">二、实验目的</h1>
+<ol type="1">
+<li><p>理解 WAL 日志文件的工作原理。</p></li>
+<li><p>理解 XLOG 日志记录的组织。</p></li>
+<li><p>理解 WAL 日志写入过程。</p></li>
+<li><p>理解 WAL 日志检查点机制。</p></li>
+<li><p>理解利用 WAL 日志重做 XLOG 记录进行数据库恢复的原理。</p></li>
+<li><p>掌握数据库备份与 PITR 恢复方法。</p></li>
+<li><p>了解与本实验相关的函数与结构体的源代码。</p></li>
 </ol>
-<h1 id="三、实验步骤和结果"><a href="#三、实验步骤和结果" class="headerlink" title="三、实验步骤和结果"></a>三、实验步骤和结果</h1><p>（一）查看WAL日志文件</p>
+<h1 id="三实验步骤和结果">三、实验步骤和结果</h1>
+<p>（一）查看WAL日志文件</p>
 <p>1.查看默认日志大小</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> wal_segment_size;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611134721915.png" alt="image-20240611134721915" style="zoom:80%;" />
-
+<p><img src="./image-20240611134721915.png" alt="image-20240611134721915" style="zoom:80%;" /></p>
 <p>2.查看当前日志的 LSN</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_current_xlog_insert_location();</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611134815177.png" alt="image-20240611134815177" style="zoom:80%;" />
-
+<p><img src="./image-20240611134815177.png" alt="image-20240611134815177" style="zoom:80%;" /></p>
 <p>3.查看当前日志文件名</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_xlogfile_name(<span class="string">&#x27;0/1497E7B0&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611134845262.png" alt="image-20240611134845262" style="zoom:80%;" />
-
+<p><img src="./image-20240611134845262.png" alt="image-20240611134845262" style="zoom:80%;" /></p>
 <p>4.查看当前日志文件名和 LSN 在 WAL 段文件中的字节偏移量</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_xlogfile_name_offset(<span class="string">&#x27;0/1497E7B0&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611134916606.png" alt="image-20240611134916606" style="zoom:80%;" />
-
+<p><img src="./image-20240611134916606.png" alt="image-20240611134916606" style="zoom:80%;" /></p>
 <p>5.查看 openGauss 的 WAL 日志文件目录</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ll $GAUSSHOME/data/pg_xlog</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611135509546.png" alt="image-20240611135509546" style="zoom:80%;" />
-
+<p><img src="./image-20240611135509546.png" alt="image-20240611135509546" style="zoom:80%;" /></p>
 <p>（二）验证数据库恢复</p>
 <p>1.通过 immediate 关闭模式触发数据库恢复</p>
 <p>新建一个 SSH 会话，用 gsql 客户端连接数据库服务器。执行下面语句：</p>
-<img src="./image-20240611140028076.png" alt="image-20240611140028076" style="zoom:80%;" />
-
+<p><img src="./image-20240611140028076.png" alt="image-20240611140028076" style="zoom:80%;" /></p>
 <p>用 fast 模式关闭数据库服务器：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gs_ctl stop -D $GAUSSHOME/data -m fast</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab3/image-20240611140049374.png" alt="image-20240611140049374"></p>
-<p>查看 gaussdb 进程输出日志文件（位于$GAUSSHOME&#x2F;data&#x2F;pg_log 目录），其中</p>
+<figure>
+<img src="./image-20240611140049374.png" alt="image-20240611140049374" /><figcaption aria-hidden="true">image-20240611140049374</figcaption>
+</figure>
+<p>查看 gaussdb 进程输出日志文件（位于$GAUSSHOME/data/pg_log 目录），其中</p>
 <p>部分日志行如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">LOG: received fast shutdown request</span><br><span class="line">LOG: aborting any active transactions</span><br><span class="line">FATAL: terminating connection due to administrator command</span><br><span class="line">LOG: shutting down</span><br><span class="line">LOG: will do full checkpoint, need flush 0 pages.</span><br><span class="line">LOG: pagewriter thread shut down, id is 2</span><br><span class="line">LOG: pagewriter thread shut down, id is 1</span><br><span class="line">LOG: pagewriter thread shut down, id is 4</span><br><span class="line">LOG: pagewriter thread shut down, id is 3</span><br><span class="line">LOG: pagewriter thread shut down, id is 0</span><br><span class="line">LOG: will update control file (create checkpoint), shutdown:1</span><br><span class="line">LOG: database system is shut down</span><br><span class="line">LOG: Gaussdb exit(0)</span><br></pre></td></tr></table></figure>
-
 <p>重启数据库服务器：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gs_ctl start -D $GAUSSHOME/data -Z single_node -l logfile</span><br></pre></td></tr></table></figure>
-
 <p>查看表数据，发现未提交的事务被回滚，INSERT 语句插入的数据没有出现在表中。</p>
-<img src="./image-20240611140437098.png" alt="image-20240611140437098" style="zoom:80%;" />
-
+<p><img src="./image-20240611140437098.png" alt="image-20240611140437098" style="zoom:80%;" /></p>
 <p>下面通过实验观察 immediate 关闭模式。</p>
 <p>新建一个 SSH 会话，用 gsql 客户端连接数据库服务器。执行下面语句：</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> table_b <span class="keyword">VALUES</span> (<span class="number">1</span>, <span class="string">&#x27;abc&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611140521188.png" alt="image-20240611140521188" style="zoom:80%;" />
-
+<p><img src="./image-20240611140521188.png" alt="image-20240611140521188" style="zoom:80%;" /></p>
 <p>用 immediate 模式关闭数据库服务器：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gs_ctl stop -D $GAUSSHOME/data -m immediate</span><br></pre></td></tr></table></figure>
-
-<p>查看 gaussdb 进程的输出日志文件（位于$GAUSSHOME&#x2F;data&#x2F;pg_log 目录），其</p>
+<p>查看 gaussdb 进程的输出日志文件（位于$GAUSSHOME/data/pg_log 目录），其</p>
 <p>中部分日志行如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LOG: received immediate shutdown request</span><br><span class="line">LOG: Gaussdb exit(0)</span><br></pre></td></tr></table></figure>
-
 <p>重启数据库服务器：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gs_ctl start -D $GAUSSHOME/data -Z single_node -l logfile</span><br></pre></td></tr></table></figure>
-
-<p>查看 gaussdb 进程输出日志文件（位于$GAUSSHOME&#x2F;data&#x2F;pg_log 目录），其中部分日志行如下：</p>
+<p>查看 gaussdb 进程输出日志文件（位于$GAUSSHOME/data/pg_log 目录），其中部分日志行如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">LOG: database system was not properly shut down; automatic recovery in progress</span><br><span class="line">LOG: redo starts at 0/15E87F98</span><br><span class="line">[REDO] LOG: pagerepair started</span><br><span class="line">[BACKEND] LOG: redo done at 0/15E88170, end at 0/15E881B8</span><br><span class="line">[REDO] LOG: [PR]: Recoverying elapsed: 100631 us,</span><br><span class="line">redoTotalBytes:544,EndRecPtr:367559096, redoStartPtr:367558552,speed:0 MB/s,</span><br><span class="line">totalTime:100631</span><br><span class="line">[BACKEND] LOG: last completed transaction was at log time 2023-02-23</span><br><span class="line">00:25:32.978453+08</span><br><span class="line">LOG: database system is ready to accept connections</span><br><span class="line">[BACKEND] LOG: database first startup and recovery finish,so do checkpointer</span><br></pre></td></tr></table></figure>
-
 <p>查看表数据，发现 INSERT 语句插入的数据在表中，表明数据库已恢复到正常状态。</p>
-<img src="./image-20240611140716309.png" alt="image-20240611140716309" style="zoom:80%;" />
-
+<p><img src="./image-20240611140716309.png" alt="image-20240611140716309" style="zoom:80%;" /></p>
 <p>（二）查看 pg_control 文件</p>
 <p>pg_control 文件位于在数据目录的 global 子目录中。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd $GAUSSHOME/data/single_node/global/</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pg_controldata /home/omm/opengauss/data/single_node/</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240611141138018.png" alt="image-20240611141138018" style="zoom:80%;" />
-
-<h1 id="四、实验讨论与总结"><a href="#四、实验讨论与总结" class="headerlink" title="四、实验讨论与总结"></a>四、实验讨论与总结</h1><p>日志与恢复是数据库管理系统中至关重要的部分，确保了事务处理的完整性和数据库的ACID特性。在本实验中，通过openGauss数据库中的日志与恢复机制，我们深入理解了WAL日志文件的工作原理、XLOG日志记录的组织及其写入过程、日志检查点机制，以及利用WAL日志进行数据库恢复的原理。此外，我们还掌握了数据库备份与PITR恢复的方法。本实验结合源代码阅读和分析，帮助我们在理论与实践之间架起桥梁，深化了对数据库日志与恢复机制复杂实现的理解。这些知识和技能对于保障数据库在系统故障情况下的稳定性和数据完整性具有重要意义。</p>
+<p><img src="./image-20240611141138018.png" alt="image-20240611141138018" style="zoom:80%;" /></p>
+<h1 id="四实验讨论与总结">四、实验讨论与总结</h1>
+<p>日志与恢复是数据库管理系统中至关重要的部分，确保了事务处理的完整性和数据库的ACID特性。在本实验中，通过openGauss数据库中的日志与恢复机制，我们深入理解了WAL日志文件的工作原理、XLOG日志记录的组织及其写入过程、日志检查点机制，以及利用WAL日志进行数据库恢复的原理。此外，我们还掌握了数据库备份与PITR恢复的方法。本实验结合源代码阅读和分析，帮助我们在理论与实践之间架起桥梁，深化了对数据库日志与恢复机制复杂实现的理解。这些知识和技能对于保障数据库在系统故障情况下的稳定性和数据完整性具有重要意义。</p>
 
     </div>
 
@@ -435,12 +409,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/05/20/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E5%A4%8D%E4%B9%A0/" rel="prev" title="数据库原理复习">
-      <i class="fa fa-chevron-left"></i> 数据库原理复习
+    <a href="/2024/05/23/openGauss-lab4/" rel="prev" title="openGauss-lab4">
+      <i class="fa fa-chevron-left"></i> openGauss-lab4
     </a></div>
       <div class="post-nav-item">
-    <a href="/2024/05/23/openGauss-lab4/" rel="next" title="openGauss-lab4">
-      openGauss-lab4 <i class="fa fa-chevron-right"></i>
+    <a href="/2024/05/24/openGauss-lab5/" rel="next" title="openGauss-lab5">
+      openGauss-lab5 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -501,7 +475,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E8%AE%A8%E8%AE%BA%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">四、实验讨论与总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E5%AE%9E%E9%AA%8C%E8%AE%A8%E8%AE%BA%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">四、实验讨论与总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -593,12 +567,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -706,6 +680,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

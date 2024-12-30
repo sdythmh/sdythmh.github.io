@@ -276,7 +276,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>4.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -297,148 +297,128 @@
 
       
         <p><font color = "red" size = "6">本次实验由于华为云服务器欠费，没有使用openGauss数据库，而使用的是自己电脑的postgresql</font></p>
-<h1 id="一、实验介绍"><a href="#一、实验介绍" class="headerlink" title="一、实验介绍"></a>一、实验介绍</h1><p>本实验通过阅读和分析 openGauss 中与 B+树索引构建相关的实现源代码，理解和验证索引的构建流程、使用方法与系统开销。首先回顾索引结构与 B+树索引的原理，总结 CREATE INDEX 语句的用法，通过浏览 openGauss 中 btree 索引构建的相关源代码，实践 btree 索引的具体工程实现。通过一系列实验，对 btree 索引构建、索引与查询执行计划的关联、索引相关系统表、索引的作用与开销有更加深刻的认识和理解。通过添加代码的方法，对 btree索引构建过程中的关键环节信息进行输出，进一步理解索引结构的原理与实现。</p>
+<h1 id="一实验介绍">一、实验介绍</h1>
+<p>本实验通过阅读和分析 openGauss 中与 B+树索引构建相关的实现源代码，理解和验证索引的构建流程、使用方法与系统开销。首先回顾索引结构与 B+树索引的原理，总结 CREATE INDEX 语句的用法，通过浏览 openGauss 中 btree 索引构建的相关源代码，实践 btree 索引的具体工程实现。通过一系列实验，对 btree 索引构建、索引与查询执行计划的关联、索引相关系统表、索引的作用与开销有更加深刻的认识和理解。通过添加代码的方法，对 btree索引构建过程中的关键环节信息进行输出，进一步理解索引结构的原理与实现。</p>
 <p>本实验的实践内容涉及到 B+树索引在 openGauss 中的具体实现，实验内容较多且综合性较强。如添加的代码引入错误，需要通过“编辑——编译——测试——调试”的迭代步骤进行耐心排错，查找问题所在，增强系统软件的调试能力。</p>
-<h1 id="二、实验目的"><a href="#二、实验目的" class="headerlink" title="二、实验目的"></a>二、实验目的</h1><ol>
-<li><p>理解索引结构与 B+树索引的原理。</p>
-</li>
-<li><p>掌握在 openGauss 中用 CREATE INDEX 语句构建索引的基本方法。</p>
-</li>
-<li><p>理解在 openGauss 中 btree 索引的构建流程及其在源代码中的实现。</p>
-</li>
-<li><p>理解索引构建与查询执行计划的关联。</p>
-</li>
-<li><p>了解在 openGauss 中与索引构建相关的系统表信息。</p>
-</li>
-<li><p>理解索引的作用与开销。</p>
-</li>
-<li><p>掌握在 openGauss 中添加代码输出 btree 索引相关信息的方法。</p>
-</li>
-<li><p>掌握使用 pageinspect 插件分析索引页面的方法。</p>
-</li>
-<li><p>了解与本实验相关的函数与结构体的源代码。</p>
-</li>
+<h1 id="二实验目的">二、实验目的</h1>
+<ol type="1">
+<li><p>理解索引结构与 B+树索引的原理。</p></li>
+<li><p>掌握在 openGauss 中用 CREATE INDEX 语句构建索引的基本方法。</p></li>
+<li><p>理解在 openGauss 中 btree 索引的构建流程及其在源代码中的实现。</p></li>
+<li><p>理解索引构建与查询执行计划的关联。</p></li>
+<li><p>了解在 openGauss 中与索引构建相关的系统表信息。</p></li>
+<li><p>理解索引的作用与开销。</p></li>
+<li><p>掌握在 openGauss 中添加代码输出 btree 索引相关信息的方法。</p></li>
+<li><p>掌握使用 pageinspect 插件分析索引页面的方法。</p></li>
+<li><p>了解与本实验相关的函数与结构体的源代码。</p></li>
 </ol>
-<h1 id="三、实验步骤和结果"><a href="#三、实验步骤和结果" class="headerlink" title="三、实验步骤和结果"></a>三、实验步骤和结果</h1><h2 id="（一）构建btree索引"><a href="#（一）构建btree索引" class="headerlink" title="（一）构建btree索引"></a><a id = "index">（一）构建btree索引</a></h2><p>1.2.3.准备工作</p>
+<h1 id="三实验步骤和结果">三、实验步骤和结果</h1>
+<h2 id="一构建btree索引"><a id = "index">（一）构建btree索引</a></h2>
+<p>1.2.3.准备工作</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users</span><br><span class="line">(</span><br><span class="line"> u_id <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 用户 id</span></span><br><span class="line"> u_passwd <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 密码</span></span><br><span class="line"> u_name <span class="type">varchar</span>(<span class="number">10</span>), <span class="comment">-- 真实姓名</span></span><br><span class="line"> u_idnum <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 证件号码</span></span><br><span class="line"> u_regtime <span class="type">timestamp</span> <span class="comment">-- 注册时间</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
 <p>4.创建函数 gen_hanzi，用于生成随机汉字。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> gen_hanzi(<span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">TEXT</span> <span class="keyword">AS</span> $$<span class="language-pgsql"> </span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span> </span></span><br><span class="line"><span class="language-pgsql">res <span class="type">TEXT</span>; </span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span> </span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">IF</span> <span class="meta">$1</span> &gt;=<span class="number">1</span> <span class="keyword">THEN</span> </span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">SELECT</span> string_agg(chr(<span class="number">19968</span>+(random()*<span class="number">20901</span>)::<span class="type">int</span>), <span class="string">&#x27;&#x27;</span>) <span class="keyword">INTO</span> res</span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">FROM</span> generate_series(<span class="number">1</span>,<span class="meta">$1</span>); </span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">RETURN</span> res; </span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql"> <span class="keyword">RETURN</span> <span class="keyword">NULL</span>; </span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>; </span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql <span class="keyword">STRICT</span>;</span><br></pre></td></tr></table></figure>
-
 <p>5.设置随机数种子</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> setseed(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-
 <p>6.向 users 表中插入 100 行随机生成的元组。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> gen_hanzi(n <span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">TEXT</span> <span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span> </span></span><br><span class="line"><span class="language-pgsql">    res <span class="type">TEXT</span>; </span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span> </span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">IF</span> n &gt;= <span class="number">1</span> <span class="keyword">THEN</span> </span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">SELECT</span> string_agg(chr(<span class="number">19968</span> + (random() * <span class="number">20901</span>)::<span class="type">int</span>), <span class="string">&#x27;&#x27;</span>) <span class="keyword">INTO</span> res</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">FROM</span> generate_series(<span class="number">1</span>, n); </span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">RETURN</span> res; </span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RETURN</span> <span class="keyword">NULL</span>; </span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>; </span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql <span class="keyword">STRICT</span>;</span><br></pre></td></tr></table></figure>
-
 <p>7.查看 users 表中的数据，结果显示如下。</p>
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523161338924.png" alt="image-20240523161338924"></p>
+<figure>
+<img src="./image-20240523161338924.png" alt="image-20240523161338924" /><figcaption aria-hidden="true">image-20240523161338924</figcaption>
+</figure>
 <p>9.执行 SQL，查询指定姓名的 users 表元组。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_name = <span class="string">&#x27;筟潟蠻&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523161519438.png" alt="image-20240523161519438"></p>
+<figure>
+<img src="./image-20240523161519438.png" alt="image-20240523161519438" /><figcaption aria-hidden="true">image-20240523161519438</figcaption>
+</figure>
 <p>10.查看上述查询语句的查询执行计划以及执行时间。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">ANALYZE</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_name = <span class="string">&#x27;筟潟蠻&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523161634956.png" alt="image-20240523161634956"></p>
-<p>总时间为0.039+0.025&#x3D;0.064ms</p>
+<figure>
+<img src="./image-20240523161634956.png" alt="image-20240523161634956" /><figcaption aria-hidden="true">image-20240523161634956</figcaption>
+</figure>
+<p>总时间为0.039+0.025=0.064ms</p>
 <p>11.执行 CREATE INDEX 语句，在 users 表上对于 u_name 列构建 btree 索引。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> usersidx <span class="keyword">ON</span> users <span class="keyword">USING</span> btree (u_name);</span><br></pre></td></tr></table></figure>
-
 <p>12.再次执行上述 EXPLAIN ANALYZE 语句。</p>
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523162034370.png" alt="image-20240523162034370"></p>
+<figure>
+<img src="./image-20240523162034370.png" alt="image-20240523162034370" /><figcaption aria-hidden="true">image-20240523162034370</figcaption>
+</figure>
 <p>发现查询执行计划没有发生任何变化。仍然采用顺序扫描而没有利用 u_name 上刚创建的索引 usersidx 进行查找。请思考这是为什么？</p>
 <p>原因：<font color = "red">可能是因为表太小了，对于非常小的表，顺序扫描的开销可能比使用索引更低，因此优化器会选择顺序扫描。</font></p>
-<h2 id="（二）索引相关的系统表"><a href="#（二）索引相关的系统表" class="headerlink" title="（二）索引相关的系统表"></a>（二）索引相关的系统表</h2><p>1.查看 pg_class 系统表。</p>
+<h2 id="二索引相关的系统表">（二）索引相关的系统表</h2>
+<p>1.查看 pg_class 系统表。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> pg_class <span class="keyword">WHERE</span> relname = <span class="string">&#x27;usersidx&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523162400100.png" alt="image-20240523162400100"></p>
+<figure>
+<img src="./image-20240523162400100.png" alt="image-20240523162400100" /><figcaption aria-hidden="true">image-20240523162400100</figcaption>
+</figure>
 <p>2.查看表 users 和索引 usersidx 对应的磁盘文件信息。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_relation_filepath(<span class="type">oid</span>), relpages, reltuples <span class="keyword">FROM</span> pg_class <span class="keyword">WHERE</span> relname = <span class="string">&#x27;users&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523162530924.png" alt="image-20240523162530924" style="zoom:80%;" />
-
-<p>可以看到，表 users 存储在数据文件夹的 base&#x2F;16722&#x2F;16723 文件中，占用一个磁盘页面，有 100 条元组。</p>
+<p><img src="./image-20240523162530924.png" alt="image-20240523162530924" style="zoom:80%;" /></p>
+<p>可以看到，表 users 存储在数据文件夹的 base/16722/16723 文件中，占用一个磁盘页面，有 100 条元组。</p>
 <p>可以用同样方法查看索引 usersidx 的磁盘文件信息。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_relation_filepath(<span class="type">oid</span>), relpages, reltuples <span class="keyword">FROM</span> pg_class <span class="keyword">WHERE</span> relname = <span class="string">&#x27;usersidx&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523162717636.png" alt="image-20240523162717636" style="zoom:80%;" />
-
-<p>可以看到，索引 usersidx 的对应文件是 base&#x2F;16722&#x2F;16723，占用 2 个页面，有100 个索引项，与表 users 中的元组数量相同。</p>
+<p><img src="./image-20240523162717636.png" alt="image-20240523162717636" style="zoom:80%;" /></p>
+<p>可以看到，索引 usersidx 的对应文件是 base/16722/16723，占用 2 个页面，有100 个索引项，与表 users 中的元组数量相同。</p>
 <p>3.查看 pg_attribute 系统表。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> a.* <span class="keyword">FROM</span> pg_class c, pg_attribute a <span class="keyword">WHERE</span> c.relname=<span class="string">&#x27;usersidx&#x27;</span> <span class="keyword">and</span> c.oid = a.attrelid;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523163012464.png" alt="image-20240523163012464"></p>
+<figure>
+<img src="./image-20240523163012464.png" alt="image-20240523163012464" /><figcaption aria-hidden="true">image-20240523163012464</figcaption>
+</figure>
 <p>4.查看 pg_index 系统表。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> i.* <span class="keyword">FROM</span> pg_index i, pg_class c <span class="keyword">WHERE</span> c.relname=<span class="string">&#x27;usersidx&#x27;</span> <span class="keyword">and</span> c.oid = i.indexrelid;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523163124659.png" alt="image-20240523163124659"></p>
+<figure>
+<img src="./image-20240523163124659.png" alt="image-20240523163124659" /><figcaption aria-hidden="true">image-20240523163124659</figcaption>
+</figure>
 <p>5.查看 pg_depend 系统表。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> pg_depend <span class="keyword">WHERE</span> objid = <span class="number">16727</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523163311545.png" alt="image-20240523163311545" style="zoom:80%;" />
-
+<p><img src="./image-20240523163311545.png" alt="image-20240523163311545" style="zoom:80%;" /></p>
 <p>6.查看 pg_am 系统表。</p>
 <p><font color = "red">这里pg的am表中的属性有所不同</font></p>
 <p><font color = "red"><code>oid</code>: 索引访问方法的对象ID、<code>amname</code>: 访问方法名称、<code>amhandler</code>: 处理函数、<code>amtype</code>: 访问方法类型</font></p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="type">oid</span>, amname, amhandler, amtype <span class="keyword">FROM</span> pg_am;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523163712023.png" alt="image-20240523163712023" style="zoom:80%;" />
-
-<h2 id="（三）索引的作用与开销"><a href="#（三）索引的作用与开销" class="headerlink" title="（三）索引的作用与开销"></a>（三）索引的作用与开销</h2><p>1.2.删除和重新创建users表</p>
+<p><img src="./image-20240523163712023.png" alt="image-20240523163712023" style="zoom:80%;" /></p>
+<h2 id="三索引的作用与开销">（三）索引的作用与开销</h2>
+<p>1.2.删除和重新创建users表</p>
 <p>3.向users表中插入 1000 行随机生成的元组。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DO</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    i <span class="type">INT</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- Set the seed for the random number generator</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">PERFORM</span> setseed(<span class="number">0</span>);</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- Loop through the desired range to insert 1000 rows</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FOR</span> i <span class="keyword">IN</span> <span class="number">1000.</span><span class="number">.1999</span> <span class="keyword">LOOP</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">INSERT</span> <span class="keyword">INTO</span> users (u_id, u_passwd, u_name, u_idnum, u_regtime) <span class="keyword">VALUES</span> (</span></span><br><span class="line"><span class="language-pgsql">            i,</span></span><br><span class="line"><span class="language-pgsql">            to_char(floor(random() * <span class="number">100000000</span>)::<span class="type">bigint</span>, <span class="string">&#x27;FM09999999&#x27;</span>),</span></span><br><span class="line"><span class="language-pgsql">            gen_hanzi(<span class="number">3</span>),</span></span><br><span class="line"><span class="language-pgsql">            to_char(<span class="number">10000000000</span> + floor(random() * <span class="number">10000000000</span>)::<span class="type">bigint</span>, <span class="string">&#x27;FM09999999999&#x27;</span>),</span></span><br><span class="line"><span class="language-pgsql">            <span class="built_in">CURRENT_DATE</span> + floor(random() * <span class="number">15</span>)::<span class="type">int</span></span></span><br><span class="line"><span class="language-pgsql">        );</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span> $$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>4.查看 users 表中的数据，结果显示如下。</p>
-<p><img src="/2024/05/23/openGauss-lab4/image-20240523164930892.png" alt="image-20240523164930892"></p>
+<figure>
+<img src="./image-20240523164930892.png" alt="image-20240523164930892" /><figcaption aria-hidden="true">image-20240523164930892</figcaption>
+</figure>
 <p>5.执行 EXPLAIN ANALYZE 语句。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">ANALYZE</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_name = <span class="string">&#x27;癐鮴膎&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523165038653.png" alt="image-20240523165038653" style="zoom:80%;" />
-
+<p><img src="./image-20240523165038653.png" alt="image-20240523165038653" style="zoom:80%;" /></p>
 <p>6.执行 CREATE INDEX 语句，在 users 表上对于 u_name 列构建 btree 索引。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> usersidx <span class="keyword">ON</span> users (u_name);</span><br></pre></td></tr></table></figure>
-
 <p>7.再执行 EXPLAIN ANALYZE 语句。</p>
-<img src="./image-20240523165203575.png" alt="image-20240523165203575" style="zoom:80%;" />
-
+<p><img src="./image-20240523165203575.png" alt="image-20240523165203575" style="zoom:80%;" /></p>
 <p>思考：为什么在<a href="#index">第一部分</a>中 100 行元组的表上建立的索引在查询中没有发挥作用，而这里在 1000 行元组的表上建立的索引在查询中就被使用呢？</p>
 <p>显然前面的猜想是正确的：<font color = "red">因为表太小了，顺序扫描的开销可能比使用索引更低，因此优化器会选择顺序扫描。</font></p>
 <p>8.增加表的数据规模</p>
 <p>删除并重建users表</p>
 <p>向 users 表中插入 100000 行随机生成的元组。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DO</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    i <span class="type">INT</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- Set the seed for the random number generator</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">PERFORM</span> setseed(<span class="number">0</span>);</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- Loop through the desired range to insert 1000 rows</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FOR</span> i <span class="keyword">IN</span> <span class="number">1.</span><span class="number">.100000</span> <span class="keyword">LOOP</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">INSERT</span> <span class="keyword">INTO</span> users (u_id, u_passwd, u_name, u_idnum, u_regtime) <span class="keyword">VALUES</span> (</span></span><br><span class="line"><span class="language-pgsql">            i,</span></span><br><span class="line"><span class="language-pgsql">            to_char(floor(random() * <span class="number">100000000</span>)::<span class="type">bigint</span>, <span class="string">&#x27;FM09999999&#x27;</span>),</span></span><br><span class="line"><span class="language-pgsql">            gen_hanzi(<span class="number">3</span>),</span></span><br><span class="line"><span class="language-pgsql">            to_char(<span class="number">10000000000</span> + floor(random() * <span class="number">10000000000</span>)::<span class="type">bigint</span>, <span class="string">&#x27;FM09999999999&#x27;</span>),</span></span><br><span class="line"><span class="language-pgsql">            <span class="built_in">CURRENT_DATE</span> + floor(random() * <span class="number">15</span>)::<span class="type">int</span></span></span><br><span class="line"><span class="language-pgsql">        );</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span> $$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>9.查看 users 表中的数据，结果显示如下。</p>
-<img src="./image-20240523170057128.png" alt="image-20240523170057128" style="zoom:80%;" />
-
+<p><img src="./image-20240523170057128.png" alt="image-20240523170057128" style="zoom:80%;" /></p>
 <p>10.执行 EXPLAIN ANALYZE 语句。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">ANALYZE</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_name = <span class="string">&#x27;呼戲妬&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523170027046.png" alt="image-20240523170027046" style="zoom:80%;" />
-
+<p><img src="./image-20240523170027046.png" alt="image-20240523170027046" style="zoom:80%;" /></p>
 <p>11.执行 CREATE INDEX 语句，在 users 表上对于 u_name 列构建 btree 索引。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> usersidx <span class="keyword">ON</span> users (u_name);</span><br></pre></td></tr></table></figure>
-
 <p>12.再执行 EXPLAIN ANALYZE 语句。</p>
-<img src="./image-20240523170157066.png" alt="image-20240523170157066" style="zoom:80%;" />
-
+<p><img src="./image-20240523170157066.png" alt="image-20240523170157066" style="zoom:80%;" /></p>
 <p>与直接顺序扫描的5.287ms相比，建立索引的查询时间为0.298ms，提升了17倍</p>
 <p>13.查看索引的空间开销。</p>
 <p>pg_relation_size 函数可以查看关系表所占用空间的大小。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_size_pretty(pg_relation_size(<span class="string">&#x27;usersidx&#x27;</span>)) <span class="keyword">AS</span> size;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523170308109.png" alt="image-20240523170308109" style="zoom:80%;" />
-
+<p><img src="./image-20240523170308109.png" alt="image-20240523170308109" style="zoom:80%;" /></p>
 <p>再看 users 关系表的空间大小。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_size_pretty(pg_relation_size(<span class="string">&#x27;users&#x27;</span>)) <span class="keyword">AS</span> size;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240523170523230.png" alt="image-20240523170523230" style="zoom:80%;" />
-
+<p><img src="./image-20240523170523230.png" alt="image-20240523170523230" style="zoom:80%;" /></p>
 <p>14.删除users表，为后面实验步骤做准备。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> users;</span><br></pre></td></tr></table></figure>
-
-<h2 id="（四）添加代码：分析-btree-索引构建过程"><a href="#（四）添加代码：分析-btree-索引构建过程" class="headerlink" title="（四）添加代码：分析 btree 索引构建过程"></a>（四）添加代码：分析 btree 索引构建过程</h2><p><font color = "red">华为云欠费，此部分暂未完成</font></p>
+<h2 id="四添加代码分析-btree-索引构建过程">（四）添加代码：分析 btree 索引构建过程</h2>
+<p><font color = "red">华为云欠费，此部分暂未完成</font></p>
 
     </div>
 
@@ -484,12 +464,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/05/23/openGauss-lab3/" rel="prev" title="openGauss-lab3">
-      <i class="fa fa-chevron-left"></i> openGauss-lab3
+    <a href="/2024/05/20/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8E%9F%E7%90%86%E5%A4%8D%E4%B9%A0/" rel="prev" title="数据库原理复习">
+      <i class="fa fa-chevron-left"></i> 数据库原理复习
     </a></div>
       <div class="post-nav-item">
-    <a href="/2024/05/24/openGauss-lab5/" rel="next" title="openGauss-lab5">
-      openGauss-lab5 <i class="fa fa-chevron-right"></i>
+    <a href="/2024/05/23/openGauss-lab3/" rel="next" title="openGauss-lab3">
+      openGauss-lab3 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -550,7 +530,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%9E%84%E5%BB%BAbtree%E7%B4%A2%E5%BC%95"><span class="nav-number">3.1.</span> <span class="nav-text">（一）构建btree索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E7%B4%A2%E5%BC%95%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%A1%A8"><span class="nav-number">3.2.</span> <span class="nav-text">（二）索引相关的系统表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%BC%80%E9%94%80"><span class="nav-number">3.3.</span> <span class="nav-text">（三）索引的作用与开销</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E6%B7%BB%E5%8A%A0%E4%BB%A3%E7%A0%81%EF%BC%9A%E5%88%86%E6%9E%90-btree-%E7%B4%A2%E5%BC%95%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">3.4.</span> <span class="nav-text">（四）添加代码：分析 btree 索引构建过程</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%9E%84%E5%BB%BAbtree%E7%B4%A2%E5%BC%95"><span class="nav-number">3.1.</span> <span class="nav-text">（一）构建btree索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%B4%A2%E5%BC%95%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%A1%A8"><span class="nav-number">3.2.</span> <span class="nav-text">（二）索引相关的系统表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%B4%A2%E5%BC%95%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%BC%80%E9%94%80"><span class="nav-number">3.3.</span> <span class="nav-text">（三）索引的作用与开销</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%B7%BB%E5%8A%A0%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-btree-%E7%B4%A2%E5%BC%95%E6%9E%84%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-number">3.4.</span> <span class="nav-text">（四）添加代码：分析 btree 索引构建过程</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -642,12 +622,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -755,6 +735,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

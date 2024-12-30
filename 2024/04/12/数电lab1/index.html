@@ -303,63 +303,57 @@
 
       
         <p>数电实验实验报告</p>
-<h1 id="实验一-多数表决器的设计与实现"><a href="#实验一-多数表决器的设计与实现" class="headerlink" title="实验一 多数表决器的设计与实现"></a>实验一 多数表决器的设计与实现</h1><h2 id="一、实验目的"><a href="#一、实验目的" class="headerlink" title="一、实验目的"></a>一、实验目的</h2><ol>
-<li><p>掌握基于 Vivado 的数字逻辑电路设计流程；</p>
-</li>
-<li><p>熟练使用 SystemVerilog HDL 的行为建模方法对组合逻辑电路进行描述；</p>
-</li>
-<li><p>熟练使用 SystemVerilog HDL 的结构建模方法对组合逻辑电路进行描述；</p>
-</li>
-<li><p>掌握基于远程 FPGA 硬件云平台对数字逻辑电路进行功能验证的流程。</p>
-</li>
+<h1 id="实验一-多数表决器的设计与实现">实验一 多数表决器的设计与实现</h1>
+<h2 id="一实验目的">一、实验目的</h2>
+<ol type="1">
+<li><p>掌握基于 Vivado 的数字逻辑电路设计流程；</p></li>
+<li><p>熟练使用 SystemVerilog HDL 的行为建模方法对组合逻辑电路进行描述；</p></li>
+<li><p>熟练使用 SystemVerilog HDL 的结构建模方法对组合逻辑电路进行描述；</p></li>
+<li><p>掌握基于远程 FPGA 硬件云平台对数字逻辑电路进行功能验证的流程。</p></li>
 </ol>
-<h2 id="二、实验环境"><a href="#二、实验环境" class="headerlink" title="二、实验环境"></a>二、实验环境</h2><ol>
-<li><p>操作系统：Windows 10 或 Ubuntu 16.04</p>
-</li>
-<li><p>开发环境：Xilinx Vivado 2018.2</p>
-</li>
-<li><p>硬件平台：远程 FPGA 硬件云平台</p>
-</li>
+<h2 id="二实验环境">二、实验环境</h2>
+<ol type="1">
+<li><p>操作系统：Windows 10 或 Ubuntu 16.04</p></li>
+<li><p>开发环境：Xilinx Vivado 2018.2</p></li>
+<li><p>硬件平台：远程 FPGA 硬件云平台</p></li>
 </ol>
-<h2 id="三、-实验原理"><a href="#三、-实验原理" class="headerlink" title="三、 实验原理"></a>三、 实验原理</h2><p><strong>1. 3-8 译码器 — — 74LS138</strong></p>
-<img src="./image-20240413173607981.png" alt="image-20240413173607981" style="zoom: 67%;" />
-
+<h2 id="三-实验原理">三、 实验原理</h2>
+<p><strong>1. 3-8 译码器 — — 74LS138</strong></p>
+<p><img src="./image-20240413173607981.png" alt="image-20240413173607981" style="zoom: 67%;" /></p>
 <p><strong>2. 2-4 译码器 — — 74LS139</strong></p>
-<img src="./image-20240413173627842.png" alt="image-20240413173627842" style="zoom:67%;" />
-
+<p><img src="./image-20240413173627842.png" alt="image-20240413173627842" style="zoom:67%;" /></p>
 <p>具体的真值表就不做说明了</p>
-<h2 id="四、实验内容和步骤"><a href="#四、实验内容和步骤" class="headerlink" title="四、实验内容和步骤"></a>四、实验内容和步骤</h2><h3 id="内容1：（基于集成电路模块）"><a href="#内容1：（基于集成电路模块）" class="headerlink" title="内容1：（基于集成电路模块）"></a><strong>内容1：（基于集成电路模块）</strong></h3><ol>
+<h2 id="四实验内容和步骤">四、实验内容和步骤</h2>
+<h3 id="内容1基于集成电路模块"><strong>内容1：（基于集成电路模块）</strong></h3>
+<ol type="1">
 <li>根据表 1-1 和 1-2，采用 SystemVerilog HDL 的行为建模方法，完成 74LS138</li>
 </ol>
 <p>和 74LS139 两种译码器的设计。</p>
-<ol start="2">
+<ol start="2" type="1">
 <li>根据图 1-3 和表 1-4，基于 SystemVerilog HDL 的结构化建模方法，调用</li>
 </ol>
 <p>74LS138 和 74LS139 两种译码器，以及若干基本逻辑门，完成 5 输入多数表</p>
 <p>决器电路的设计（类似搭积木），并基于 Vivado 完成行为仿真、综合、实现、</p>
 <p>生成比特流文件等操作，最终在远程 FPGA 硬件云平台上完成功能验证。</p>
-<h3 id="步骤1：（基于集成电路模块）"><a href="#步骤1：（基于集成电路模块）" class="headerlink" title="步骤1：（基于集成电路模块）"></a><strong>步骤1：（基于集成电路模块）</strong></h3><p>①首先添加源文件“dec_74LS138.sv”，通过行为建模的方法，设计一个3:8译码器，具体代码如下：</p>
+<h3 id="步骤1基于集成电路模块"><strong>步骤1：（基于集成电路模块）</strong></h3>
+<p>①首先添加源文件“dec_74LS138.sv”，通过行为建模的方法，设计一个3:8译码器，具体代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">module dec_74LS138(</span><br><span class="line">    input logic G,G2a,G2b,</span><br><span class="line">    input logic [2:0] D,</span><br><span class="line">    output logic [7:0] Y</span><br><span class="line">    );</span><br><span class="line">    always_comb begin</span><br><span class="line">        if(G==0)  Y=8&#x27;b11111111;</span><br><span class="line">        else if(G2a==1)  Y=8&#x27;b11111111;</span><br><span class="line">        else if(G2b==1)  Y=8&#x27;b11111111;</span><br><span class="line">        else begin</span><br><span class="line">            case(D)</span><br><span class="line">            3&#x27;b000: Y=8&#x27;b11111110;</span><br><span class="line">            3&#x27;b001: Y=8&#x27;b11111101;</span><br><span class="line">            3&#x27;b010: Y=8&#x27;b11111011;</span><br><span class="line">            3&#x27;b011: Y=8&#x27;b11110111;</span><br><span class="line">            3&#x27;b100: Y=8&#x27;b11101111;</span><br><span class="line">            3&#x27;b101: Y=8&#x27;b11011111;</span><br><span class="line">            3&#x27;b110: Y=8&#x27;b10111111;</span><br><span class="line">            3&#x27;b111: Y=8&#x27;b01111111;</span><br><span class="line">            endcase</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>②然后添加源文件“dec_74LS139.sv”，通过行为建模的方法，设计一个2:4译码器，具体代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">module dec_74LS139(</span><br><span class="line">    input logic S,</span><br><span class="line">    input logic [1:0] D,</span><br><span class="line">    output logic [3:0] Y</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    always_comb begin</span><br><span class="line">        if(S == 0) begin</span><br><span class="line">            case(D)</span><br><span class="line">                2&#x27;b00: Y = 4&#x27;b1110;</span><br><span class="line">                2&#x27;b01: Y = 4&#x27;b1101;</span><br><span class="line">                2&#x27;b10: Y = 4&#x27;b1011;</span><br><span class="line">                2&#x27;b11: Y = 4&#x27;b0111;</span><br><span class="line">                default: Y = 4&#x27;b1111;</span><br><span class="line">            endcase</span><br><span class="line">        end else begin</span><br><span class="line">            Y = 4&#x27;b1111;</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>③下面通过结构化建模的方法实现五人多数表决器</p>
 <p><strong>方法一</strong>：</p>
 <p>需要：</p>
 <p>一个2:4译码器和四个3:8译码器</p>
 <p>思路分析：</p>
 <p>首先把五个人分为A、B、C、D、E，考虑D和E（分四种情况）</p>
-<p>第一种情况：D和E都同意，A、B和C中至少有一人同意灯就亮，即排除A、B和C三个人都不同意的情况(即图中Y8正常，Y5、Y6、Y7均为8’b11111111)</p>
-<p>第二种情况：D同意E不同意，A、B和C中至少有两人同意等才亮（假设Y7正常，其余全为8’b11111111)</p>
-<p>第三种情况：E同意D不同意，A、B和C中至少有两人同意等才亮（假设Y6正常，其余全为8’b11111111)</p>
+<p>第一种情况：D和E都同意，A、B和C中至少有一人同意灯就亮，即排除A、B和C三个人都不同意的情况(即图中Y8正常，Y5、Y6、Y7均为8'b11111111)</p>
+<p>第二种情况：D同意E不同意，A、B和C中至少有两人同意等才亮（假设Y7正常，其余全为8'b11111111)</p>
+<p>第三种情况：E同意D不同意，A、B和C中至少有两人同意等才亮（假设Y6正常，其余全为8'b11111111)</p>
 <p>第四种情况：E和D的不同意，A、B和C必须都同意</p>
 <p>下面是电路图</p>
-<img src="./多数表决器电路图.jpg" alt="多数表决器电路图" style="zoom: 50%;" />
-
+<p><img src="./多数表决器电路图.jpg" alt="多数表决器电路图" style="zoom: 50%;" /></p>
 <p>相应的代码为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">module voter5(</span><br><span class="line">    input logic [4:0] I,</span><br><span class="line">    output logic pass</span><br><span class="line">    );</span><br><span class="line">    logic G = 1&#x27;b1;</span><br><span class="line">    logic G1 = 1&#x27;b0;</span><br><span class="line">    logic [3:0] TEMP;</span><br><span class="line">    logic [7:0] Y5;</span><br><span class="line">    logic [7:0] Y6;</span><br><span class="line">    logic [7:0] Y7;</span><br><span class="line">    logic [7:0] Y8;</span><br><span class="line"></span><br><span class="line">    dec_74LS139 T4(.S(1&#x27;b0),.D(I[4:3]),.Y(TEMP));</span><br><span class="line">    dec_74LS138 T5(.G(G),.G2a(G1),.G2b(TEMP[0]),.D(I[2:0]),.Y(Y5));</span><br><span class="line">    dec_74LS138 T6(.G(G),.G2a(G1),.G2b(TEMP[1]),.D(I[2:0]),.Y(Y6));</span><br><span class="line">    dec_74LS138 T7(.G(G),.G2a(G1),.G2b(TEMP[2]),.D(I[2:0]),.Y(Y7));</span><br><span class="line">    dec_74LS138 T8(.G(G),.G2a(G1),.G2b(TEMP[3]),.D(I[2:0]),.Y(Y8));</span><br><span class="line">    </span><br><span class="line">    assign pass = ~(Y5[7]&amp;Y6[3]&amp;Y6[5]&amp;Y6[6]&amp;Y6[7]&amp;Y7[3]&amp;Y7[5]&amp;Y7[6]&amp;Y7[7]&amp;Y8[1]&amp;Y8[2]&amp;Y8[3]&amp;Y8[4]&amp;Y8[5]&amp;Y8[6]&amp;Y8[7]);</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p><strong>方法二</strong>：<a id = "anchor-name"><font color = "red">附加题</font></a></p>
 <p>需要：</p>
 <p>3个3:8译码器</p>
@@ -371,58 +365,60 @@
 <p>第二三种情况可以通过观察A、B和C的输入情况判断相应的输出情况，如A、B和C的输入情况有000,001,010,011,100,101,110,111，其中000,001,010,100这些情况最多只有1人不满足条件（输出为1），所以只需要将这些情况取与，如果全为1，则代表不满足这些情况，自然就满足了至少两人的条件</p>
 <p>而3人同意，即A、B和C都同意的情况下，输出的第七位为0</p>
 <p>根据上面的分析，我们可以画出相应的电路图（不完整版）</p>
-<img src="./多路表决器电路图——附加题.jpg" alt="多路表决器电路图——附加题" style="zoom: 50%;" />
-
+<p><img src="./多路表决器电路图——附加题.jpg" alt="多路表决器电路图——附加题" style="zoom: 50%;" /></p>
 <p>相应的代码为</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">module voter5(</span><br><span class="line">    input logic [4:0] I,</span><br><span class="line">    output logic pass</span><br><span class="line">    );</span><br><span class="line">    logic G = 1&#x27;b1;</span><br><span class="line">    logic G1 = 1&#x27;b0;</span><br><span class="line">    logic G2 = 1&#x27;b0;</span><br><span class="line">    logic [7:0] Y5;</span><br><span class="line">    logic [7:0] Y6;</span><br><span class="line">    logic [7:0] Y7;</span><br><span class="line">    logic A1,A2,A3;</span><br><span class="line">    dec_74LS138 T5(.G(G),.G2a(G1),.G2b(I[3]),.D(I[2:0]),.Y(Y5));</span><br><span class="line">    dec_74LS138 T6(.G(G),.G2a(I[4]),.G2b(G2),.D(I[2:0]),.Y(Y6));</span><br><span class="line">    dec_74LS138 T7(.G(G),.G2a(G1),.G2b(G2),.D(I[2:0]),.Y(Y7));</span><br><span class="line">    assign A1 = (!((~Y5)|(~Y6)))&amp; (Y7[0]);</span><br><span class="line">    assign A2 = Y5 == 8&#x27;b11111111 ? (Y7[0] &amp; Y7[1] &amp; Y7[2] &amp; Y7[4]) : (!Y7[7]);</span><br><span class="line">    assign A3 = Y6 == 8&#x27;b11111111 ? (Y7[0] &amp; Y7[1] &amp; Y7[2] &amp; Y7[4]) : (!Y7[7]);</span><br><span class="line">    assign pass = A1 | A2 |A3;</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>④编写测试程序</p>
-<p>添加测试文件”voter5_tb.sv”，编写相关代码如下：</p>
+<p>添加测试文件"voter5_tb.sv"，编写相关代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns/1ns</span><br><span class="line">module  voter5_tb();</span><br><span class="line"> logic [4:0] I;</span><br><span class="line"> logic  pass;</span><br><span class="line"> integer i;</span><br><span class="line"> voter5 DUT(.I(I),.pass(pass));</span><br><span class="line"> initial begin</span><br><span class="line">   for(i=0;i&lt;32;i=i+1) begin</span><br><span class="line">    I=i;</span><br><span class="line">    #20;   </span><br><span class="line">    end</span><br><span class="line"> end</span><br><span class="line"> initial begin</span><br><span class="line"> $timeformat(-9,0,&quot;ns&quot;,5);</span><br><span class="line"> $monitor(&quot;At time %t: I=%b,pass=%b&quot;,$time,I,pass);</span><br><span class="line"> end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>仿真结果:</p>
-<div><img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" /></div>
-
+<div>
+<img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" />
+</div>
 <p>⑤编辑约束文件</p>
-<p>根据”远程硬件平台管脚对应关系.xlsx”，选择对应的管脚，约束文件（voter_xdc.sv）如下：</p>
+<p>根据"远程硬件平台管脚对应关系.xlsx"，选择对应的管脚，约束文件（voter_xdc.sv）如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">set_property -dict &#123;PACKAGE_PIN B9  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[0]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN D11  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[1]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN B11  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[2]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN B12  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[3]&#125;];</span><br><span class="line">set_property -dict &#123;PACKAGE_PIN A10  IOSTANDARD LVCMOS33&#125; [get_ports &#123;I[4]&#125;];</span><br><span class="line"></span><br><span class="line">set_property -dict &#123;PACKAGE_PIN K13  IOSTANDARD LVCMOS33&#125; [get_ports &#123;pass&#125;];</span><br></pre></td></tr></table></figure>
-
 <p>确认无误后，再分别综合、实现、生成bin文件。</p>
 <p>⑥远程云端硬件实验平台验证</p>
 <p>自定义管脚：</p>
 <p>输入管脚分别为I[0]、I[1]、I[2]、I[3]、I[4]，位宽均为1BIT，连接的管脚分别为0、1、2、3、4</p>
 <p>输出管脚为pass，位宽为1BIT，连接的管脚为4</p>
 <p>具体如图：</p>
-<p><img src="/2024/04/12/%E6%95%B0%E7%94%B5lab1/image-20240413181132483.png" alt="image-20240413181132483"></p>
+<figure>
+<img src="./image-20240413181132483.png" alt="image-20240413181132483" /><figcaption aria-hidden="true">image-20240413181132483</figcaption>
+</figure>
 <p>FPGA烧写上传bin文件，然后运行实验，以下是示例</p>
-<div><img src="./image-20240413181329167.png" alt="image-20240413181329167" style="zoom:50%;" /><img src="./image-20240413181342965.png" alt="image-20240413181342965" style="zoom:50%;" /><img src="./image-20240413181400790.png" alt="image-20240413181400790" style="zoom:50%;" /><img src="./image-20240413181507357.png" alt="image-20240413181507357" style="zoom:50%;" /></div>
-
-<h3 id="内容-2：（基于行为建模）"><a href="#内容-2：（基于行为建模）" class="headerlink" title="内容 2：（基于行为建模）"></a><strong>内容 2：（基于行为建模）</strong></h3><ol>
+<div>
+<img src="./image-20240413181329167.png" alt="image-20240413181329167" style="zoom:50%;" /><img src="./image-20240413181342965.png" alt="image-20240413181342965" style="zoom:50%;" /><img src="./image-20240413181400790.png" alt="image-20240413181400790" style="zoom:50%;" /><img src="./image-20240413181507357.png" alt="image-20240413181507357" style="zoom:50%;" />
+</div>
+<h3 id="内容-2基于行为建模"><strong>内容 2：（基于行为建模）</strong></h3>
+<ol type="1">
 <li>不使用 74LS138 和 74LS139 芯片，直接使用行为建模的方法完成 5 输入多数表决器电路的设计，并基于 Vivado 完成电路的行为仿真、综合、实现、生成比特流文件等操作，最终在远程 FPGA 硬件云平台上完成功能验证。</li>
 </ol>
-<h3 id="步骤-2：（基于行为建模）"><a href="#步骤-2：（基于行为建模）" class="headerlink" title="步骤 2：（基于行为建模）"></a><strong>步骤 2：（基于行为建模）</strong></h3><p>①思路分析：</p>
+<h3 id="步骤-2基于行为建模"><strong>步骤 2：（基于行为建模）</strong></h3>
+<p>①思路分析：</p>
 <p>可以把输入的值每一位都相加，如果这个sum大于半数，则通过；否则没有通过。代码如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">//voter5.sv</span><br><span class="line">module voter5(</span><br><span class="line">    input logic [(2*count):0] I,</span><br><span class="line">    output logic pass</span><br><span class="line">    );</span><br><span class="line">    parameter count = 2;</span><br><span class="line">    logic [7:0] mysum;</span><br><span class="line">    integer i;</span><br><span class="line"></span><br><span class="line">    always_comb begin</span><br><span class="line">        mysum = 0;</span><br><span class="line">        for (i = 0; i &lt;= 2 * count; i = i + 1) begin</span><br><span class="line">            mysum = mysum + I[i];</span><br><span class="line">        end</span><br><span class="line">        pass = (mysum &gt; count) ? 1&#x27;b1 : 1&#x27;b0;</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>②测试程序</p>
 <p>和内容1中的测试程序一致</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">`timescale 1ns/1ns</span><br><span class="line">module  voter5_tb();</span><br><span class="line"> logic [4:0] I;</span><br><span class="line"> logic  pass;</span><br><span class="line"> integer i;</span><br><span class="line"> voter5 DUT(.I(I),.pass(pass));</span><br><span class="line"> initial begin</span><br><span class="line">   for(i=0;i&lt;32;i=i+1) begin</span><br><span class="line">    I=i;</span><br><span class="line">    #20;   </span><br><span class="line">    end</span><br><span class="line"> end</span><br><span class="line"> initial begin</span><br><span class="line"> $timeformat(-9,0,&quot;ns&quot;,5);</span><br><span class="line"> $monitor(&quot;At time %t: I=%b,pass=%b&quot;,$time,I,pass);</span><br><span class="line"> end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p>结果如下：</p>
-<div><img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" /></div>
-
+<div>
+<img src="./image-20240418213106251.png" alt="image-20240418213106251" style="zoom:68%;" /><img src="./image-20240418213118749.png" alt="image-20240418213118749" style="zoom:71%;" /><img src="./image-20240418213318678.png" alt="image-20240418213318678" style="zoom:63%;" />
+</div>
 <p>③编辑约束文件，综合、实现并生成bin文件</p>
 <p>④远程平台验证</p>
 <p>结果如下：</p>
-<div><img src="./image-20240413181329167.png" alt="image-20240413181329167" style="zoom:50%;" /><img src="./image-20240413181342965.png" alt="image-20240413181342965" style="zoom:50%;" /><img src="./image-20240413181400790.png" alt="image-20240413181400790" style="zoom:50%;" /><img src="./image-20240413181507357.png" alt="image-20240413181507357" style="zoom:50%;" /></div>
-
-<h2 id="五、实验总结"><a href="#五、实验总结" class="headerlink" title="五、实验总结"></a>五、实验总结</h2><p><font color = "red">注意附加题已在上面的<a href="#anchor-name">步骤1：（基于集成电路模块）</a>中给出</font></p>
+<div>
+<img src="./image-20240413181329167.png" alt="image-20240413181329167" style="zoom:50%;" /><img src="./image-20240413181342965.png" alt="image-20240413181342965" style="zoom:50%;" /><img src="./image-20240413181400790.png" alt="image-20240413181400790" style="zoom:50%;" /><img src="./image-20240413181507357.png" alt="image-20240413181507357" style="zoom:50%;" />
+</div>
+<h2 id="五实验总结">五、实验总结</h2>
+<p><font color = "red">注意附加题已在上面的<a href="#anchor-name">步骤1：（基于集成电路模块）</a>中给出</font></p>
 <p>本次实验对于我而言，在结构化建模构造五人表决器时还是有一定难度的，通过查阅相关资料，目前已经学会了两种方法来构造；</p>
 <p>对于行为建模而言较为简单，也是基础题型。</p>
 <p>另外，由于第一次使用vivado和远程硬件平台，相关操作不太熟练，耗费了大量的时间，希望以后能够多加练习。</p>
 <p>注意，以下代码是错误的</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">module dec_74LS139(</span><br><span class="line">    input logic S,</span><br><span class="line">    input logic [1:0] D,</span><br><span class="line">    output logic [3:0] Y</span><br><span class="line">    );</span><br><span class="line">    </span><br><span class="line">    assign Y = 4&#x27;b1111;</span><br><span class="line">    </span><br><span class="line">    always_comb begin</span><br><span class="line">        if(S == 0) begin</span><br><span class="line">            case(D)</span><br><span class="line">                2&#x27;b00: Y[0] = 0;</span><br><span class="line">                2&#x27;b01: Y[1] = 0;</span><br><span class="line">                2&#x27;b10: Y[2] = 0;</span><br><span class="line">                2&#x27;b11: Y[3] = 0;</span><br><span class="line">            endcase</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">endmodule</span><br></pre></td></tr></table></figure>
-
 <p><font color = "red">具体原因是不能现在always_comb外部定义Y，然后内部进行赋值；同时if..else语句不完整，case没有default</font></p>
 
     </div>
@@ -535,7 +531,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80-%E5%A4%9A%E6%95%B0%E8%A1%A8%E5%86%B3%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">实验一 多数表决器的设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">一、实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">二、实验环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81-%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">三、 实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9%E5%92%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.</span> <span class="nav-text">四、实验内容和步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AE%B91%EF%BC%9A%EF%BC%88%E5%9F%BA%E4%BA%8E%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">内容1：（基于集成电路模块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41%EF%BC%9A%EF%BC%88%E5%9F%BA%E4%BA%8E%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E6%A8%A1%E5%9D%97%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">步骤1：（基于集成电路模块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AE%B9-2%EF%BC%9A%EF%BC%88%E5%9F%BA%E4%BA%8E%E8%A1%8C%E4%B8%BA%E5%BB%BA%E6%A8%A1%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">内容 2：（基于行为建模）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2%EF%BC%9A%EF%BC%88%E5%9F%BA%E4%BA%8E%E8%A1%8C%E4%B8%BA%E5%BB%BA%E6%A8%A1%EF%BC%89"><span class="nav-number">1.4.4.</span> <span class="nav-text">步骤 2：（基于行为建模）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">五、实验总结</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80-%E5%A4%9A%E6%95%B0%E8%A1%A8%E5%86%B3%E5%99%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">实验一 多数表决器的设计与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.1.</span> <span class="nav-text">一、实验目的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">1.2.</span> <span class="nav-text">二、实验环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">三、 实验原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9%E5%92%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.4.</span> <span class="nav-text">四、实验内容和步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AE%B91%E5%9F%BA%E4%BA%8E%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E6%A8%A1%E5%9D%97"><span class="nav-number">1.4.1.</span> <span class="nav-text">内容1：（基于集成电路模块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A41%E5%9F%BA%E4%BA%8E%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF%E6%A8%A1%E5%9D%97"><span class="nav-number">1.4.2.</span> <span class="nav-text">步骤1：（基于集成电路模块）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AE%B9-2%E5%9F%BA%E4%BA%8E%E8%A1%8C%E4%B8%BA%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.4.3.</span> <span class="nav-text">内容 2：（基于行为建模）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4-2%E5%9F%BA%E4%BA%8E%E8%A1%8C%E4%B8%BA%E5%BB%BA%E6%A8%A1"><span class="nav-number">1.4.4.</span> <span class="nav-text">步骤 2：（基于行为建模）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">1.5.</span> <span class="nav-text">五、实验总结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -627,12 +623,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -740,6 +736,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

@@ -278,23 +278,27 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="一、实验目的"><a href="#一、实验目的" class="headerlink" title="一、实验目的"></a>一、实验目的</h1><p>熟悉Eclipse；</p>
-<p>熟悉Java中Set&#x2F;Map&#x2F;List File的使用；</p>
-<h1 id="二、实验内容"><a href="#二、实验内容" class="headerlink" title="二、实验内容"></a>二、实验内容</h1><p>字符串content是一个超市的历次购物小票的合计，每次购物的明细之间用分号分割，每个商品之间用半角逗号分开。请开发程序完成如下功能：</p>
-<ol>
-<li><p>找出哪两个商品总被同时购买的频率最高(不考虑商品的先后顺序)；</p>
-</li>
-<li><p>找出哪N个商品(N&#x3D;2)总被同时购买的频率最高。（选做）</p>
-</li>
+        <h1 id="一实验目的">一、实验目的</h1>
+<p>熟悉Eclipse；</p>
+<p>熟悉Java中Set/Map/List File的使用；</p>
+<h1 id="二实验内容">二、实验内容</h1>
+<p>字符串content是一个超市的历次购物小票的合计，每次购物的明细之间用分号分割，每个商品之间用半角逗号分开。请开发程序完成如下功能：</p>
+<ol type="1">
+<li><p>找出哪两个商品总被同时购买的频率最高(不考虑商品的先后顺序)；</p></li>
+<li><p>找出哪N个商品(N=2)总被同时购买的频率最高。（选做）</p></li>
 </ol>
-<h1 id="三、代码实现"><a href="#三、代码实现" class="headerlink" title="三、代码实现"></a>三、代码实现</h1><p>思路分析：首先每次购物明细之间是用分号分隔的，所以先定义allPairMap（Map类型），将每次购物明细划分出来；然后针对每次的购物明细，定义uniqueProducts（Set类型）选取其中所有的商品（不重复），然后定义一个双重循环，将所有可能的Pair都从uniqueProducts选取出来，按照两个词的字典顺序排列，然后加入到allPairMap，最后通过entrySet遍历allPairMap类选取其中出现频率最高的pair</p>
+<h1 id="三代码实现">三、代码实现</h1>
+<p>思路分析：首先每次购物明细之间是用分号分隔的，所以先定义allPairMap（Map类型），将每次购物明细划分出来；然后针对每次的购物明细，定义uniqueProducts（Set类型）选取其中所有的商品（不重复），然后定义一个双重循环，将所有可能的Pair都从uniqueProducts选取出来，按照两个词的字典顺序排列，然后加入到allPairMap，最后通过entrySet遍历allPairMap类选取其中出现频率最高的pair</p>
 <p>代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">getFrequentItem</span><span class="params">(String content)</span>  &#123;</span><br><span class="line">    String[] sessions = content.split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line">    Map&lt;String, Integer&gt; allPairMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(String session: sessions) &#123;</span><br><span class="line">        String[] products = session.split(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">        Set&lt;String&gt; uniqueProducts = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span>(String product : products) &#123;</span><br><span class="line">            uniqueProducts.add(product.trim());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span>(String first : uniqueProducts) &#123;</span><br><span class="line">            <span class="keyword">for</span>(String second : uniqueProducts) &#123;</span><br><span class="line">                <span class="keyword">if</span>(!first.equals(second)) &#123;</span><br><span class="line">                    <span class="type">String</span> <span class="variable">pair</span> <span class="operator">=</span> first.compareTo(second) &lt; <span class="number">0</span> ? first + <span class="string">&quot;,&quot;</span> + second : second + <span class="string">&quot;,&quot;</span> + first;</span><br><span class="line">                    allPairMap.put(pair,allPairMap.getOrDefault(pair, <span class="number">0</span>)+<span class="number">1</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">String</span> <span class="variable">maxFrequentPair</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="type">int</span> <span class="variable">maxFrequentCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(Map.Entry&lt;String, Integer&gt; entry: allPairMap.entrySet()) &#123;</span><br><span class="line">        <span class="keyword">if</span>(maxFrequentCount &lt; entry.getValue()) &#123;</span><br><span class="line">            maxFrequentCount = entry.getValue();</span><br><span class="line">            maxFrequentPair = entry.getKey();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxFrequentPair;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p><font color= "red">注意其中的compareTo函数是自带的，按照字典顺序排列</font></p>
 <p><font color= "red">getOrDefault函数可以获取当前key的value，如果没有这个key，则返回0（默认值）</font></p>
-<h1 id="四、实验结果"><a href="#四、实验结果" class="headerlink" title="四、实验结果"></a>四、实验结果</h1><p><img src="/2024/04/16/java%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1-lab2/image-20240416203230441.png" alt="image-20240416203230441"></p>
-<h1 id="五、实验总结"><a href="#五、实验总结" class="headerlink" title="五、实验总结"></a>五、实验总结</h1><p>本次实验是对Map和Set的总和考察，其中一些小小的细节能够提升代码的可读性和精准性，如CompareTo的使用、getOrDefault函数的使用等等。</p>
+<h1 id="四实验结果">四、实验结果</h1>
+<figure>
+<img src="image-20240416203230441.png" alt="image-20240416203230441" /><figcaption aria-hidden="true">image-20240416203230441</figcaption>
+</figure>
+<h1 id="五实验总结">五、实验总结</h1>
+<p>本次实验是对Map和Set的总和考察，其中一些小小的细节能够提升代码的可读性和精准性，如CompareTo的使用、getOrDefault函数的使用等等。</p>
 
     </div>
 
@@ -406,7 +410,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">一、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">二、实验内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">三、代码实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">4.</span> <span class="nav-text">四、实验结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">五、实验总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">1.</span> <span class="nav-text">一、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E5%86%85%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">二、实验内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">三、代码实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">4.</span> <span class="nav-text">四、实验结果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E5%AE%9E%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">五、实验总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -498,12 +502,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -611,6 +615,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

@@ -289,53 +289,54 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="一、协议设计"><a href="#一、协议设计" class="headerlink" title="一、协议设计"></a>一、协议设计</h1><p><strong>具体要求：</strong></p>
+        <h1 id="一协议设计">一、协议设计</h1>
+<p><strong>具体要求：</strong></p>
 <p>当服务器在等待一个客户端发送下一个请求时，能够同时处理来自其它客户端的请求，使服务器能够同时处理多个并发的客户端。</p>
 <p>注意：</p>
-<ol>
-<li><p>将服务器能够支持的最大连接数设置为 1024，这是操作系统可用文件描述符数量的最大值。</p>
-</li>
-<li><p>客户端可能会“暂停”（即请求发送了一半突然暂停）或出错，但这些问题不应对其他并发用户产生不良影响。也就是说，如果一个客户端只发送了请求的一半就停止了，那么服务端应继续为另一个客户端提供服务。</p>
-</li>
-<li><p>只能通过 select()方法实现并发，禁止使用多线程。</p>
-</li>
+<ol type="1">
+<li><p>将服务器能够支持的最大连接数设置为 1024，这是操作系统可用文件描述符数量的最大值。</p></li>
+<li><p>客户端可能会“暂停”（即请求发送了一半突然暂停）或出错，但这些问题不应对其他并发用户产生不良影响。也就是说，如果一个客户端只发送了请求的一半就停止了，那么服务端应继续为另一个客户端提供服务。</p></li>
+<li><p>只能通过 select()方法实现并发，禁止使用多线程。</p></li>
 </ol>
-<h2 id="（一）协议头部"><a href="#（一）协议头部" class="headerlink" title="（一）协议头部"></a>（一）协议头部</h2><p>在讨论并发的概念时，常常会提到另一个相关概念——并行。以下是对这两个概念的区分：</p>
+<h2 id="一协议头部">（一）协议头部</h2>
+<p>在讨论并发的概念时，常常会提到另一个相关概念——并行。以下是对这两个概念的区分：</p>
 <p><strong>并发（Concurrency）：</strong> 并发是指在不同时间点将任务交给处理器处理。在某一时刻，多个任务可能不会同时运行，但它们会在不同时间片轮流执行。</p>
 <p><strong>并行（Parallelism）：</strong> 并行则是将每个任务分配给独立的处理器进行处理。在某一时刻，多个任务可以同时运行。</p>
 <p>并发和并行有显著的区别。并行是在不同的物理处理器上同时执行不同的代码片段，其关键是同时完成多个任务。而并发则是同时管理多个任务，这些任务可能在执行过程中被暂停，以便处理其他任务。</p>
-<p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/v2-7b3107ece3b8e47097ed0a7bee923299_720w.jpg" alt="理解并行与并发 - 知乎"></p>
-<p>在现代服务器上，实现并发主要有两种方法：多线程同步阻塞和 I&#x2F;O 多路复用。</p>
+<figure>
+<img src="./v2-7b3107ece3b8e47097ed0a7bee923299_720w.jpg" alt="理解并行与并发 - 知乎" /><figcaption aria-hidden="true">理解并行与并发 - 知乎</figcaption>
+</figure>
+<p>在现代服务器上，实现并发主要有两种方法：多线程同步阻塞和 I/O 多路复用。</p>
 <p>如果服务器不做特别处理，每次只能处理一个连接。新的连接必须等待当前连接结束才能建立，这就是最初的同步阻塞方法。这种方式一次只能连接一对服务器和客户端。</p>
 <p>为了提高处理效率，多线程同步阻塞方法应运而生。每次 <code>accept</code> 接受一个连接，就创建一个线程来处理该连接，这样就可以同时处理多个连接，这是经典的多线程同步阻塞方法。</p>
-<p>然而，多线程同步阻塞并不理想，会导致资源浪费。每个 TCP 连接需要一个线程，10k 个连接需要 10k 个线程。然而，大部分连接并不活跃，即便需要处理业务逻辑，也可以快速返回结果，大部分时间都在 I&#x2F;O 阻塞或等待网络响应。这使得创建和管理大量线程非常耗费资源，线程切换也极其耗费 CPU。最终，CPU 处理实际业务的时间少，大部分资源浪费在线程切换上。</p>
-<p>I&#x2F;O 多路复用方法则不同，它将阻塞的 socket 暂时放置一边，处理其他事情，从而避免资源浪费，这是非阻塞 I&#x2F;O 的核心概念。</p>
-<p>![123](.&#x2F;DALL·E 2024-06-14 02.21.34 - A diagram illustrating the process of handling I_O in concurrent servers. On the left side, labeled ‘Application Process,’ it shows multiple calls to .webp)</p>
+<p>然而，多线程同步阻塞并不理想，会导致资源浪费。每个 TCP 连接需要一个线程，10k 个连接需要 10k 个线程。然而，大部分连接并不活跃，即便需要处理业务逻辑，也可以快速返回结果，大部分时间都在 I/O 阻塞或等待网络响应。这使得创建和管理大量线程非常耗费资源，线程切换也极其耗费 CPU。最终，CPU 处理实际业务的时间少，大部分资源浪费在线程切换上。</p>
+<p>I/O 多路复用方法则不同，它将阻塞的 socket 暂时放置一边，处理其他事情，从而避免资源浪费，这是非阻塞 I/O 的核心概念。</p>
+<p>[123](./DALL·E 2024-06-14 02.21.34 - A diagram illustrating the process of handling I_O in concurrent servers. On the left side, labeled 'Application Process,' it shows multiple calls to .webp)</p>
 <p>上图展示了调用 <code>recv</code> 时的情况。当用户进程发出 <code>read</code> 操作时，如果内核中的数据尚未准备好，系统不会阻塞用户进程，而是立即返回一个错误。用户进程不需要等待，而是立即知道数据尚未准备好，于是可以再次发送 <code>read</code> 操作。一旦内核中的数据准备好，再次接收到用户进程的系统调用，数据会立刻被拷贝到用户内存，然后返回。</p>
-<p>I&#x2F;O 多路复用的原理是不断检查多个 socket，当某个 socket 数据准备好时立即返回，否则整个进程继续阻塞。这样，一个进程可以在不耗费大量资源的情况下处理多个连接。这种轮询操作由内核态完成，从而减少内核态和用户态之间的切换。</p>
-<h2 id="（二）协议规则"><a href="#（二）协议规则" class="headerlink" title="（二）协议规则"></a>（二）协议规则</h2><p>具体实现的流程如下：</p>
-<p>1）主进程采用 I&#x2F;O 多路复用技术来监控多个 socket 资源。 </p>
+<p>I/O 多路复用的原理是不断检查多个 socket，当某个 socket 数据准备好时立即返回，否则整个进程继续阻塞。这样，一个进程可以在不耗费大量资源的情况下处理多个连接。这种轮询操作由内核态完成，从而减少内核态和用户态之间的切换。</p>
+<h2 id="二协议规则">（二）协议规则</h2>
+<p>具体实现的流程如下：</p>
+<p>1）主进程采用 I/O 多路复用技术来监控多个 socket 资源。</p>
 <p>2）当客户端尝试连接时，服务端会接受连接请求，并将其加入到监控列表中。</p>
-<p>3）客户端与服务端之间的通信也会触发 I&#x2F;O 复用函数返回。</p>
+<p>3）客户端与服务端之间的通信也会触发 I/O 复用函数返回。</p>
 <p>4）服务端在循环中同时处理新的连接请求和已有连接的业务请求。</p>
-<h2 id="（三）主要数据结构"><a href="#（三）主要数据结构" class="headerlink" title="（三）主要数据结构"></a>（三）主要数据结构</h2><p>在本次第四周的 socket 实验中，我们引入了一个名为 <code>fdclient[]</code> 的数组数据结构，用作用户池。这个数组的定义和初始化如下所示：</p>
+<h2 id="三主要数据结构">（三）主要数据结构</h2>
+<p>在本次第四周的 socket 实验中，我们引入了一个名为 <code>fdclient[]</code> 的数组数据结构，用作用户池。这个数组的定义和初始化如下所示：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fdclient[<span class="number">1024</span>] = &#123;<span class="number">0</span>&#125;;</span><br></pre></td></tr></table></figure>
-
 <p>数组的大小设置为 1024，这是因为实验指导书中提到最大连接用户数为 1024。为了管理和操作这个用户池，我们使用了一个辅助索引 <code>fdptr</code>，其定义如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> fdptr = <span class="number">1024</span>;</span><br></pre></td></tr></table></figure>
-
 <p><code>fdptr</code> 是一个整数变量，用来记录当前处理的用户在用户池中的位置。在处理用户连接的循环中，<code>fdptr</code> 会持续遍历 <code>fdclient[]</code> 数组中的所有用户，从而确保每个用户都能被正确处理和管理。</p>
 <p>进一步解释：</p>
-<ol>
+<ol type="1">
 <li><strong>用户池 (<code>fdclient[]</code>)</strong>: 这个数组用于存储每个连接的文件描述符。文件描述符是系统为每个连接分配的唯一标识符，用于跟踪和管理活动连接。</li>
 <li><strong>辅助索引 (<code>fdptr</code>)</strong>: <code>fdptr</code> 是一个指针，指向当前正在处理的用户在 <code>fdclient[]</code> 数组中的位置。每次新的连接或需要处理现有连接时，<code>fdptr</code> 会更新以指向下一个用户，从而在循环中遍历所有连接。</li>
 <li><strong>循环处理</strong>: 在服务器运行过程中，会进入一个循环，使用 <code>fdptr</code> 遍历 <code>fdclient[]</code> 数组中的每个用户，处理他们的连接请求和数据传输。这种方法确保了服务器能够高效地管理多个并发连接。</li>
 </ol>
-<h2 id="（四）相关算法"><a href="#（四）相关算法" class="headerlink" title="（四）相关算法"></a>（四）相关算法</h2><p>本周的实验任务是确保服务器能够在等待一个客户端发送下一个请求的同时，处理来自其他客户端的请求，从而实现对多个并发客户端的支持。为实现这一目标，我们将使用 <code>select</code> 函数。</p>
+<h2 id="四相关算法">（四）相关算法</h2>
+<p>本周的实验任务是确保服务器能够在等待一个客户端发送下一个请求的同时，处理来自其他客户端的请求，从而实现对多个并发客户端的支持。为实现这一目标，我们将使用 <code>select</code> 函数。</p>
 <p><code>select</code> 是一个阻塞调用函数，允许我们监听多个文件描述符（socket）的状态，并在其中某个变为可读、可写或发生异常时返回。这样，服务器可以同时处理多个客户端连接，而无需为每个连接创建一个线程。</p>
 <p><code>select</code> 函数原型：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">select</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">int</span> nfds,</span></span><br><span class="line"><span class="params">    fd_set *readfds,</span></span><br><span class="line"><span class="params">    fd_set *writefds,</span></span><br><span class="line"><span class="params">    fd_set *exceptfds,</span></span><br><span class="line"><span class="params">    <span class="type">const</span> <span class="keyword">struct</span> timeval *timeout</span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
-
 <ul>
 <li><strong>nfds</strong>：这个参数在现代实现中已被忽略，主要用于兼容性目的。</li>
 <li><strong>readfds</strong>：指向一组等待可读性检查的文件描述符的集合。</li>
@@ -344,9 +345,9 @@
 <li><strong>timeout</strong>：指定 <code>select</code> 等待的最长时间，可以是 NULL 表示无限期阻塞。</li>
 </ul>
 <p><code>fd_set</code> 的理解：</p>
-<p><code>fd_set</code> 是一个文件描述符集合，用于指定需要监听的文件描述符。可以将 <code>fd_set</code> 视为一个位数组，其中每一位表示一个文件描述符的状态。假设 <code>fd_set</code> 的大小为 1 字节，则可以表示最多 8 个文件描述符。如果 <code>sizeof(fd_set)</code> 为 512 字节，则可以表示 512 * 8 &#x3D; 4096 个文件描述符。</p>
+<p><code>fd_set</code> 是一个文件描述符集合，用于指定需要监听的文件描述符。可以将 <code>fd_set</code> 视为一个位数组，其中每一位表示一个文件描述符的状态。假设 <code>fd_set</code> 的大小为 1 字节，则可以表示最多 8 个文件描述符。如果 <code>sizeof(fd_set)</code> 为 512 字节，则可以表示 512 * 8 = 4096 个文件描述符。</p>
 <p>使用 <code>select</code> 的步骤：</p>
-<ol>
+<ol type="1">
 <li>初始化 <code>fd_set</code>：使用 <code>FD_ZERO</code> 宏清空集合，然后使用 <code>FD_SET</code> 宏添加需要监听的文件描述符。</li>
 <li>调用 <code>select</code>：传递文件描述符集合以及超时时间，<code>select</code> 将阻塞直到其中一个文件描述符变为可读、可写或发生异常，或者超时。</li>
 <li>处理返回结果：使用 <code>FD_ISSET</code> 宏检查哪个文件描述符准备好，并进行相应处理。</li>
@@ -354,35 +355,37 @@
 <p><code>select</code> 的性能注意事项：</p>
 <ul>
 <li><strong>内核态和用户态的拷贝开销</strong>：每次调用 <code>select</code>，都需要将文件描述符集合从用户态拷贝到内核态，这在文件描述符数量较多时会产生较大的开销。</li>
-<li><strong>线性扫描</strong>：内核需要线性扫描整个 <code>fd_set</code> 集合，因此随着监控文件描述符数量的增加，I&#x2F;O 性能会线性下降。</li>
+<li><strong>线性扫描</strong>：内核需要线性扫描整个 <code>fd_set</code> 集合，因此随着监控文件描述符数量的增加，I/O 性能会线性下降。</li>
 </ul>
-<h2 id="算法内容"><a href="#算法内容" class="headerlink" title="算法内容"></a>算法内容</h2><ol>
-<li><strong>初始化和创建套接字</strong><ul>
+<h2 id="算法内容">算法内容</h2>
+<ol type="1">
+<li><strong>初始化和创建套接字</strong>
+<ul>
 <li>创建服务器套接字并设置为非阻塞模式。</li>
 <li>绑定服务器套接字到指定的地址和端口，并开始监听连接请求。</li>
-</ul>
-</li>
-<li><strong>并发处理</strong><ul>
+</ul></li>
+<li><strong>并发处理</strong>
+<ul>
 <li>使用 <code>select()</code> 方法监控多个文件描述符，等待它们变为可读或可写状态。</li>
 <li>当一个新客户端连接时，接受连接并将客户端套接字设置为非阻塞模式。</li>
 <li>将客户端套接字添加到文件描述符集合中，以便 <code>select()</code> 方法监控它们。</li>
-</ul>
-</li>
-<li><strong>处理客户端请求</strong><ul>
+</ul></li>
+<li><strong>处理客户端请求</strong>
+<ul>
 <li>当客户端发送数据时，接收并处理请求，根据 HTTP 方法（GET、HEAD、POST）执行相应的操作。</li>
 <li>如果接收到的请求不完整或出现错误，关闭客户端连接并从文件描述符集合中移除该客户端。</li>
 <li>向客户端发送响应，包括错误信息（如 400、404、501 等）。</li>
-</ul>
-</li>
-<li><strong>日志记录</strong><ul>
+</ul></li>
+<li><strong>日志记录</strong>
+<ul>
 <li>在处理请求和发送响应时，记录每个请求的详细信息，包括请求的类型、来源 IP、时间等。</li>
 <li>在出现错误时，记录错误信息和相关的详细信息。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
-<h2 id="伪代码"><a href="#伪代码" class="headerlink" title="伪代码"></a>伪代码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">函数 main()</span><br><span class="line">    初始化服务器套接字</span><br><span class="line">    将套接字绑定到端口 9999</span><br><span class="line">    监听套接字</span><br><span class="line"></span><br><span class="line">    初始化 fd 集合用于 select()</span><br><span class="line">    将服务器套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">    循环</span><br><span class="line">        复制 fd 集合以供 select() 使用</span><br><span class="line">        调用 select() 监视套接字</span><br><span class="line"></span><br><span class="line">        如果服务器套接字有新连接</span><br><span class="line">            处理新连接()</span><br><span class="line"></span><br><span class="line">        处理现有连接()</span><br><span class="line"></span><br><span class="line">    关闭服务器套接字</span><br><span class="line"></span><br><span class="line">函数 处理新连接()</span><br><span class="line">    接受新连接</span><br><span class="line">    将客户端套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">函数 处理现有连接()</span><br><span class="line">    遍历 fd 集合中的每个套接字</span><br><span class="line">        如果套接字有数据可读</span><br><span class="line">            处理客户端()</span><br><span class="line"></span><br><span class="line">函数 处理客户端()</span><br><span class="line">    当客户端有数据可读</span><br><span class="line">        从客户端读取数据</span><br><span class="line">        解析 HTTP 请求</span><br><span class="line">        处理请求()</span><br><span class="line">        将响应发送回客户端</span><br><span class="line">        如果必要，关闭客户端连接</span><br><span class="line"></span><br><span class="line">函数 处理请求()</span><br><span class="line">    如果请求为空</span><br><span class="line">        发送 400 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line">    否则如果请求有效</span><br><span class="line">        检查 HTTP 版本</span><br><span class="line">        如果版本不支持</span><br><span class="line">            发送 505 错误响应</span><br><span class="line">            记录错误日志</span><br><span class="line">        否则</span><br><span class="line">            调用 use_method() 处理请求</span><br><span class="line">    否则</span><br><span class="line">        发送 501 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line"></span><br><span class="line">函数 关闭客户端()</span><br><span class="line">    从 fd 集合中移除客户端套接字</span><br><span class="line">    关闭客户端套接字</span><br><span class="line"></span><br><span class="line">函数 发送错误响应()</span><br><span class="line">    构造错误响应</span><br><span class="line">    将响应发送到客户端</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h1 id="四、实验结果分析与测试"><a href="#四、实验结果分析与测试" class="headerlink" title="四、实验结果分析与测试"></a>四、实验结果分析与测试</h1><p>ApacheBench（简称 ab）是 Apache 服务器附带的一个简单却强大的 Web 压力测试工具。它是一个命令行工具，能够通过创建大量并发访问线程模拟多个用户对特定 URL 地址的访问，从而测试目标服务器的负载能力。</p>
+<h2 id="伪代码">伪代码</h2>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">函数 main()</span><br><span class="line">    初始化服务器套接字</span><br><span class="line">    将套接字绑定到端口 9999</span><br><span class="line">    监听套接字</span><br><span class="line"></span><br><span class="line">    初始化 fd 集合用于 select()</span><br><span class="line">    将服务器套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">    循环</span><br><span class="line">        复制 fd 集合以供 select() 使用</span><br><span class="line">        调用 select() 监视套接字</span><br><span class="line"></span><br><span class="line">        如果服务器套接字有新连接</span><br><span class="line">            处理新连接()</span><br><span class="line"></span><br><span class="line">        处理现有连接()</span><br><span class="line"></span><br><span class="line">    关闭服务器套接字</span><br><span class="line"></span><br><span class="line">函数 处理新连接()</span><br><span class="line">    接受新连接</span><br><span class="line">    将客户端套接字添加到 fd 集合</span><br><span class="line"></span><br><span class="line">函数 处理现有连接()</span><br><span class="line">    遍历 fd 集合中的每个套接字</span><br><span class="line">        如果套接字有数据可读</span><br><span class="line">            处理客户端()</span><br><span class="line"></span><br><span class="line">函数 处理客户端()</span><br><span class="line">    当客户端有数据可读</span><br><span class="line">        从客户端读取数据</span><br><span class="line">        解析 HTTP 请求</span><br><span class="line">        处理请求()</span><br><span class="line">        将响应发送回客户端</span><br><span class="line">        如果必要，关闭客户端连接</span><br><span class="line"></span><br><span class="line">函数 处理请求()</span><br><span class="line">    如果请求为空</span><br><span class="line">        发送 400 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line">    否则如果请求有效</span><br><span class="line">        检查 HTTP 版本</span><br><span class="line">        如果版本不支持</span><br><span class="line">            发送 505 错误响应</span><br><span class="line">            记录错误日志</span><br><span class="line">        否则</span><br><span class="line">            调用 use_method() 处理请求</span><br><span class="line">    否则</span><br><span class="line">        发送 501 错误响应</span><br><span class="line">        记录错误日志</span><br><span class="line"></span><br><span class="line">函数 关闭客户端()</span><br><span class="line">    从 fd 集合中移除客户端套接字</span><br><span class="line">    关闭客户端套接字</span><br><span class="line"></span><br><span class="line">函数 发送错误响应()</span><br><span class="line">    构造错误响应</span><br><span class="line">    将响应发送到客户端</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="四实验结果分析与测试">四、实验结果分析与测试</h1>
+<p>ApacheBench（简称 ab）是 Apache 服务器附带的一个简单却强大的 Web 压力测试工具。它是一个命令行工具，能够通过创建大量并发访问线程模拟多个用户对特定 URL 地址的访问，从而测试目标服务器的负载能力。</p>
 <p>工具特点</p>
 <ul>
 <li><strong>轻量化</strong>：ab 工具对发起负载的本机要求很低。</li>
@@ -393,7 +396,6 @@
 <p>使用方法</p>
 <p>ab 的基本命令格式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">css</span><br><span class="line">复制代码</span><br><span class="line">ab [options] [http://]hostname[:port]/path</span><br></pre></td></tr></table></figure>
-
 <p>其中，<code>options</code> 可以包括多种参数设置。在性能测试中，我们通常关注以下两个主要参数：</p>
 <ul>
 <li><code>-n</code>：设置测试中总共发起的请求数，即 Number of requests to perform。</li>
@@ -401,104 +403,116 @@
 </ul>
 <p>例如，要对 <code>http://example.com</code> 进行测试，总共发起 1000 个请求，并且同时产生 100 个并发请求，可以使用以下命令：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arduino</span><br><span class="line">复制代码</span><br><span class="line">ab -n 1000 -c 100 http://example.com/</span><br></pre></td></tr></table></figure>
-
 <p>结果解释</p>
 <p>运行上述命令后，ab 工具会输出详细的测试结果，其中最重要的几个指标包括：</p>
-<ol>
-<li><strong>Requests per second</strong>：<ul>
+<ol type="1">
+<li><strong>Requests per second</strong>：
+<ul>
 <li>该指标表示每秒钟处理的请求数，相当于性能测试工具 LoadRunner 中的每秒事务数。括号中的 <code>mean</code> 表示这是一个平均值。</li>
 <li>计算公式：<code>Requests per second = 总请求数 / 总测试时间</code></li>
-</ul>
-</li>
-<li><strong>Time per request</strong>：<ul>
+</ul></li>
+<li><strong>Time per request</strong>：
+<ul>
 <li>该指标表示平均每个请求的响应时间，相当于 LoadRunner 中的平均事务响应时间。括号中的 <code>mean</code> 表示这是一个平均值。</li>
 <li>计算公式：<code>Time per request = 总测试时间 / 总请求数</code></li>
-</ul>
-</li>
-<li>**Time per request (concurrent)**：<ul>
+</ul></li>
+<li><strong>Time per request (concurrent)</strong>：
+<ul>
 <li>这一行显示的 <code>Time per request</code> 是每个连接请求实际运行时间的平均值。它的值等于上面行的 <code>Time per request</code> 除以并发数 <code>c</code>。</li>
 <li>计算公式：<code>Time per request (concurrent) = Time per request / 并发数</code></li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p>修改好的代码可以同时执行两个客户端的请求，测试结果如下图：</p>
-<p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614045520028.png" alt="image-20240614045520028"></p>
-<p>在ab测试中，为了比较不同在并发数下我们的服务器的工作状态，我们选取 n&#x3D;256，c 取 1,2,4,8,16,32,64,128,256 最后的测试</p>
+<figure>
+<img src="./image-20240614045520028.png" alt="image-20240614045520028" /><figcaption aria-hidden="true">image-20240614045520028</figcaption>
+</figure>
+<p>在ab测试中，为了比较不同在并发数下我们的服务器的工作状态，我们选取 n=256，c 取 1,2,4,8,16,32,64,128,256 最后的测试</p>
 <p>各种情况的截图如下</p>
-<p>这是c&#x3D;1</p>
-<div><img src="./image-20240614045932695.png" alt="image-20240614045932695" style="zoom: 80%;" /><img src="./image-20240614045957702.png" alt="image-20240614045957702" style="zoom:80%;" /></div>
-
-<p>接下来分别是c&#x3D;2,4,8….</p>
-<div><img src="./image-20240614050133110.png" alt="image-20240614050133110" style="zoom:80%;" /><img src="./image-20240614050204034.png" alt="image-20240614050204034" style="zoom:80%;" /></div>
-
-<div><img src="./image-20240614050339310.png" alt="image-20240614050339310" style="zoom:80%;" /><img src="./image-20240614050413778.png" alt="image-20240614050413778" style="zoom:80%;" /></div>
-
-<div><img src="./image-20240614050453866.png" alt="image-20240614050453866" style="zoom:80%;" /><img src="./image-20240614050521564.png" alt="image-20240614050521564" style="zoom:80%;" /></div>
-
-<div><img src="./image-20240614050553165.png" alt="image-20240614050553165" style="zoom:80%;"></div>
-
+<p>这是c=1</p>
+<div>
+<img src="./image-20240614045932695.png" alt="image-20240614045932695" style="zoom: 80%;" /><img src="./image-20240614045957702.png" alt="image-20240614045957702" style="zoom:80%;" />
+</div>
+<p>接下来分别是c=2,4,8....</p>
+<div>
+<img src="./image-20240614050133110.png" alt="image-20240614050133110" style="zoom:80%;" /><img src="./image-20240614050204034.png" alt="image-20240614050204034" style="zoom:80%;" />
+</div>
+<div>
+<img src="./image-20240614050339310.png" alt="image-20240614050339310" style="zoom:80%;" /><img src="./image-20240614050413778.png" alt="image-20240614050413778" style="zoom:80%;" />
+</div>
+<div>
+<img src="./image-20240614050453866.png" alt="image-20240614050453866" style="zoom:80%;" /><img src="./image-20240614050521564.png" alt="image-20240614050521564" style="zoom:80%;" />
+</div>
+<div>
+<img src="./image-20240614050553165.png" alt="image-20240614050553165" style="zoom:80%;">
+</div>
 <p>结果数据如下表所示</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>c</th>
 <th>request per second</th>
 <th>time per request1</th>
 <th>time per request2</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td>1</td>
 <td>173.18</td>
 <td>5.774</td>
 <td>5.774</td>
 </tr>
-<tr>
+<tr class="even">
 <td>2</td>
 <td>169.42</td>
 <td>11.805</td>
 <td>5.902</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>4</td>
 <td>177.76</td>
 <td>22.503</td>
 <td>5.626</td>
 </tr>
-<tr>
+<tr class="even">
 <td>8</td>
 <td>27.08</td>
 <td>295.372</td>
 <td>36.922</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>16</td>
 <td>34.08</td>
 <td>29.347</td>
 <td>32.91</td>
 </tr>
-<tr>
+<tr class="even">
 <td>32</td>
 <td>45.56</td>
 <td>702.379</td>
 <td>21.949</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>64</td>
 <td>42.88</td>
 <td>1492.624</td>
 <td>23.322</td>
 </tr>
-<tr>
+<tr class="even">
 <td>128</td>
 <td>34.98</td>
 <td>3659.200</td>
 <td>33.78</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p>从表格中可以观察到，随着并发数的增加，我们的每秒请求数（Requests per second）也在不断增加。这意味着随着并发数的上升，每秒处理的事务数量也在增加。然而，当并发数达到32时，Requests per second达到了峰值，之后便开始下降。对于每个并发客户端的请求时间（Time per request）也是类似的趋势。一开始，随着并发数的增加，每个请求的平均处理时间在减少，直到并发数达到32时，Time per request达到最小值。随后，随着并发数的进一步增加，Time per request又开始上升，最终在并发数为256时达到了一个最高点。</p>
-<h2 id="测试平台截屏"><a href="#测试平台截屏" class="headerlink" title="测试平台截屏"></a>测试平台截屏</h2><p><img src="/2024/06/14/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek4/image-20240614051322143.png" alt="image-20240614051322143"></p>
-<h1 id="五、进度总结（未完成）"><a href="#五、进度总结（未完成）" class="headerlink" title="五、进度总结（未完成）"></a>五、进度总结（未完成）</h1>
+<h2 id="测试平台截屏">测试平台截屏</h2>
+<figure>
+<img src="./image-20240614051322143.png" alt="image-20240614051322143" /><figcaption aria-hidden="true">image-20240614051322143</figcaption>
+</figure>
+<h1 id="五进度总结未完成">五、进度总结（未完成）</h1>
+
     </div>
 
     
@@ -609,7 +623,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">一、协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E5%8D%8F%E8%AE%AE%E5%A4%B4%E9%83%A8"><span class="nav-number">1.1.</span> <span class="nav-text">（一）协议头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%8D%8F%E8%AE%AE%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">（二）协议规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E4%B8%BB%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">（三）主要数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">（四）相关算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%86%85%E5%AE%B9"><span class="nav-number">1.5.</span> <span class="nav-text">算法内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">伪代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">四、实验结果分析与测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%88%AA%E5%B1%8F"><span class="nav-number">2.1.</span> <span class="nav-text">测试平台截屏</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BF%9B%E5%BA%A6%E6%80%BB%E7%BB%93%EF%BC%88%E6%9C%AA%E5%AE%8C%E6%88%90%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">五、进度总结（未完成）</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">一、协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%8D%8F%E8%AE%AE%E5%A4%B4%E9%83%A8"><span class="nav-number">1.1.</span> <span class="nav-text">（一）协议头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%8F%E8%AE%AE%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">（二）协议规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%BB%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">（三）主要数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E7%9B%B8%E5%85%B3%E7%AE%97%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">（四）相关算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%86%85%E5%AE%B9"><span class="nav-number">1.5.</span> <span class="nav-text">算法内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="nav-number">1.6.</span> <span class="nav-text">伪代码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90%E4%B8%8E%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">四、实验结果分析与测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%88%AA%E5%B1%8F"><span class="nav-number">2.1.</span> <span class="nav-text">测试平台截屏</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E8%BF%9B%E5%BA%A6%E6%80%BB%E7%BB%93%E6%9C%AA%E5%AE%8C%E6%88%90"><span class="nav-number">3.</span> <span class="nav-text">五、进度总结（未完成）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -701,12 +715,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -814,6 +828,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

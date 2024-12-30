@@ -327,343 +327,257 @@
 
       
         <p><font color = "red" size = "6">本次实验由于华为云服务器欠费，没有使用openGauss数据库，而使用的是自己电脑的postgresql</font></p>
-<h1 id="一、实验介绍"><a href="#一、实验介绍" class="headerlink" title="一、实验介绍"></a>一、实验介绍</h1><p>本章将实践 openGauss 数据库的高级数据管理功能，涉及各类数据库对象，包括：视图、索引、存储过程、触发器、事务管理、权限管理等。视图可用于简化查询和保护数据，索引用于提高查询效率，存储过程用于封装复杂业务逻辑，触发器可以自动化数据操作以维护完整性，事务管理确保数据库系统的 ACID 特性，权限管理确保数据库系统的安全性。在本章中，将通过实验操作，掌握这些 openGauss 数据库对象的使用，以验证这几类数据库对象所实现的数据库原理。</p>
-<h1 id="二、实验目的"><a href="#二、实验目的" class="headerlink" title="二、实验目的"></a>二、实验目的</h1><ol>
-<li><p>掌握 openGauss 数据库中视图的使用方法。</p>
-</li>
-<li><p>掌握 openGauss 数据库中索引的使用方法。</p>
-</li>
-<li><p>掌握 openGauss 数据库中存储过程的使用方法。</p>
-</li>
-<li><p>掌握 openGauss 数据库中触发器的使用方法。</p>
-</li>
-<li><p>掌握 openGauss 数据库中的事务管理机制。</p>
-</li>
-<li><p>掌握 openGauss 数据库中的权限机制。</p>
-</li>
+<h1 id="一实验介绍">一、实验介绍</h1>
+<p>本章将实践 openGauss 数据库的高级数据管理功能，涉及各类数据库对象，包括：视图、索引、存储过程、触发器、事务管理、权限管理等。视图可用于简化查询和保护数据，索引用于提高查询效率，存储过程用于封装复杂业务逻辑，触发器可以自动化数据操作以维护完整性，事务管理确保数据库系统的 ACID 特性，权限管理确保数据库系统的安全性。在本章中，将通过实验操作，掌握这些 openGauss 数据库对象的使用，以验证这几类数据库对象所实现的数据库原理。</p>
+<h1 id="二实验目的">二、实验目的</h1>
+<ol type="1">
+<li><p>掌握 openGauss 数据库中视图的使用方法。</p></li>
+<li><p>掌握 openGauss 数据库中索引的使用方法。</p></li>
+<li><p>掌握 openGauss 数据库中存储过程的使用方法。</p></li>
+<li><p>掌握 openGauss 数据库中触发器的使用方法。</p></li>
+<li><p>掌握 openGauss 数据库中的事务管理机制。</p></li>
+<li><p>掌握 openGauss 数据库中的权限机制。</p></li>
 </ol>
-<h1 id="三、实验步骤和结果"><a href="#三、实验步骤和结果" class="headerlink" title="三、实验步骤和结果"></a>三、实验步骤和结果</h1><h2 id="（一）使用视图"><a href="#（一）使用视图" class="headerlink" title="（一）使用视图"></a>（一）使用视图</h2><h3 id="1-定义视图"><a href="#1-定义视图" class="headerlink" title="1.定义视图"></a>1.定义视图</h3><p>【查询 1】建立 CS 系学生的视图。</p>
+<h1 id="三实验步骤和结果">三、实验步骤和结果</h1>
+<h2 id="一使用视图">（一）使用视图</h2>
+<h3 id="定义视图">1.定义视图</h3>
+<p>【查询 1】建立 CS 系学生的视图。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> student_cs <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> sno, sname, sgender, sbirth, sdept</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> sdept = <span class="string">&#x27;CS&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>选取CS系学生的所有属性建立视图，然后对视图进行查询</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520190929528.png" alt="image-20240520190929528" style="zoom:80%;" />
-
+<p><img src="./image-20240520190929528.png" alt="image-20240520190929528" style="zoom:80%;" /></p>
 <p>【查询 2】建立 CS 系学生的视图，且要求修改和插入数据时保证该视图只有 CS 系的学生。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> student_cs_2 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> sno, sname, sgender, sbirth, sdept</span><br><span class="line"><span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> sdept = <span class="string">&#x27;CS&#x27;</span></span><br><span class="line"><span class="keyword">WITH</span> <span class="keyword">CHECK</span> <span class="keyword">OPTION</span>;</span><br></pre></td></tr></table></figure>
-
-<p>加入了<code>WITH CHECK OPTION</code>，插入和修改数据时必须满足<code>sdept = &#39;CS&#39;</code>的条件</p>
+<p>加入了<code>WITH CHECK OPTION</code>，插入和修改数据时必须满足<code>sdept = 'CS'</code>的条件</p>
 <p>查看该视图</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs_2</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520191441919.png" alt="image-20240520191441919" style="zoom:80%;" />
-
+<p><img src="./image-20240520191441919.png" alt="image-20240520191441919" style="zoom:80%;" /></p>
 <p>【查询 3】建立 CS 系选修了数据库系统课程的学生的视图。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> student_cs_3(sno, sname, score) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> student.sno, sname, score</span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">INNER</span> <span class="keyword">JOIN</span> sc <span class="keyword">ON</span> student.sno = sc.sno</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> course <span class="keyword">on</span> sc.cno = course.cno</span><br><span class="line"><span class="keyword">WHERE</span> sdept = <span class="string">&#x27;CS&#x27;</span> <span class="keyword">AND</span> cname = <span class="string">&#x27;数据库系统&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>将student表和sc表中学生学号相同的内连接，同时把sc表和course表中课程号相同的内连接，相当于把三个表连在一起</p>
 <p>查看该视图</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs_3</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520191834529.png" alt="image-20240520191834529" style="zoom:80%;" />
-
+<p><img src="./image-20240520191834529.png" alt="image-20240520191834529" style="zoom:80%;" /></p>
 <p>【查询 4】建立 CS 系选修了数据库系统课程且成绩在 90 分以上的学生的视图。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> student_cs_4 <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> sno, sname, score</span><br><span class="line"><span class="keyword">FROM</span> student_cs_3</span><br><span class="line"><span class="keyword">WHERE</span> score &gt;= <span class="number">90</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查看该视图</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs_4</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520192140981.png" alt="image-20240520192140981" style="zoom:80%;" />
-
+<p><img src="./image-20240520192140981.png" alt="image-20240520192140981" style="zoom:80%;" /></p>
 <p>【查询 5】定义一个反映学生年龄的视图。</p>
 <p>这里调用了AGE函数计算出从出生到现在之间的时间，然后从中提取年份就是现在的年龄</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">VIEW</span> student_age(sno, sname, sage) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> sno, sname, EXTRACT(&#x27;<span class="type">YEAR</span>&#x27; <span class="keyword">FROM</span> AGE(<span class="built_in">CURRENT_DATE</span>, sbirth))</span><br><span class="line"><span class="keyword">FROM</span> student;</span><br></pre></td></tr></table></figure>
-
 <p>查看该视图</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_age</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520192523865.png" alt="image-20240520192523865" style="zoom:80%;" />
-
-<h3 id="2-查询视图"><a href="#2-查询视图" class="headerlink" title="2.查询视图"></a>2.查询视图</h3><p>【查询 6】在视图 student_age 中查找年龄小于 22 岁的学生。</p>
+<p><img src="./image-20240520192523865.png" alt="image-20240520192523865" style="zoom:80%;" /></p>
+<h3 id="查询视图">2.查询视图</h3>
+<p>【查询 6】在视图 student_age 中查找年龄小于 22 岁的学生。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> sno, sname, sage</span><br><span class="line"><span class="keyword">FROM</span> student_age</span><br><span class="line"><span class="keyword">WHERE</span> sage &lt; <span class="number">22</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查询结果</p>
-<img src="./image-20240520193037831.png" alt="image-20240520193037831" style="zoom:80%;" />
-
+<p><img src="./image-20240520193037831.png" alt="image-20240520193037831" style="zoom:80%;" /></p>
 <p>【查询 7】查询 CS 系中选修了 2 号课程的学生。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> s.sno, sname</span><br><span class="line"><span class="keyword">FROM</span> student_cs s <span class="keyword">INNER</span> <span class="keyword">JOIN</span> sc <span class="keyword">ON</span> s.sno = sc.sno</span><br><span class="line"><span class="keyword">WHERE</span> cno = <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查询结果</p>
-<img src="./image-20240520193148960.png" alt="image-20240520193148960" style="zoom:80%;" />
-
-<h3 id="3-修改视图"><a href="#3-修改视图" class="headerlink" title="3.修改视图"></a>3.修改视图</h3><p>【查询 8】向 CS 系学生视图 student_cs 中插入一条新记录。</p>
+<p><img src="./image-20240520193148960.png" alt="image-20240520193148960" style="zoom:80%;" /></p>
+<h3 id="修改视图">3.修改视图</h3>
+<p>【查询 8】向 CS 系学生视图 student_cs 中插入一条新记录。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student_cs <span class="keyword">VALUES</span> (<span class="string">&#x27;22005&#x27;</span>, <span class="string">&#x27;孙七&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;2001-11-01&#x27;</span>, <span class="string">&#x27;CE&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
 <p>查询视图student_cs</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520193515579.png" alt="image-20240520193515579" style="zoom:80%;" />
-
+<p><img src="./image-20240520193515579.png" alt="image-20240520193515579" style="zoom:80%;" /></p>
 <p>没有任何变化，查询student表</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520193557785.png" alt="image-20240520193557785" style="zoom:80%;" />
-
+<p><img src="./image-20240520193557785.png" alt="image-20240520193557785" style="zoom:80%;" /></p>
 <p>发现多出来了孙七。但是如果想student_cs_2中插入孙七则会报错，因为student_cs_2已经加入了<code>WIHH CHEKC OPTION</code></p>
-<img src="./image-20240520193905090.png" alt="image-20240520193905090" style="zoom:80%;" />
-
+<p><img src="./image-20240520193905090.png" alt="image-20240520193905090" style="zoom:80%;" /></p>
 <p>【查询 9】通过视图 student_cs 将学号为 22001 的学生姓名改为“张小明”。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> student_cs</span><br><span class="line"><span class="keyword">SET</span> sname = <span class="string">&#x27;张小明&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> sno = <span class="string">&#x27;22001&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>等价于对原表进行操作</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> student</span><br><span class="line"><span class="keyword">SET</span> sname = <span class="string">&#x27;张小明&#x27;</span></span><br><span class="line"><span class="keyword">WHERE</span> sno = <span class="string">&#x27;22001&#x27;</span> <span class="keyword">AND</span> sdept=<span class="string">&#x27;CS&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查看student表，结果如下</p>
-<img src="./image-20240520194146219.png" alt="image-20240520194146219" style="zoom:80%;" />
-
+<p><img src="./image-20240520194146219.png" alt="image-20240520194146219" style="zoom:80%;" /></p>
 <p>【查询 10】通过视图 student_cs 将学号为 22002 的学生记录删除。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> student_cs</span><br><span class="line"><span class="keyword">WHERE</span> sno = <span class="string">&#x27;22002&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>等价于对原表进行操作</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> student</span><br><span class="line"><span class="keyword">WHERE</span> sno = <span class="string">&#x27;22002&#x27;</span> <span class="keyword">AND</span> sdept = <span class="string">&#x27;CS&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>因为键值对(sno)&#x3D;(22002)仍然是从表”sc”引用的.在 “student” 上的更新或删除操作违反了在 “sc” 上的外键约束 “fk_student” ，所以删除不成功。</p>
-<h3 id="4-删除视图"><a href="#4-删除视图" class="headerlink" title="4.删除视图"></a>4.删除视图</h3><p>【查询 11】删除 student_cs_2 视图，同时删除所有依赖该视图的视图。</p>
+<p>因为键值对(sno)=(22002)仍然是从表"sc"引用的.在 "student" 上的更新或删除操作违反了在 "sc" 上的外键约束 "fk_student" ，所以删除不成功。</p>
+<h3 id="删除视图">4.删除视图</h3>
+<p>【查询 11】删除 student_cs_2 视图，同时删除所有依赖该视图的视图。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">VIEW</span> student_cs_2 <span class="keyword">CASCADE</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-物化视图"><a href="#5-物化视图" class="headerlink" title="5.物化视图"></a>5.物化视图</h3><p>【查询 12】建立 CS 系选修了数据库系统课程的学生的物化视图。</p>
+<h3 id="物化视图">5.物化视图</h3>
+<p>【查询 12】建立 CS 系选修了数据库系统课程的学生的物化视图。</p>
 <p>在student_cs_3的基础之上</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">MATERIALIZED</span> <span class="keyword">VIEW</span> student_cs_3m(sno, sname, score) <span class="keyword">AS</span></span><br><span class="line"><span class="keyword">SELECT</span> student.sno, sname, score</span><br><span class="line"><span class="keyword">FROM</span> student <span class="keyword">INNER</span> <span class="keyword">JOIN</span> sc <span class="keyword">ON</span> student.sno = sc.sno</span><br><span class="line"><span class="keyword">INNER</span> <span class="keyword">JOIN</span> course <span class="keyword">on</span> sc.cno = course.cno</span><br><span class="line"><span class="keyword">WHERE</span> sdept = <span class="string">&#x27;CS&#x27;</span> <span class="keyword">AND</span> cname = <span class="string">&#x27;数据库系统&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查询该视图</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student_cs_3m</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520194715671.png" alt="image-20240520194715671" style="zoom:80%;" />
-
+<p><img src="./image-20240520194715671.png" alt="image-20240520194715671" style="zoom:80%;" /></p>
 <p>将 student 表中学生张小明的姓名改为张三，再次查询物化视图</p>
-<img src="./image-20240520195042342.png" alt="image-20240520195042342" style="zoom:80%;" />
-
+<p><img src="./image-20240520195042342.png" alt="image-20240520195042342" style="zoom:80%;" /></p>
 <p>结果不变</p>
 <p>【查询 13】刷新物化视图 student_cs_3m。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">REFRESH</span> <span class="keyword">MATERIALIZED</span> <span class="keyword">VIEW</span> student_cs_3m;</span><br></pre></td></tr></table></figure>
-
 <p>再次查询，结果发生改变</p>
-<img src="./image-20240520195149369.png" alt="image-20240520195149369" style="zoom:80%;" />
-
+<p><img src="./image-20240520195149369.png" alt="image-20240520195149369" style="zoom:80%;" /></p>
 <p>【查询 14】删除物化视图 student_cs_3m。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">MATERIALIZED</span> <span class="keyword">VIEW</span> student_cs_3m;</span><br></pre></td></tr></table></figure>
-
-<h2 id="（二）使用索引"><a href="#（二）使用索引" class="headerlink" title="（二）使用索引"></a>（二）使用索引</h2><h3 id="1-准备工作"><a href="#1-准备工作" class="headerlink" title="1.准备工作"></a>1.准备工作</h3><p>创建函数 gen_hanzi 用于生成随机汉字</p>
+<h2 id="二使用索引">（二）使用索引</h2>
+<h3 id="准备工作">1.准备工作</h3>
+<p>创建函数 gen_hanzi 用于生成随机汉字</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> gen_hanzi(<span class="type">INT</span>) <span class="keyword">RETURNS</span> <span class="type">TEXT</span> <span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">res <span class="type">TEXT</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">IF</span> <span class="meta">$1</span> &gt;=<span class="number">1</span> <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">SELECT</span> string_agg(chr(<span class="number">19968</span>+(random()*<span class="number">20901</span>)::<span class="type">int</span>), <span class="string">&#x27;&#x27;</span>) <span class="keyword">INTO</span> res</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">FROM</span> generate_series(<span class="number">1</span>,<span class="meta">$1</span>);</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">RETURN</span> res;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">RETURN</span> <span class="keyword">NULL</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql <span class="keyword">STRICT</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-装载数据"><a href="#2-装载数据" class="headerlink" title="2.装载数据"></a>2.装载数据</h3><figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (</span><br><span class="line">generate_series(<span class="number">30000</span>, <span class="number">99999</span>)::<span class="type">text</span>,		<span class="comment">--在postgresql中使用::text来把数字转换为字符</span></span><br><span class="line">gen_hanzi(<span class="number">3</span>),</span><br><span class="line"><span class="string">&#x27;男&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;2001-09-01&#x27;</span>::<span class="type">date</span> + floor((random() * <span class="number">365</span>))::<span class="type">int</span>,</span><br><span class="line"><span class="string">&#x27;CS&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
+<h3 id="装载数据">2.装载数据</h3>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> student <span class="keyword">VALUES</span> (</span><br><span class="line">generate_series(<span class="number">30000</span>, <span class="number">99999</span>)::<span class="type">text</span>,		<span class="comment">--在postgresql中使用::text来把数字转换为字符</span></span><br><span class="line">gen_hanzi(<span class="number">3</span>),</span><br><span class="line"><span class="string">&#x27;男&#x27;</span>,</span><br><span class="line"><span class="string">&#x27;2001-09-01&#x27;</span>::<span class="type">date</span> + floor((random() * <span class="number">365</span>))::<span class="type">int</span>,</span><br><span class="line"><span class="string">&#x27;CS&#x27;</span>);</span><br></pre></td></tr></table></figure>
 <p>查找student表行数</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> COUNT(*) <span class="keyword">FROM</span> student</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520200206683.png" alt="image-20240520200206683" style="zoom: 80%;" />
-
-<h3 id="3-创建索引"><a href="#3-创建索引" class="headerlink" title="3.创建索引"></a>3.创建索引</h3><p>【查询 15】查询 student 表中 sname 值为“墐膫進”的记录：</p>
+<p><img src="./image-20240520200206683.png" alt="image-20240520200206683" style="zoom: 80%;" /></p>
+<h3 id="创建索引">3.创建索引</h3>
+<p>【查询 15】查询 student 表中 sname 值为“墐膫進”的记录：</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> sname = <span class="string">&#x27;墐膫進&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520200743213.png" alt="image-20240520200743213" style="zoom:80%;" />
-
+<p><img src="./image-20240520200743213.png" alt="image-20240520200743213" style="zoom:80%;" /></p>
 <p>执行结果为107ms</p>
 <p>使用 EXPLAIN 语句查看查询执行计划</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> sname = <span class="string">&#x27;墐膫進&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520200917369.png" alt="image-20240520200917369" style="zoom:80%;" />
-
+<p><img src="./image-20240520200917369.png" alt="image-20240520200917369" style="zoom:80%;" /></p>
 <p>在 sname 列上创建索引</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> sname_idx <span class="keyword">ON</span> student(sname);</span><br></pre></td></tr></table></figure>
-
 <p>通过查询系统表 pg_indexes，查看表 student 上建立的全部索引</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> indexname, indexdef</span><br><span class="line"><span class="keyword">FROM</span> pg_indexes</span><br><span class="line"><span class="keyword">WHERE</span> tablename = <span class="string">&#x27;student&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520201203069.png" alt="image-20240520201203069" style="zoom:80%;" />
-
-<h3 id="4-使用索引"><a href="#4-使用索引" class="headerlink" title="4.使用索引"></a>4.使用索引</h3><p>再次执行上面的查询</p>
-<img src="./image-20240520201321440.png" alt="image-20240520201321440" style="zoom:80%;" />
-
+<p><img src="./image-20240520201203069.png" alt="image-20240520201203069" style="zoom:80%;" /></p>
+<h3 id="使用索引">4.使用索引</h3>
+<p>再次执行上面的查询</p>
+<p><img src="./image-20240520201321440.png" alt="image-20240520201321440" style="zoom:80%;" /></p>
 <p>结果是65ms，是之前查询耗时的60.74%</p>
 <p>再次查询执行计划</p>
-<img src="./image-20240520201425549.png" alt="image-20240520201425549" style="zoom:80%;" />
-
-<h3 id="5-删除索引"><a href="#5-删除索引" class="headerlink" title="5.删除索引"></a>5.删除索引</h3><p>【查询 16】删除索引 sname_idx。</p>
+<p><img src="./image-20240520201425549.png" alt="image-20240520201425549" style="zoom:80%;" /></p>
+<h3 id="删除索引">5.删除索引</h3>
+<p>【查询 16】删除索引 sname_idx。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> sname_idx;</span><br></pre></td></tr></table></figure>
-
-<h3 id="6-多列索引"><a href="#6-多列索引" class="headerlink" title="6.多列索引"></a>6.多列索引</h3><p>【查询 17】在 student 表的 sname 和 sbirth 列上创建多列索引。</p>
+<h3 id="多列索引">6.多列索引</h3>
+<p>【查询 17】在 student 表的 sname 和 sbirth 列上创建多列索引。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> sname = <span class="string">&#x27;墐膫進&#x27;</span><span class="keyword">AND</span> sbirth = <span class="string">&#x27;2001-10-13&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520202019236.png" alt="image-20240520202019236" style="zoom:80%;" />
-
+<p><img src="./image-20240520202019236.png" alt="image-20240520202019236" style="zoom:80%;" /></p>
 <p>因为前面 sname 上的索引已删除，该查询只能使用顺序扫描。</p>
-<img src="./image-20240520202043090.png" alt="image-20240520202043090" style="zoom:80%;" />
-
+<p><img src="./image-20240520202043090.png" alt="image-20240520202043090" style="zoom:80%;" /></p>
 <p>查询耗时86ms</p>
 <p>在 student 表的 sname 和 sbirth 列上创建多列索引</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> sname_sbirth_idx <span class="keyword">ON</span> student(sname, sbirth);</span><br></pre></td></tr></table></figure>
-
 <p>再次查看执行计划</p>
-<img src="./image-20240520202214321.png" alt="image-20240520202214321" style="zoom:80%;" />
-
+<p><img src="./image-20240520202214321.png" alt="image-20240520202214321" style="zoom:80%;" /></p>
 <p>再次执行查询，查询耗时83ms</p>
-<img src="./image-20240520202318981.png" alt="image-20240520202318981" style="zoom:80%;" />
-
+<p><img src="./image-20240520202318981.png" alt="image-20240520202318981" style="zoom:80%;" /></p>
 <p>创建多列索引要考虑列的顺序</p>
 <p>查询以下查询的查询计划</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> sname = <span class="string">&#x27;墐膫進&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520202620113.png" alt="image-20240520202620113" style="zoom:80%;" />
-
+<p><img src="./image-20240520202620113.png" alt="image-20240520202620113" style="zoom:80%;" /></p>
 <p>查询以下查询的查询计划</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">EXPLAIN</span> <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> student sbirth = <span class="string">&#x27;2001-10-13&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520202751153.png" alt="image-20240520202751153" style="zoom:80%;" />
-
+<p><img src="./image-20240520202751153.png" alt="image-20240520202751153" style="zoom:80%;" /></p>
 <p>删除该索引</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">INDEX</span> sname_sbirth_idx;</span><br></pre></td></tr></table></figure>
-
-<h2 id="（三）使用存储过程"><a href="#（三）使用存储过程" class="headerlink" title="（三）使用存储过程"></a>（三）使用存储过程</h2><h3 id="1-创建存储过程"><a href="#1-创建存储过程" class="headerlink" title="1.创建存储过程"></a>1.创建存储过程</h3><p><font color = "red">这一部分在postgresql中语法有所不同</font></p>
+<h2 id="三使用存储过程">（三）使用存储过程</h2>
+<h3 id="创建存储过程">1.创建存储过程</h3>
+<p><font color = "red">这一部分在postgresql中语法有所不同</font></p>
 <p>【查询 18】创建一个存储过程，用于向 sc 表中插入一条记录。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> insert_sc(param1 <span class="type">CHAR</span>(<span class="number">5</span>), param2 <span class="type">SMALLINT</span>, param3 <span class="type">SMALLINT</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INSERT</span> <span class="keyword">INTO</span> sc (sno, cno, score) <span class="keyword">VALUES</span> (param1, param2, param3);</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>【查询 19】创建一个存储过程，用于删除 sc 表中一条指定学号和课号的记录。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建存储过程</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> delete_sc(param1 <span class="type">CHAR</span>(<span class="number">5</span>), param2 <span class="type">SMALLINT</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">DELETE</span> <span class="keyword">FROM</span> sc</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sc.sno = param1 <span class="keyword">AND</span> sc.cno = param2;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-调用存储过程"><a href="#2-调用存储过程" class="headerlink" title="2.调用存储过程"></a>2.调用存储过程</h3><p>【查询 20】调用存储过程 insert_sc，向 sc 表中插入记录： ‘22003’, 1, 86</p>
+<h3 id="调用存储过程">2.调用存储过程</h3>
+<p>【查询 20】调用存储过程 insert_sc，向 sc 表中插入记录： '22003', 1, 86</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> insert_sc(<span class="string">&#x27;22003&#x27;</span>::<span class="type">CHAR</span>(<span class="number">5</span>), <span class="number">1</span>::<span class="type">SMALLINT</span>, <span class="number">86</span>::<span class="type">SMALLINT</span>);</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520204442936.png" alt="image-20240520204442936" style="zoom:80%;" />
-
-<p>【查询 21】调用存储过程 delete_sc，将’22003’选修 1 号课程的记录删除。</p>
+<p><img src="./image-20240520204442936.png" alt="image-20240520204442936" style="zoom:80%;" /></p>
+<p>【查询 21】调用存储过程 delete_sc，将'22003'选修 1 号课程的记录删除。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> delete_sc(<span class="string">&#x27;22003&#x27;</span>::<span class="type">CHAR</span>(<span class="number">5</span>), <span class="number">1</span>::<span class="type">SMALLINT</span>);</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520204611357.png" alt="image-20240520204611357" style="zoom:80%;" />
-
-<h3 id="3-输出参数与返回值"><a href="#3-输出参数与返回值" class="headerlink" title="3.输出参数与返回值"></a>3.输出参数与返回值</h3><p>【查询 22】创建一个存储过程，根据指定的学号返回学生姓名。</p>
+<p><img src="./image-20240520204611357.png" alt="image-20240520204611357" style="zoom:80%;" /></p>
+<h3 id="输出参数与返回值">3.输出参数与返回值</h3>
+<p>【查询 22】创建一个存储过程，根据指定的学号返回学生姓名。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 创建带有输入和输出参数的存储过程</span></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> get_sname(<span class="keyword">IN</span> stu_num <span class="type">TEXT</span>, <span class="keyword">OUT</span> stu_name <span class="type">TEXT</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">SELECT</span> sname <span class="keyword">INTO</span> stu_name</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FROM</span> student</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sno = stu_num;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>可以把 OUT 参数传出来的值保存到变量中。如下面代码段</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DO</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    var_out <span class="type">TEXT</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 调用存储过程并获取输出参数的值</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">CALL</span> get_sname(<span class="string">&#x27;22001&#x27;</span>, var_out);</span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 输出结果</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">&#x27;姓名: %&#x27;</span>, var_out;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>结果如下</p>
-<img src="./image-20240520205336365.png" alt="image-20240520205336365" style="zoom:80%;" />
-
+<p><img src="./image-20240520205336365.png" alt="image-20240520205336365" style="zoom:80%;" /></p>
 <p>其中DO表示的是执行的匿名代码块，可以忽略</p>
 <p>【查询 23】创建一个函数，返回指定学号学生的平均成绩。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> get_avg_score(num <span class="type">CHAR</span>(<span class="number">5</span>))</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">NUMERIC</span>(<span class="number">5</span>, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">AS</span></span><br><span class="line">$$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    avg_score <span class="type">NUMERIC</span>(<span class="number">5</span>, <span class="number">2</span>);</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">SELECT</span> AVG(score)</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INTO</span> avg_score</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FROM</span> sc</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sc.sno = num;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RETURN</span> avg_score;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql;</span><br></pre></td></tr></table></figure>
-
 <p>调用函数</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> get_avg_score(<span class="string">&#x27;22001&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520205807700.png" alt="image-20240520205807700" style="zoom:80%;" />
-
-<h3 id="4-定义变量"><a href="#4-定义变量" class="headerlink" title="4.定义变量"></a>4.定义变量</h3><p>【查询 24】创建一个存储过程，根据指定的学号，输出学生的全部信息。</p>
+<p><img src="./image-20240520205807700.png" alt="image-20240520205807700" style="zoom:80%;" /></p>
+<h3 id="定义变量">4.定义变量</h3>
+<p>【查询 24】创建一个存储过程，根据指定的学号，输出学生的全部信息。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> get_student(stu_num <span class="type">TEXT</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    stu_name student.sname<span class="meta">%TYPE</span>;</span></span><br><span class="line"><span class="language-pgsql">    stu_row student<span class="meta">%ROWTYPE</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 查询并输出学生姓名</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">SELECT</span> sname</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INTO</span> stu_name</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FROM</span> student</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sno = stu_num;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">&#x27;学号: %, 姓名: %&#x27;</span>, stu_num, stu_name;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 查询并输出学生的所有信息</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">SELECT</span> *</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INTO</span> stu_row</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FROM</span> student</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sno = stu_num;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">&#x27;学号: %, 姓名: %, 性别: %, 生日: %, 系别: %&#x27;</span>,</span></span><br><span class="line"><span class="language-pgsql">                 stu_row.sno, stu_row.sname, stu_row.sgender, stu_row.sbirth, stu_row.sdept;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="5-条件判断"><a href="#5-条件判断" class="headerlink" title="5.条件判断"></a>5.条件判断</h3><p>【查询 25】创建一个函数，返回指定学号的学生是否选修了至少一门选课，是返回1，否返回 0。</p>
+<h3 id="条件判断">5.条件判断</h3>
+<p>【查询 25】创建一个函数，返回指定学号的学生是否选修了至少一门选课，是返回1，否返回 0。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> is_in_sc(stu_num <span class="type">TEXT</span>)</span><br><span class="line"><span class="keyword">RETURNS</span> <span class="type">BIT</span></span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    ret <span class="type">BIT</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">IF</span> <span class="keyword">EXISTS</span> (<span class="keyword">SELECT</span> <span class="number">1</span> <span class="keyword">FROM</span> sc <span class="keyword">WHERE</span> sno = stu_num) <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql">        ret := B<span class="string">&#x27;1&#x27;</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">ELSE</span></span></span><br><span class="line"><span class="language-pgsql">        ret := B<span class="string">&#x27;0&#x27;</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RETURN</span> ret;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql;</span><br></pre></td></tr></table></figure>
-
 <p>调用该函数</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> is_in_sc(<span class="string">&#x27;22001&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520210359844.png" alt="image-20240520210359844" style="zoom:80%;" />
-
+<p><img src="./image-20240520210359844.png" alt="image-20240520210359844" style="zoom:80%;" /></p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> is_in_sc(<span class="string">&#x27;22003&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520210425619.png" alt="image-20240520210425619" style="zoom:80%;" />
-
-<h3 id="6-异常处理"><a href="#6-异常处理" class="headerlink" title="6.异常处理"></a>6.异常处理</h3><p>【查询 26】使用 RAISE 语句输出所有级别的消息。</p>
+<p><img src="./image-20240520210425619.png" alt="image-20240520210425619" style="zoom:80%;" /></p>
+<h3 id="异常处理">6.异常处理</h3>
+<p>【查询 26】使用 RAISE 语句输出所有级别的消息。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DO</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">DEBUG</span> <span class="string">&#x27;debug message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">LOG</span> <span class="string">&#x27;log message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">INFO</span> <span class="string">&#x27;information message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">&#x27;notice message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="built_in">WARNING</span> <span class="string">&#x27;warning message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">RAISE</span> <span class="keyword">EXCEPTION</span> <span class="string">&#x27;exception message %&#x27;</span>, now();</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520210700680.png" alt="image-20240520210700680" style="zoom:80%;" />
-
+<p><img src="./image-20240520210700680.png" alt="image-20240520210700680" style="zoom:80%;" /></p>
 <p>【查询 27】编写一个存储过程，根据学号查找选课记录，对于没有选课的和选修了两门以上课的情况进行异常处理。</p>
 <p>在 PostgreSQL 中，内置异常处理的功能稍有不同，不会自动引发 <code>no_data_found</code> 和 <code>too_many_rows</code> 异常。相反，你需要手动处理这些情况。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> handle_exception_test(stu_num <span class="type">TEXT</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    rec <span class="type">RECORD</span>;</span></span><br><span class="line"><span class="language-pgsql">    count_result <span class="type">INTEGER</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 尝试查询学生记录</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 检查是否找到多行数据</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">SELECT</span> count(*)</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">INTO</span> count_result</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">FROM</span> sc</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">WHERE</span> sno = stu_num;</span></span><br><span class="line"><span class="language-pgsql">        </span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 检查是否没有找到数据</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">IF</span> count_result = <span class="number">0</span> <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql">            <span class="keyword">RAISE</span> <span class="keyword">EXCEPTION</span> <span class="string">&#x27;学号为 % 的学生记录未找到&#x27;</span>, stu_num;</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 检查是否找到多于一行数据</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">IF</span> count_result &gt; <span class="number">1</span> <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql">            <span class="keyword">RAISE</span> <span class="keyword">EXCEPTION</span> <span class="string">&#x27;学号为 % 的学生选了多门课程&#x27;</span>, stu_num;</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 如果只有一行数据，则将其选择到 rec 中</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">SELECT</span> *</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">INTO</span> rec</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">FROM</span> sc</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">WHERE</span> sno = stu_num;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">EXCEPTION</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 捕获并处理异常</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">WHEN</span> OTHERS <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql">            <span class="keyword">RAISE</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>调用该存储过程</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> handle_exception_test(<span class="string">&#x27;22001&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520211557688.png" alt="image-20240520211557688" style="zoom:80%;" />
-
+<p><img src="./image-20240520211557688.png" alt="image-20240520211557688" style="zoom:80%;" /></p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> handle_exception_test(<span class="string">&#x27;22003&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520211620179.png" alt="image-20240520211620179" style="zoom:80%;" />
-
+<p><img src="./image-20240520211620179.png" alt="image-20240520211620179" style="zoom:80%;" /></p>
 <p>调用 insert_sc 存储过程插入一条选课数据</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> insert_sc (<span class="string">&#x27;22003&#x27;</span>::<span class="type">CHAR</span>(<span class="number">5</span>), <span class="number">1</span>::<span class="type">SMALLINT</span>, <span class="number">86</span>::<span class="type">SMALLINT</span>);</span><br></pre></td></tr></table></figure>
-
 <p>在调用该存储过程</p>
-<img src="./image-20240520211847796.png" alt="image-20240520211847796" style="zoom:80%;" />
-
-<h3 id="7-游标与循环"><a href="#7-游标与循环" class="headerlink" title="7.游标与循环"></a>7.游标与循环</h3><p>【查询 28】创建一个存储过程，获取大于等于指定成绩的学生学号、姓名、课程名称和成绩记录，并将每条记录逐行输出。</p>
+<p><img src="./image-20240520211847796.png" alt="image-20240520211847796" style="zoom:80%;" /></p>
+<h3 id="游标与循环">7.游标与循环</h3>
+<p>【查询 28】创建一个存储过程，获取大于等于指定成绩的学生学号、姓名、课程名称和成绩记录，并将每条记录逐行输出。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">PROCEDURE</span> get_student_by_score(p_score <span class="type">SMALLINT</span>)</span><br><span class="line"><span class="keyword">LANGUAGE</span> plpgsql</span><br><span class="line"><span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">DECLARE</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 定义游标</span></span></span><br><span class="line"><span class="language-pgsql">    cur <span class="type">REFCURSOR</span>;</span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 定义 RECORD 类型的变量来存储每行的返回值</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">row</span> <span class="type">RECORD</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 打开游标</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">OPEN</span> cur <span class="keyword">FOR</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">SELECT</span> s.sno, s.sname, c.cname, sc.score</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">FROM</span> sc</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> student s <span class="keyword">ON</span> sc.sno = s.sno</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">INNER</span> <span class="keyword">JOIN</span> course c <span class="keyword">ON</span> sc.cno = c.cno</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">WHERE</span> sc.score &gt;= p_score;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 获取并打印每行返回值</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">LOOP</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">FETCH NEXT</span> <span class="keyword">FROM</span> cur <span class="keyword">INTO</span> <span class="keyword">row</span>;</span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">EXIT</span> <span class="keyword">WHEN</span> <span class="keyword">NOT</span> <span class="built_in">FOUND</span>; <span class="comment">-- 当找不到时退出</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="comment">-- 打印每行的返回值</span></span></span><br><span class="line"><span class="language-pgsql">        <span class="keyword">RAISE</span> <span class="keyword">NOTICE</span> <span class="string">&#x27;学号: %, 姓名: %, 课程: %, 成绩: %&#x27;</span>, <span class="keyword">row</span>.sno, <span class="keyword">row</span>.sname, <span class="keyword">row</span>.cname, <span class="keyword">row</span>.score;</span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">END</span> <span class="keyword">LOOP</span>;</span></span><br><span class="line"><span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql">    <span class="comment">-- 关闭游标</span></span></span><br><span class="line"><span class="language-pgsql">    <span class="keyword">CLOSE</span> cur;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span>;</span><br></pre></td></tr></table></figure>
-
 <p>调用该存储过程，获取成绩大于等于 90 的学生选课记录</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CALL</span> get_student_by_score(<span class="number">90</span>::<span class="type">SMALLINT</span>);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240520212450508.png" alt="image-20240520212450508" style="zoom:80%;" />
-
-<h3 id="8-删除存储过程"><a href="#8-删除存储过程" class="headerlink" title="8.删除存储过程"></a>8.删除存储过程</h3><p>【查询 29】删除本节创建的所有存储过程。</p>
+<p><img src="./image-20240520212450508.png" alt="image-20240520212450508" style="zoom:80%;" /></p>
+<h3 id="删除存储过程">8.删除存储过程</h3>
+<p>【查询 29】删除本节创建的所有存储过程。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> insert_sc;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> delete_sc;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> get_sname;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> get_avg_score;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> get_student;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> is_in_sc;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> handle_exception_test;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">PROCEDURE</span> get_student_by_score;</span><br></pre></td></tr></table></figure>
-
-<h2 id="（四）使用触发器"><a href="#（四）使用触发器" class="headerlink" title="（四）使用触发器"></a>（四）使用触发器</h2><h3 id="1-创建触发器"><a href="#1-创建触发器" class="headerlink" title="1.创建触发器"></a>1.创建触发器</h3><p>【查询 30】在 sc 表上创建一个触发器，该触发器的作用是对分数 score 列的更新操作进行审计记录，即对 UPDATE 语句所更新的每一行，均记录用户名、操作时间、学号、课号、score 列的旧值和新值。</p>
+<h2 id="四使用触发器">（四）使用触发器</h2>
+<h3 id="创建触发器">1.创建触发器</h3>
+<p>【查询 30】在 sc 表上创建一个触发器，该触发器的作用是对分数 score 列的更新操作进行审计记录，即对 UPDATE 语句所更新的每一行，均记录用户名、操作时间、学号、课号、score 列的旧值和新值。</p>
 <p>首先，创建 sc_audit 表，用于保存该触发器产生的审计记录</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> sc_audit</span><br><span class="line">(</span><br><span class="line">log_id <span class="type">SERIAL</span>, <span class="comment">-- IDENTITY 属性</span></span><br><span class="line">login_name <span class="type">VARCHAR</span>(<span class="number">256</span>), <span class="comment">-- 登录名</span></span><br><span class="line">update_date <span class="type">TIMESTAMP</span>, <span class="comment">-- 修改时间</span></span><br><span class="line">sno <span class="type">CHAR</span>(<span class="number">5</span>), <span class="comment">-- 学号</span></span><br><span class="line">cno <span class="type">SMALLINT</span>, <span class="comment">-- 课程号</span></span><br><span class="line">score_old <span class="type">SMALLINT</span>, <span class="comment">-- 成绩的旧值</span></span><br><span class="line">score_new <span class="type">SMALLINT</span>, <span class="comment">-- 成绩的新值</span></span><br><span class="line"><span class="keyword">CONSTRAINT</span> sc_audit_pk <span class="keyword">PRIMARY KEY</span>(log_id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
 <p>创建触发器函数 sc_update_audit</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">OR REPLACE</span> <span class="keyword">FUNCTION</span> sc_update_audit() <span class="keyword">RETURNS</span> <span class="type">TRIGGER</span> <span class="keyword">AS</span> $$<span class="language-pgsql"></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">BEGIN</span></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">IF</span> <span class="built_in">OLD</span>.score &lt;&gt; <span class="built_in">NEW</span>.score <span class="keyword">THEN</span></span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> sc_audit(login_name, update_date, sno, cno, score_old, score_new)</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">SELECT</span> <span class="built_in">CURRENT_USER</span>, <span class="built_in">CURRENT_TIMESTAMP</span>, <span class="built_in">OLD</span>.sno, <span class="built_in">OLD</span>.cno, <span class="built_in">OLD</span>.score, <span class="built_in">NEW</span>.score;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span> <span class="keyword">IF</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">RETURN</span> <span class="built_in">NEW</span>;</span></span><br><span class="line"><span class="language-pgsql"><span class="keyword">END</span>;</span></span><br><span class="line"><span class="language-pgsql">$$</span> <span class="keyword">LANGUAGE</span> plpgsql;</span><br></pre></td></tr></table></figure>
-
 <p>创建 sc 表上的触发器 tr_sc_update_audit，绑定触发器函数 sc_update_audit</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TRIGGER</span> tr_sc_update_audit</span><br><span class="line"><span class="keyword">AFTER</span> <span class="keyword">UPDATE</span> <span class="keyword">ON</span> sc</span><br><span class="line"><span class="keyword">FOR</span> <span class="keyword">EACH</span> <span class="keyword">ROW</span></span><br><span class="line"><span class="keyword">EXECUTE</span> <span class="keyword">PROCEDURE</span> sc_update_audit();</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-使用触发器"><a href="#2-使用触发器" class="headerlink" title="2.使用触发器"></a>2.使用触发器</h3><p>执行 UPDATE 语句，给学号为 22001 的学生的每门课程成绩加 1 分</p>
+<h3 id="使用触发器">2.使用触发器</h3>
+<p>执行 UPDATE 语句，给学号为 22001 的学生的每门课程成绩加 1 分</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> sc <span class="keyword">SET</span> score = score + <span class="number">1</span> <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22001&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查看sc表</p>
-<img src="./image-20240520213157505.png" alt="image-20240520213157505" style="zoom:80%;" />
-
+<p><img src="./image-20240520213157505.png" alt="image-20240520213157505" style="zoom:80%;" /></p>
 <p>查看sc_audit表</p>
-<img src="./image-20240520213254080.png" alt="image-20240520213254080" style="zoom:80%;" />
-
+<p><img src="./image-20240520213254080.png" alt="image-20240520213254080" style="zoom:80%;" /></p>
 <p>执行 UPDATE 语句，给学号为 22001 的学生的每门课程成绩减 1 分，即恢复为每门课程原来的成绩</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> sc <span class="keyword">SET</span> score = score - <span class="number">1</span> <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22001&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
 <p>查看sc表</p>
-<img src="./image-20240520213425020.png" alt="image-20240520213425020" style="zoom:80%;" />
-
+<p><img src="./image-20240520213425020.png" alt="image-20240520213425020" style="zoom:80%;" /></p>
 <p>再查看 sc_audit 表</p>
-<img src="./image-20240520213454419.png" alt="image-20240520213454419" style="zoom:80%;" />
-
-<h3 id="3-修改触发器名称"><a href="#3-修改触发器名称" class="headerlink" title="3.修改触发器名称"></a>3.修改触发器名称</h3><p>【查询 31】将触发器 tr_sc_update_audit 的名称修改为 tr_score_audit。</p>
+<p><img src="./image-20240520213454419.png" alt="image-20240520213454419" style="zoom:80%;" /></p>
+<h3 id="修改触发器名称">3.修改触发器名称</h3>
+<p>【查询 31】将触发器 tr_sc_update_audit 的名称修改为 tr_score_audit。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TRIGGER</span> tr_sc_update_audit <span class="keyword">ON</span> sc <span class="keyword">RENAME</span> <span class="keyword">TO</span> tr_score_audit;</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-删除触发器及相关数据库对象"><a href="#4-删除触发器及相关数据库对象" class="headerlink" title="4.删除触发器及相关数据库对象"></a>4.删除触发器及相关数据库对象</h3><p>【查询 32】将前面建立的触发器及相关的数据库对象删除。</p>
+<h3 id="删除触发器及相关数据库对象">4.删除触发器及相关数据库对象</h3>
+<p>【查询 32】将前面建立的触发器及相关的数据库对象删除。</p>
 <p>删除触发器 tr_score_audit</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TRIGGER</span> tr_score_audit <span class="keyword">ON</span> sc;</span><br></pre></td></tr></table></figure>
-
 <p>删除触发器函数 sc_update_audit</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> sc_update_audit;</span><br></pre></td></tr></table></figure>
-
 <p>删除 sc_audit 表</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> sc_audit;</span><br></pre></td></tr></table></figure>
-
-<h2 id="（五）使用事务机制"><a href="#（五）使用事务机制" class="headerlink" title="（五）使用事务机制"></a>（五）使用事务机制</h2><p><font color = "red">此部分和操作手册里很不相同，局限于本机状态只有pdAdmin4</font></p>
-<h3 id="1-验证事务原子性"><a href="#1-验证事务原子性" class="headerlink" title="1.验证事务原子性"></a>1.验证事务原子性</h3><figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 开启事务</span></span><br><span class="line"><span class="keyword">BEGIN</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 向 sc 表中插入一条数据</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> sc <span class="keyword">VALUES</span> (<span class="string">&#x27;22004&#x27;</span>, <span class="number">1</span>, <span class="number">86</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询表中的数据以确认插入</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22004&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 回滚事务</span></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 再次查询表中的数据以确认回滚</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22004&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
+<h2 id="五使用事务机制">（五）使用事务机制</h2>
+<p><font color = "red">此部分和操作手册里很不相同，局限于本机状态只有pdAdmin4</font></p>
+<h3 id="验证事务原子性">1.验证事务原子性</h3>
+<figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 开启事务</span></span><br><span class="line"><span class="keyword">BEGIN</span> <span class="keyword">TRANSACTION</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 向 sc 表中插入一条数据</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> sc <span class="keyword">VALUES</span> (<span class="string">&#x27;22004&#x27;</span>, <span class="number">1</span>, <span class="number">86</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询表中的数据以确认插入</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22004&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 回滚事务</span></span><br><span class="line"><span class="keyword">ROLLBACK</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 再次查询表中的数据以确认回滚</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> sc <span class="keyword">WHERE</span> sno = <span class="string">&#x27;22004&#x27;</span>;</span><br></pre></td></tr></table></figure>
 <p>插入后</p>
-<img src="./image-20240520214656091.png" alt="image-20240520214656091" style="zoom:80%;" />
-
+<p><img src="./image-20240520214656091.png" alt="image-20240520214656091" style="zoom:80%;" /></p>
 <p>回滚后</p>
-<img src="./image-20240520214717416.png" alt="image-20240520214717416" style="zoom:80%;" />
-
+<p><img src="./image-20240520214717416.png" alt="image-20240520214717416" style="zoom:80%;" /></p>
 <p><font color = "red">后面的部分需要用到SSH连接数据库进行相应的操作，故没有做</font></p>
 
     </div>
@@ -776,7 +690,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E4%BD%BF%E7%94%A8%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.</span> <span class="nav-text">（一）使用视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%9A%E4%B9%89%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.定义视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9F%A5%E8%AF%A2%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.2.</span> <span class="nav-text">2.查询视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.3.</span> <span class="nav-text">3.修改视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%A0%E9%99%A4%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.4.</span> <span class="nav-text">4.删除视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.5.</span> <span class="nav-text">5.物化视图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.</span> <span class="nav-text">（二）使用索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.2.1.</span> <span class="nav-text">1.准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%A3%85%E8%BD%BD%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.装载数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.创建索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.4.</span> <span class="nav-text">4.使用索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.5.</span> <span class="nav-text">5.删除索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%A4%9A%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.6.</span> <span class="nav-text">6.多列索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E4%BD%BF%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">（三）使用存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.1.</span> <span class="nav-text">1.创建存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B0%83%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.调用存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.输出参数与返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.4.</span> <span class="nav-text">4.定义变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">3.3.5.</span> <span class="nav-text">5.条件判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">3.3.6.</span> <span class="nav-text">6.异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%B8%B8%E6%A0%87%E4%B8%8E%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.3.7.</span> <span class="nav-text">7.游标与循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.8.</span> <span class="nav-text">8.删除存储过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E4%BD%BF%E7%94%A8%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.</span> <span class="nav-text">（四）使用触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.1.</span> <span class="nav-text">1.创建触发器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BD%BF%E7%94%A8%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.2.</span> <span class="nav-text">2.使用触发器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%AE%E6%94%B9%E8%A7%A6%E5%8F%91%E5%99%A8%E5%90%8D%E7%A7%B0"><span class="nav-number">3.4.3.</span> <span class="nav-text">3.修改触发器名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%A0%E9%99%A4%E8%A7%A6%E5%8F%91%E5%99%A8%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.4.4.</span> <span class="nav-text">4.删除触发器及相关数据库对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.</span> <span class="nav-text">（五）使用事务机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%AA%8C%E8%AF%81%E4%BA%8B%E5%8A%A1%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">3.5.1.</span> <span class="nav-text">1.验证事务原子性</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BD%BF%E7%94%A8%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.</span> <span class="nav-text">（一）使用视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.1.</span> <span class="nav-text">1.定义视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.2.</span> <span class="nav-text">2.查询视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.3.</span> <span class="nav-text">3.修改视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.4.</span> <span class="nav-text">4.删除视图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE"><span class="nav-number">3.1.5.</span> <span class="nav-text">5.物化视图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.</span> <span class="nav-text">（二）使用索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">3.2.1.</span> <span class="nav-text">1.准备工作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%85%E8%BD%BD%E6%95%B0%E6%8D%AE"><span class="nav-number">3.2.2.</span> <span class="nav-text">2.装载数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.创建索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.4.</span> <span class="nav-text">4.使用索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.5.</span> <span class="nav-text">5.删除索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%88%97%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.6.</span> <span class="nav-text">6.多列索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%BD%BF%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">（三）使用存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.1.</span> <span class="nav-text">1.创建存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.调用存储过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.输出参数与返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.4.</span> <span class="nav-text">4.定义变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="nav-number">3.3.5.</span> <span class="nav-text">5.条件判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">3.3.6.</span> <span class="nav-text">6.异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E6%A0%87%E4%B8%8E%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.3.7.</span> <span class="nav-text">7.游标与循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.3.8.</span> <span class="nav-text">8.删除存储过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E4%BD%BF%E7%94%A8%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.</span> <span class="nav-text">（四）使用触发器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.1.</span> <span class="nav-text">1.创建触发器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.4.2.</span> <span class="nav-text">2.使用触发器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E8%A7%A6%E5%8F%91%E5%99%A8%E5%90%8D%E7%A7%B0"><span class="nav-number">3.4.3.</span> <span class="nav-text">3.修改触发器名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%A7%A6%E5%8F%91%E5%99%A8%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.4.4.</span> <span class="nav-text">4.删除触发器及相关数据库对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E4%BD%BF%E7%94%A8%E4%BA%8B%E5%8A%A1%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.</span> <span class="nav-text">（五）使用事务机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E4%BA%8B%E5%8A%A1%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">3.5.1.</span> <span class="nav-text">1.验证事务原子性</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -868,12 +782,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -981,6 +895,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

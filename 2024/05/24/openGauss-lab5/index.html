@@ -295,125 +295,96 @@
 
       
         <p><font color = "red" size = "6">本次实验由于华为云服务器欠费，没有使用openGauss数据库，而使用的是自己电脑的postgresql</font></p>
-<h1 id="一、实验介绍"><a href="#一、实验介绍" class="headerlink" title="一、实验介绍"></a>一、实验介绍</h1><p>与日志和恢复机制相同，并发控制与锁机制是 openGauss 数据库实现事务处理 ACID 特性的另一重要部分。目前数据库原理教学中对于并发控制与锁机制模块缺乏行之有效的实践教学手段，部分原因归咎于并发控制与锁机制在数据库管理系统中涉及到的相关代码复杂繁复。本实验旨在借助 openGauss 的开源代码，一方面对于并发控制与锁机制的原理进行落地的代码工程实践，另一方面最大限度地减小源代码繁复程度的影响。本章实验原理主要包括 openGauss 的事务处理和锁机制。首先，通过实验查看 openGauss 数据库中表上的加锁信息；然后，通过复现的方式分别验证 Share 锁、Access Share 锁、Row Exclusive 锁和 Access Exclusive 锁。</p>
+<h1 id="一实验介绍">一、实验介绍</h1>
+<p>与日志和恢复机制相同，并发控制与锁机制是 openGauss 数据库实现事务处理 ACID 特性的另一重要部分。目前数据库原理教学中对于并发控制与锁机制模块缺乏行之有效的实践教学手段，部分原因归咎于并发控制与锁机制在数据库管理系统中涉及到的相关代码复杂繁复。本实验旨在借助 openGauss 的开源代码，一方面对于并发控制与锁机制的原理进行落地的代码工程实践，另一方面最大限度地减小源代码繁复程度的影响。本章实验原理主要包括 openGauss 的事务处理和锁机制。首先，通过实验查看 openGauss 数据库中表上的加锁信息；然后，通过复现的方式分别验证 Share 锁、Access Share 锁、Row Exclusive 锁和 Access Exclusive 锁。</p>
 <p>并发控制与锁机制也是数据库管理系统实现中最为复杂和精妙部分之一。与日志和恢复部分类似，会涉及到若干系统层面的实现代码。希望通过本实验的实践内容，提升对于并发控制与锁机制的理解程度，更好地认识系统软件在工程实现方面的复杂性。</p>
-<h1 id="二、实验目的"><a href="#二、实验目的" class="headerlink" title="二、实验目的"></a>二、实验目的</h1><ol>
-<li><p>理解 openGauss 事务处理原理。</p>
-</li>
-<li><p>了解 openGauss 事务处理模块的实现机制。</p>
-</li>
-<li><p>理解 openGauss 锁机制原理。</p>
-</li>
-<li><p>了解 openGauss 锁机制的若干实现过程。</p>
-</li>
-<li><p>掌握 openGauss 中 Share 锁的复现方法。</p>
-</li>
-<li><p>掌握 openGauss 中 Access Share 锁的复现方法。</p>
-</li>
-<li><p>掌握 openGauss 中 Row Exclusive 锁的复现方法。</p>
-</li>
-<li><p>掌握 openGauss 中 Access Exclusive 锁的复现方法。</p>
-</li>
-<li><p>了解与本实验相关的函数与结构体的源代码。</p>
-</li>
+<h1 id="二实验目的">二、实验目的</h1>
+<ol type="1">
+<li><p>理解 openGauss 事务处理原理。</p></li>
+<li><p>了解 openGauss 事务处理模块的实现机制。</p></li>
+<li><p>理解 openGauss 锁机制原理。</p></li>
+<li><p>了解 openGauss 锁机制的若干实现过程。</p></li>
+<li><p>掌握 openGauss 中 Share 锁的复现方法。</p></li>
+<li><p>掌握 openGauss 中 Access Share 锁的复现方法。</p></li>
+<li><p>掌握 openGauss 中 Row Exclusive 锁的复现方法。</p></li>
+<li><p>掌握 openGauss 中 Access Exclusive 锁的复现方法。</p></li>
+<li><p>了解与本实验相关的函数与结构体的源代码。</p></li>
 </ol>
-<h1 id="三、实验步骤和结果"><a href="#三、实验步骤和结果" class="headerlink" title="三、实验步骤和结果"></a>三、实验步骤和结果</h1><h2 id="（一）查看锁信息"><a href="#（一）查看锁信息" class="headerlink" title="（一）查看锁信息"></a>（一）查看锁信息</h2><p>1.创建表</p>
+<h1 id="三实验步骤和结果">三、实验步骤和结果</h1>
+<h2 id="一查看锁信息">（一）查看锁信息</h2>
+<p>1.创建表</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> users</span><br><span class="line">(</span><br><span class="line"> u_id <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 用户 id，用于系统登录账户名（主键）</span></span><br><span class="line"> u_passwd <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 密码，用于系统登录密码</span></span><br><span class="line"> u_name <span class="type">varchar</span>(<span class="number">10</span>), <span class="comment">-- 真实姓名</span></span><br><span class="line"> u_idnum <span class="type">varchar</span>(<span class="number">20</span>), <span class="comment">-- 证件号码</span></span><br><span class="line"> u_regtime <span class="type">timestamp</span>, <span class="comment">-- 注册时间</span></span><br><span class="line"> <span class="keyword">CONSTRAINT</span> pk_users <span class="keyword">PRIMARY KEY</span> (u_id)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
 <p>2.插入一些随机数据（postgresql版）</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users <span class="keyword">VALUES</span> (</span><br><span class="line"> to_char(generate_series(<span class="number">100</span>, <span class="number">199</span>), <span class="string">&#x27;FM999&#x27;</span>),</span><br><span class="line"> to_char(floor(random() * <span class="number">100000000</span>), <span class="string">&#x27;09999999&#x27;</span>),</span><br><span class="line"> to_char(<span class="number">10000</span> + floor(random() * <span class="number">10000</span>), <span class="string">&#x27;09999&#x27;</span>),</span><br><span class="line"> to_char(<span class="number">10000000000</span> + floor(random() * <span class="number">10000000000</span>), <span class="string">&#x27;09999999999&#x27;</span>),</span><br><span class="line"> <span class="built_in">CURRENT_DATE</span> + floor(random() * <span class="number">15</span>)::<span class="type">int</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
 <p>3.首先通过 SELECT pg_backend_pid();命令，我们可以查看当前会话的会话 id，实验结果如下；</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> pg_backend_pid( );</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524010323857.png" alt="image-20240524010323857" style="zoom:80%;" />
-
+<p><img src="./image-20240524010323857.png" alt="image-20240524010323857" style="zoom:80%;" /></p>
 <p>4.再从系统表中查找到当前会话所添加的锁</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524010413363.png" alt="image-20240524010413363" style="zoom:80%;" />
-
+<p><img src="./image-20240524010413363.png" alt="image-20240524010413363" style="zoom:80%;" /></p>
 <p>5.接下来找到我们所创建的表 users 的 relation id。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="type">oid</span> <span class="keyword">FROM</span> pg_class <span class="keyword">WHERE</span> relname=<span class="string">&#x27;users&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524010452402.png" alt="image-20240524010452402" style="zoom:80%;" />
-
+<p><img src="./image-20240524010452402.png" alt="image-20240524010452402" style="zoom:80%;" /></p>
 <p>Users表对应的id为16736</p>
-<h2 id="（二）复现Share锁"><a href="#（二）复现Share锁" class="headerlink" title="（二）复现Share锁"></a>（二）复现Share锁</h2><p>1.生成事务，添加 Share 锁。</p>
+<h2 id="二复现share锁">（二）复现Share锁</h2>
+<p>1.生成事务，添加 Share 锁。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> idx_idnum <span class="keyword">ON</span> users(u_idnum);</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524010800429.png" alt="image-20240524010800429" style="zoom:80%;" />
-
+<p><img src="./image-20240524010800429.png" alt="image-20240524010800429" style="zoom:80%;" /></p>
 <p>2.进行 INSERT 操作</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> users <span class="keyword">VALUES</span> (<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;asdzxc&#x27;</span>,<span class="string">&#x27;1234&#x27;</span>,<span class="string">&#x27;2000-04-20&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
 <p>打开另一个会话窗口，进行 INSERT 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。如下：</p>
-<img src="./image-20240524011428902.png" alt="image-20240524011428902" style="zoom:80%;" />
-
+<p><img src="./image-20240524011428902.png" alt="image-20240524011428902" style="zoom:80%;" /></p>
 <p>打开另一个会话窗口，进行 SELECT 操作，执行结果如下：</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;100&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524011333904.png" alt="image-20240524011333904" style="zoom:80%;" />
-
+<p><img src="./image-20240524011333904.png" alt="image-20240524011333904" style="zoom:80%;" /></p>
 <p>4.提交事务，释放 Share 锁</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
-
 <p>第二个会话INSERT操作执行成功</p>
-<img src="./image-20240524011533824.png" alt="image-20240524011533824" style="zoom:80%;" />
-
-<h2 id="（三）复现Access-Share锁"><a href="#（三）复现Access-Share锁" class="headerlink" title="（三）复现Access Share锁"></a>（三）复现Access Share锁</h2><p>1.生成锁</p>
+<p><img src="./image-20240524011533824.png" alt="image-20240524011533824" style="zoom:80%;" /></p>
+<h2 id="三复现access-share锁">（三）复现Access Share锁</h2>
+<p>1.生成锁</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;100&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524011828576.png" alt="image-20240524011828576" style="zoom:80%;" />
-
+<p><img src="./image-20240524011828576.png" alt="image-20240524011828576" style="zoom:80%;" /></p>
 <p>2.进行 SELECT 操作</p>
 <p>打开另一个会话窗口，进行 SELECT 操作，顺利执行完成。执行结果如下</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> u_id = <span class="string">&#x27;120&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p><img src="/2024/05/24/openGauss-lab5/image-20240524011906190.png" alt="image-20240524011906190"></p>
+<figure>
+<img src="./image-20240524011906190.png" alt="image-20240524011906190" /><figcaption aria-hidden="true">image-20240524011906190</figcaption>
+</figure>
 <p>3.进行 ALTER 操作</p>
 <p>打开另一个会话窗口，进行 ALTER 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> users <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> address <span class="type">varchar</span>(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-
 <p>执行结果如下：</p>
-<img src="./image-20240524012034129.png" alt="image-20240524012034129" style="zoom:80%;" />
-
+<p><img src="./image-20240524012034129.png" alt="image-20240524012034129" style="zoom:80%;" /></p>
 <p>4.提交事务，释放锁</p>
 <p>在第一个会话中提交事务，发现第三个会话中的 ALTER 成功执行。执行结果如下</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524012121580.png" alt="image-20240524012121580" style="zoom:80%;" />
-
-<h2 id="（四）复现Row-Exclusive锁"><a href="#（四）复现Row-Exclusive锁" class="headerlink" title="（四）复现Row Exclusive锁"></a>（四）复现Row Exclusive锁</h2><p>1.生成锁</p>
+<p><img src="./image-20240524012121580.png" alt="image-20240524012121580" style="zoom:80%;" /></p>
+<h2 id="四复现row-exclusive锁">（四）复现Row Exclusive锁</h2>
+<p>1.生成锁</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">UPDATE</span> users <span class="keyword">SET</span> u_passwd=<span class="string">&#x27;123asd&#x27;</span> <span class="keyword">WHERE</span> u_id=<span class="string">&#x27;120&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524012315829.png" alt="image-20240524012315829" style="zoom:80%;" />
-
+<p><img src="./image-20240524012315829.png" alt="image-20240524012315829" style="zoom:80%;" /></p>
 <p>2.此时打开另一个会话窗口，进行 CREATE INDEX 操作，发现该命令<strong>被堵塞</strong>，无法执行完成。执行结果如下：</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">INDEX</span> idx_name <span class="keyword">ON</span> users(u_name);</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524012436900.png" alt="image-20240524012436900" style="zoom:80%;" />
-
+<p><img src="./image-20240524012436900.png" alt="image-20240524012436900" style="zoom:80%;" /></p>
 <p>3.再在第一个会话中提交事务，发现第二个会话中的 CREATE INDEX 操作成功执行。第二个会话执行结果如下：</p>
-<img src="./image-20240524012527876.png" alt="image-20240524012527876" style="zoom:80%;" />
-
-<h2 id="（五）复现-Access-Exclusive-锁"><a href="#（五）复现-Access-Exclusive-锁" class="headerlink" title="（五）复现 Access Exclusive 锁"></a>（五）复现 Access Exclusive 锁</h2><p>1.生成锁执行结果如下</p>
+<p><img src="./image-20240524012527876.png" alt="image-20240524012527876" style="zoom:80%;" /></p>
+<h2 id="五复现-access-exclusive-锁">（五）复现 Access Exclusive 锁</h2>
+<p>1.生成锁执行结果如下</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">BEGIN</span>;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> users <span class="keyword">ADD</span> <span class="keyword">COLUMN</span> sex <span class="type">varchar</span>(<span class="number">10</span>);</span><br><span class="line"><span class="keyword">SELECT</span> locktype,<span class="keyword">database</span>,relation,pid,mode <span class="keyword">FROM</span> pg_locks <span class="keyword">WHERE</span> pid= <span class="number">27384</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="./image-20240524012731003.png" alt="image-20240524012731003" style="zoom:80%;" />
-
+<p><img src="./image-20240524012731003.png" alt="image-20240524012731003" style="zoom:80%;" /></p>
 <p>2.此时打开另一个会话窗口，进行 SELECT 操作，发现该命令<strong>被堵塞</strong>，无法执行完成</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users;</span><br></pre></td></tr></table></figure>
-
 <p>执行结果如下</p>
-<img src="./image-20240524012831395.png" alt="image-20240524012831395" style="zoom:80%;" />
-
+<p><img src="./image-20240524012831395.png" alt="image-20240524012831395" style="zoom:80%;" /></p>
 <p>3.再在第一个会话中提交事务，发现第二个会话中的 SELECT 操作成功执行。</p>
 <figure class="highlight postgresql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">COMMIT</span>;</span><br></pre></td></tr></table></figure>
-
 <p>提交第一个会话执行结果如下：</p>
-<p><img src="/2024/05/24/openGauss-lab5/image-20240524012912900.png" alt="image-20240524012912900"></p>
-<h2 id="（六）添加代码：输出获取与释放锁的信息"><a href="#（六）添加代码：输出获取与释放锁的信息" class="headerlink" title="（六）添加代码：输出获取与释放锁的信息"></a>（六）添加代码：输出获取与释放锁的信息</h2><p><font color = "red">由于华为云欠费，本部分暂未完成</font></p>
+<figure>
+<img src="./image-20240524012912900.png" alt="image-20240524012912900" /><figcaption aria-hidden="true">image-20240524012912900</figcaption>
+</figure>
+<h2 id="六添加代码输出获取与释放锁的信息">（六）添加代码：输出获取与释放锁的信息</h2>
+<p><font color = "red">由于华为云欠费，本部分暂未完成</font></p>
 
     </div>
 
@@ -459,8 +430,8 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2024/05/23/openGauss-lab4/" rel="prev" title="openGauss-lab4">
-      <i class="fa fa-chevron-left"></i> openGauss-lab4
+    <a href="/2024/05/23/openGauss-lab3/" rel="prev" title="openGauss-lab3">
+      <i class="fa fa-chevron-left"></i> openGauss-lab3
     </a></div>
       <div class="post-nav-item">
     <a href="/2024/06/07/wireSharkLab/" rel="next" title="wireSharkLab">
@@ -525,7 +496,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E6%9F%A5%E7%9C%8B%E9%94%81%E4%BF%A1%E6%81%AF"><span class="nav-number">3.1.</span> <span class="nav-text">（一）查看锁信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%8C%EF%BC%89%E5%A4%8D%E7%8E%B0Share%E9%94%81"><span class="nav-number">3.2.</span> <span class="nav-text">（二）复现Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%89%EF%BC%89%E5%A4%8D%E7%8E%B0Access-Share%E9%94%81"><span class="nav-number">3.3.</span> <span class="nav-text">（三）复现Access Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%9B%9B%EF%BC%89%E5%A4%8D%E7%8E%B0Row-Exclusive%E9%94%81"><span class="nav-number">3.4.</span> <span class="nav-text">（四）复现Row Exclusive锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%BA%94%EF%BC%89%E5%A4%8D%E7%8E%B0-Access-Exclusive-%E9%94%81"><span class="nav-number">3.5.</span> <span class="nav-text">（五）复现 Access Exclusive 锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E5%85%AD%EF%BC%89%E6%B7%BB%E5%8A%A0%E4%BB%A3%E7%A0%81%EF%BC%9A%E8%BE%93%E5%87%BA%E8%8E%B7%E5%8F%96%E4%B8%8E%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">3.6.</span> <span class="nav-text">（六）添加代码：输出获取与释放锁的信息</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%AE%9E%E9%AA%8C%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、实验介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%AE%9E%E9%AA%8C%E7%9B%AE%E7%9A%84"><span class="nav-number">2.</span> <span class="nav-text">二、实验目的</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">3.</span> <span class="nav-text">三、实验步骤和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%9F%A5%E7%9C%8B%E9%94%81%E4%BF%A1%E6%81%AF"><span class="nav-number">3.1.</span> <span class="nav-text">（一）查看锁信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%A4%8D%E7%8E%B0share%E9%94%81"><span class="nav-number">3.2.</span> <span class="nav-text">（二）复现Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%A4%8D%E7%8E%B0access-share%E9%94%81"><span class="nav-number">3.3.</span> <span class="nav-text">（三）复现Access Share锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%A4%8D%E7%8E%B0row-exclusive%E9%94%81"><span class="nav-number">3.4.</span> <span class="nav-text">（四）复现Row Exclusive锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E5%A4%8D%E7%8E%B0-access-exclusive-%E9%94%81"><span class="nav-number">3.5.</span> <span class="nav-text">（五）复现 Access Exclusive 锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E6%B7%BB%E5%8A%A0%E4%BB%A3%E7%A0%81%E8%BE%93%E5%87%BA%E8%8E%B7%E5%8F%96%E4%B8%8E%E9%87%8A%E6%94%BE%E9%94%81%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">3.6.</span> <span class="nav-text">（六）添加代码：输出获取与释放锁的信息</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -617,12 +588,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -730,6 +701,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

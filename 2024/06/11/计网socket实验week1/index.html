@@ -271,7 +271,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5.4k</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -291,51 +291,50 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="一、协议设计"><a href="#一、协议设计" class="headerlink" title="一、协议设计"></a>一、协议设计</h1><p><strong>具体要求：</strong></p>
-<ol>
-<li><p>掌握课本有关 HTTP 的内容；阅读 HTTP&#x2F;1.1 的标准文档 RFC2616[1]；</p>
-</li>
-<li><p>搭建编程环境（参见“讲解 PPT-环境安装配置.pptx）；</p>
-</li>
-<li><p>熟悉 Socket 编程方法；</p>
-</li>
-<li><p>掌握 lex 和 yacc[7]正确解析消息（message）的方法；</p>
-</li>
-<li><p>实现简单的 echo web server。</p>
-</li>
+        <h1 id="一协议设计">一、协议设计</h1>
+<p><strong>具体要求：</strong></p>
+<ol type="1">
+<li><p>掌握课本有关 HTTP 的内容；阅读 HTTP/1.1 的标准文档 RFC2616[1]；</p></li>
+<li><p>搭建编程环境（参见“讲解 PPT-环境安装配置.pptx）；</p></li>
+<li><p>熟悉 Socket 编程方法；</p></li>
+<li><p>掌握 lex 和 yacc[7]正确解析消息（message）的方法；</p></li>
+<li><p>实现简单的 echo web server。</p></li>
 </ol>
-<h2 id="（一）代码源文件架构"><a href="#（一）代码源文件架构" class="headerlink" title="（一）代码源文件架构"></a>（一）代码源文件架构</h2><p>文件目录结构</p>
+<h2 id="一代码源文件架构">（一）代码源文件架构</h2>
+<p>文件目录结构</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">WEBSERVER</span><br><span class="line">│</span><br><span class="line">├── <span class="selector-class">.vscode</span>/</span><br><span class="line">├── cgi/</span><br><span class="line">├── include/</span><br><span class="line">│   └── parse<span class="selector-class">.h</span></span><br><span class="line">├── obj/</span><br><span class="line">├── samples/</span><br><span class="line">├── <span class="attribute">src</span>/</span><br><span class="line">│   ├── echo_client<span class="selector-class">.c</span></span><br><span class="line">│   ├── echo_server<span class="selector-class">.c</span></span><br><span class="line">│   ├── example<span class="selector-class">.c</span></span><br><span class="line">│   ├── lex<span class="selector-class">.yy</span><span class="selector-class">.c</span></span><br><span class="line">│   ├── lexer<span class="selector-class">.l</span></span><br><span class="line">│   ├── parse<span class="selector-class">.c</span></span><br><span class="line">│   ├── parser<span class="selector-class">.y</span></span><br><span class="line">│   ├── y<span class="selector-class">.tab</span><span class="selector-class">.c</span></span><br><span class="line">│   ├── y<span class="selector-class">.tab</span><span class="selector-class">.h</span></span><br><span class="line">│   ├── static_site/</span><br><span class="line">│   ├── DockerFile</span><br><span class="line">│   └── Makefile</span><br><span class="line">└── README<span class="selector-class">.md</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="代码源文件架构分析"><a href="#代码源文件架构分析" class="headerlink" title="代码源文件架构分析"></a>代码源文件架构分析</h4><ol>
-<li><strong>根目录文件</strong><ul>
+<h4 id="代码源文件架构分析">代码源文件架构分析</h4>
+<ol type="1">
+<li><strong>根目录文件</strong>
+<ul>
 <li><code>README.md</code>：包含项目的基本信息、使用方法和开发者指南。</li>
 <li><code>Makefile</code>：用于编译和链接项目中的各个源文件，自动化构建流程。</li>
 <li><code>DockerFile</code>：用于创建Docker镜像，提供一致的开发和部署环境。</li>
-</ul>
-</li>
-<li><strong>.vscode目录</strong><ul>
+</ul></li>
+<li><strong>.vscode目录</strong>
+<ul>
 <li>存放VS Code的配置文件，如任务、调试配置等。</li>
-</ul>
-</li>
-<li><strong>cgi目录</strong><ul>
+</ul></li>
+<li><strong>cgi目录</strong>
+<ul>
 <li>用于存放CGI（Common Gateway Interface）相关的文件，实现动态网页生成。</li>
-</ul>
-</li>
-<li><strong>include目录</strong><ul>
+</ul></li>
+<li><strong>include目录</strong>
+<ul>
 <li><code>parse.h</code>：头文件，声明解析器相关的函数和数据结构。</li>
-</ul>
-</li>
-<li><strong>obj目录</strong><ul>
+</ul></li>
+<li><strong>obj目录</strong>
+<ul>
 <li>存放编译生成的中间目标文件（object files），如<code>.o</code>文件。</li>
-</ul>
-</li>
-<li><strong>samples目录</strong><ul>
+</ul></li>
+<li><strong>samples目录</strong>
+<ul>
 <li>存放示例代码或测试样例。</li>
-</ul>
-</li>
-<li><strong>src目录</strong><ul>
-<li>源文件<ul>
+</ul></li>
+<li><strong>src目录</strong>
+<ul>
+<li>源文件
+<ul>
 <li><code>echo_client.c</code>：实现客户端代码，发送请求并接收服务器响应。</li>
 <li><code>echo_server.c</code>：实现服务器代码，接收并处理客户端请求，返回响应。</li>
 <li><code>example.c</code>：示例代码，用于展示如何使用某些功能或库。</li>
@@ -345,98 +344,103 @@
 <li><code>parser.y</code>：语法分析器定义文件，使用Yacc或Bison生成解析器。</li>
 <li><code>y.tab.c</code>：由<code>parser.y</code>生成的语法分析器代码。</li>
 <li><code>y.tab.h</code>：由<code>parser.y</code>生成的语法分析器头文件，包含语法分析器使用的符号常量。</li>
-</ul>
-</li>
-<li>静态站点文件<ul>
+</ul></li>
+<li>静态站点文件
+<ul>
 <li><code>static_site/</code>：存放静态网页文件，如HTML、CSS、JavaScript等。</li>
-</ul>
-</li>
-</ul>
-</li>
+</ul></li>
+</ul></li>
 </ol>
-<h4 id="功能模块分析"><a href="#功能模块分析" class="headerlink" title="功能模块分析"></a>功能模块分析</h4><ol>
-<li><strong>客户端模块（echo_client.c）</strong><ul>
+<h4 id="功能模块分析">功能模块分析</h4>
+<ol type="1">
+<li><strong>客户端模块（echo_client.c）</strong>
+<ul>
 <li>实现客户端功能，主要负责发送HTTP请求到服务器并接收响应。</li>
-</ul>
-</li>
-<li><strong>服务器模块（echo_server.c）</strong><ul>
+</ul></li>
+<li><strong>服务器模块（echo_server.c）</strong>
+<ul>
 <li>实现服务器功能，主要负责接收和解析客户端请求，并返回相应的HTTP响应。</li>
 <li>支持处理GET, HEAD, POST等HTTP方法，并返回相应的数据。</li>
-</ul>
-</li>
-<li><strong>词法分析模块（lexer.l -&gt; lex.yy.c）</strong><ul>
+</ul></li>
+<li><strong>词法分析模块（lexer.l -&gt; lex.yy.c）</strong>
+<ul>
 <li>使用词法分析器将输入的文本流分解为标记，供语法分析器使用。</li>
-</ul>
-</li>
-<li><strong>语法分析模块（parser.y -&gt; y.tab.c, y.tab.h）</strong><ul>
+</ul></li>
+<li><strong>语法分析模块（parser.y -&gt; y.tab.c, y.tab.h）</strong>
+<ul>
 <li>使用语法分析器解析输入的标记序列，生成对应的语法树或执行相应的操作。</li>
 <li>结合词法分析器，完成对HTTP请求的解析。</li>
-</ul>
-</li>
-<li><strong>解析模块（parse.c, parse.h）</strong><ul>
+</ul></li>
+<li><strong>解析模块（parse.c, parse.h）</strong>
+<ul>
 <li>实现具体的解析逻辑，包括解析HTTP头部和消息体。</li>
 <li>使用前面生成的词法和语法分析器，对输入消息进行全面解析。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
-<h3 id="消息解析方法"><a href="#消息解析方法" class="headerlink" title="消息解析方法"></a>消息解析方法</h3><h4 id="Lex-和-Yacc-介绍"><a href="#Lex-和-Yacc-介绍" class="headerlink" title="Lex 和 Yacc 介绍"></a>Lex 和 Yacc 介绍</h4><ol>
-<li>Lex（词法分析器生成器）：<ul>
+<h3 id="消息解析方法">消息解析方法</h3>
+<h4 id="lex-和-yacc-介绍">Lex 和 Yacc 介绍</h4>
+<ol type="1">
+<li>Lex（词法分析器生成器）：
+<ul>
 <li><strong>作用</strong>：负责将输入的字符流分解成一个个标记（tokens），这些标记是语法分析器（Yacc）能够处理的基本单元。</li>
-<li>工作原理：<ol>
+<li>工作原理：
+<ol type="1">
 <li><strong>定义词法规则</strong>：在<code>.l</code>文件中定义词法规则，描述不同标记的模式。</li>
 <li><strong>生成词法分析器</strong>：使用Lex工具读取<code>.l</code>文件，生成相应的词法分析器代码（如<code>lex.yy.c</code>）。</li>
 <li><strong>标记识别</strong>：运行词法分析器代码，将输入的字符流转换成标记序列。</li>
-</ol>
-</li>
-</ul>
-</li>
-<li>Yacc（Yet Another Compiler-Compiler，语法分析器生成器）：<ul>
+</ol></li>
+</ul></li>
+<li>Yacc（Yet Another Compiler-Compiler，语法分析器生成器）：
+<ul>
 <li><strong>作用</strong>：负责根据词法分析器提供的标记序列，按照预定义的语法规则生成语法树，或执行相应的动作。</li>
-<li>工作原理：<ol>
+<li>工作原理：
+<ol type="1">
 <li><strong>定义语法规则</strong>：在<code>.y</code>文件中定义语法规则，描述标记的组合方式。</li>
 <li><strong>生成语法分析器</strong>：使用Yacc工具读取<code>.y</code>文件，生成相应的语法分析器代码（如<code>y.tab.c</code>和<code>y.tab.h</code>）。</li>
 <li><strong>语法分析</strong>：运行语法分析器代码，解析标记序列，生成语法树或执行解析操作。</li>
+</ol></li>
+</ul></li>
 </ol>
-</li>
-</ul>
-</li>
-</ol>
-<h4 id="消息解析流程"><a href="#消息解析流程" class="headerlink" title="消息解析流程"></a>消息解析流程</h4><ol>
-<li>词法分析（Lex）：<ul>
+<h4 id="消息解析流程">消息解析流程</h4>
+<ol type="1">
+<li>词法分析（Lex）：
+<ul>
 <li><strong>输入</strong>：HTTP请求的字符流。</li>
 <li><strong>输出</strong>：标记序列（如方法名、URL、HTTP版本、头部字段名、字段值等）。</li>
-</ul>
-</li>
-<li>语法分析（Yacc）：<ul>
+</ul></li>
+<li>语法分析（Yacc）：
+<ul>
 <li><strong>输入</strong>：Lex生成的标记序列。</li>
 <li><strong>输出</strong>：解析后的语法树，或直接执行相应操作（如存储请求方法、路径、HTTP版本、头部字段等）。</li>
-</ul>
-</li>
-<li>请求处理：<ul>
+</ul></li>
+<li>请求处理：
+<ul>
 <li>根据语法分析器解析的结果，处理不同的HTTP方法（GET、HEAD、POST）。</li>
 <li>对于未实现的方法，返回501 Not Implemented响应。</li>
 <li>对于格式错误的请求，返回400 Bad Request响应。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
-<h4 id="Lex-和-Yacc-工作流程图"><a href="#Lex-和-Yacc-工作流程图" class="headerlink" title="Lex 和 Yacc 工作流程图"></a>Lex 和 Yacc 工作流程图</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+</span><br><span class="line">|     HTTP 请求字符流      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|        Lex 词法分析       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|        标记序列          |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|       Yacc 语法分析      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|     解析结果或语法树      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|     请求处理与响应生成    |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
-
-<h1 id="二、协议实现"><a href="#二、协议实现" class="headerlink" title="二、协议实现"></a>二、协议实现</h1><h2 id="1-消息解析"><a href="#1-消息解析" class="headerlink" title="1.消息解析"></a>1.消息解析</h2><p>在使用 <code>./example /samples/...</code> 进行测试时，发现 start code 中的代码只能解析 <code>request_line</code> 和单个 <code>request_head</code>，无法进一步解析多条 <code>request_head</code>。因此，该代码仅能正确处理 <code>sample_request_example</code>。</p>
+<h4 id="lex-和-yacc-工作流程图">Lex 和 Yacc 工作流程图</h4>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">+--------------------------+</span><br><span class="line">|     HTTP 请求字符流      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|        Lex 词法分析       |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|        标记序列          |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|       Yacc 语法分析      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|     解析结果或语法树      |</span><br><span class="line">+--------------------------+</span><br><span class="line">              |</span><br><span class="line">              v</span><br><span class="line">+--------------------------+</span><br><span class="line">|     请求处理与响应生成    |</span><br><span class="line">+--------------------------+</span><br></pre></td></tr></table></figure>
+<h1 id="二协议实现">二、协议实现</h1>
+<h2 id="消息解析">1.消息解析</h2>
+<p>在使用 <code>./example /samples/...</code> 进行测试时，发现 start code 中的代码只能解析 <code>request_line</code> 和单个 <code>request_head</code>，无法进一步解析多条 <code>request_head</code>。因此，该代码仅能正确处理 <code>sample_request_example</code>。</p>
 <p>为了解析多条 <code>request_head</code>，我们需要修改 <code>parser.y</code> 中的 <code>request_header</code> 解析规则。关键在于正确使用 yacc 中的 <code>|</code> 符号，通过递归解析所有的 <code>request_header</code>。</p>
 <p>在消息解析部分，还有一个重要任务是在 <code>parse.c</code> 中处理畸形请求。在 <code>parse.c</code> 中，有一个 <code>TODO</code> 是关于处理畸形请求（Handle Malformed Requests）。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TODO Handle Malformed Requests</span></span><br></pre></td></tr></table></figure>
-
 <p>为此，我们需要使用 <code>yystart</code> 语句来实现，并在解析完成后使用 <code>memset</code> 清空 <code>buf</code>。</p>
 <p>另外，代码中的 <code>malloc</code> 语句一开始只分配了处理一行的内存（<code>malloc(sizeof(request_header) * 1)</code>），为了能够解析多个 <code>request_header</code>，我们需要将其修改为 19 行（<code>malloc(sizeof(request_header) * 19)</code>）。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request-&gt;headers = (Request_header *) <span class="built_in">malloc</span>(<span class="built_in">sizeof</span>(Request_header)*<span class="number">19</span>);</span><br></pre></td></tr></table></figure>
-
 <p><font color = "blue">具体修改为：</font></p>
 <p><strong>解析规则修改</strong>：在 <code>parser.y</code> 中，修改 <code>request_header</code> 的解析规则，使用 <code>|</code> 符号递归解析多条 <code>request_header</code>。</p>
 <p><strong>处理畸形请求</strong>：在 <code>parse.c</code> 中，使用 <code>yystart</code> 语句处理畸形请求，并在解析完成后使用 <code>memset</code> 清空 <code>buf</code>。</p>
 <p><strong>内存分配</strong>：将 <code>malloc(sizeof(request_header) * 1)</code> 修改为 <code>malloc(sizeof(request_header) * 19)</code>，以便解析多个 <code>request_header</code>。</p>
-<h2 id="2-实现服务端与客户端的通信"><a href="#2-实现服务端与客户端的通信" class="headerlink" title="2.实现服务端与客户端的通信"></a>2.实现服务端与客户端的通信</h2><p>服务端与客户端的通信可以分为两个部分：<code>echo_server</code> 和 <code>echo_client</code>。</p>
-<h4 id="1）echo-client"><a href="#1）echo-client" class="headerlink" title="1）echo_client"></a>1）echo_client</h4><p>Start code 中的 <code>echo_client</code> 部分实现较为完善，但在读取报文时使用了 <code>fgets</code> 函数，这种参数传递方式并不理想。更好的方法是通过 <code>open()</code> 将 <code>argv[3]</code> 中的内容读入 <code>fd_in</code>（文件描述符），然后通过 <code>read()</code> 将 <code>fd_in</code> 和缓冲区写入 <code>readRet</code>。</p>
-<h4 id="2）echo-server"><a href="#2）echo-server" class="headerlink" title="2）echo_server"></a>2）echo_server</h4><p>在 <code>echo_server</code> 部分，需要实现对 <code>GET</code>、<code>HEAD</code>、<code>POST</code> 请求的 echo 功能，以及对未实现请求返回 501 状态码和格式错误请求返回 400 状态码。以下是状态码的相关描述：</p>
+<h2 id="实现服务端与客户端的通信">2.实现服务端与客户端的通信</h2>
+<p>服务端与客户端的通信可以分为两个部分：<code>echo_server</code> 和 <code>echo_client</code>。</p>
+<h4 id="echo_client">1）echo_client</h4>
+<p>Start code 中的 <code>echo_client</code> 部分实现较为完善，但在读取报文时使用了 <code>fgets</code> 函数，这种参数传递方式并不理想。更好的方法是通过 <code>open()</code> 将 <code>argv[3]</code> 中的内容读入 <code>fd_in</code>（文件描述符），然后通过 <code>read()</code> 将 <code>fd_in</code> 和缓冲区写入 <code>readRet</code>。</p>
+<h4 id="echo_server">2）echo_server</h4>
+<p>在 <code>echo_server</code> 部分，需要实现对 <code>GET</code>、<code>HEAD</code>、<code>POST</code> 请求的 echo 功能，以及对未实现请求返回 501 状态码和格式错误请求返回 400 状态码。以下是状态码的相关描述：</p>
 <ul>
 <li><strong>1xx</strong>: 报告的 - 接收到请求，继续处理。</li>
 <li><strong>2xx</strong>: 成功 - 请求成功接收、理解并接受。</li>
@@ -446,86 +450,112 @@
 </ul>
 <p>这些状态码和原因短语一起为客户端提供了响应信息，客户端只需检查状态码，不必解析原因短语。</p>
 <p>Start code 中的 <code>echo_server</code> 部分已经基本实现，现在需要修改的是服务器在发现还有未处理的报文时的行为。</p>
-<h4 id="伪代码实现"><a href="#伪代码实现" class="headerlink" title="伪代码实现"></a>伪代码实现</h4><p>以下是服务端处理未处理报文时的<strong>伪代码</strong>：</p>
+<h4 id="伪代码实现">伪代码实现</h4>
+<p>以下是服务端处理未处理报文时的<strong>伪代码</strong>：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> ((readret = <span class="built_in">recv</span>(client_sock, buf, BUF_SIZE, <span class="number">0</span>)) &gt;= <span class="number">1</span>) &#123;</span><br><span class="line">    request = <span class="built_in">parse</span>(buf, readret, sock)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> request is <span class="literal">NULL</span>:</span><br><span class="line">        <span class="built_in">send</span>(client_sock, <span class="string">&quot;HTTP/1.1 400 Bad request\r\n\r\n&quot;</span>, <span class="number">50</span>, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> request.http_method in [<span class="string">&quot;POST&quot;</span>, <span class="string">&quot;HEAD&quot;</span>, <span class="string">&quot;GET&quot;</span>]:</span><br><span class="line">        <span class="built_in">send</span>(client_sock, buf, readret, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">send</span>(client_sock, <span class="string">&quot;HTTP/1.1 501 Not Implemented\r\n\r\n&quot;</span>, <span class="number">50</span>, <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">free</span>(request.headers)</span><br><span class="line">    <span class="built_in">free</span>(request)</span><br><span class="line">    <span class="built_in">memset</span>(buf, <span class="number">0</span>, BUF_SIZE)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> readret == <span class="number">-1</span>:</span><br><span class="line">    <span class="built_in">handle_error</span>(client_sock, sock, <span class="string">&quot;Error reading from client socket.&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">close_socket</span>(client_sock):</span><br><span class="line">    <span class="built_in">handle_error</span>(sock, sock, <span class="string">&quot;Error closing client socket.&quot;</span>)</span><br></pre></td></tr></table></figure>
-
 <p>为了改善 <code>echo_client</code> 的报文读取，使用 <code>open()</code> 将 <code>argv[3]</code> 中的内容读入文件描述符 <code>fd_in</code>，然后通过 <code>read()</code> 将 <code>fd_in</code> 和缓冲区写入 <code>readRet</code>。</p>
 <p>在 <code>echo_server</code> 部分，需要实现对 <code>GET</code>、<code>HEAD</code>、<code>POST</code> 请求的 echo 功能，并对未实现的请求返回 501 状态码，对格式错误的请求返回 400 状态码。</p>
-<p>在服务器发现未处理报文时，首先通过 <code>parse</code> 函数解析报文，如果请求为空，向 <code>client_sock</code> 发送 “HTTP&#x2F;1.1 400 Bad request” 响应；如果请求为 <code>POST</code>、<code>HEAD</code>、<code>GET</code> 方法之一，则回显请求内容；否则，向 <code>client_sock</code> 发送 “HTTP&#x2F;1.1 501 Not Implemented” 响应。最后，释放 <code>request</code> 相关的内存。</p>
+<p>在服务器发现未处理报文时，首先通过 <code>parse</code> 函数解析报文，如果请求为空，向 <code>client_sock</code> 发送 "HTTP/1.1 400 Bad request" 响应；如果请求为 <code>POST</code>、<code>HEAD</code>、<code>GET</code> 方法之一，则回显请求内容；否则，向 <code>client_sock</code> 发送 "HTTP/1.1 501 Not Implemented" 响应。最后，释放 <code>request</code> 相关的内存。</p>
 <p>最后，修改 <code>echo_server.c</code> 文件的顶部包含 <code>parse.h</code>，以及MakeFile文件确保 <code>parse.h</code> 和 <code>parse.c</code> 在 <code>Makefile</code> 中的依赖关系</p>
-<h1 id="三、实验结果和分析"><a href="#三、实验结果和分析" class="headerlink" title="三、实验结果和分析"></a>三、实验结果和分析</h1><h2 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h2><p>以下分别为 GET 在 server 端（左边）和 client 端（右边）的实验结果。由于server端检查过长，所以只截屏了一部分</p>
-<p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611185439064.png" alt="image-20240611185439064"></p>
-<p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611185513598.png" alt="image-20240611185513598"></p>
-<h2 id="HEAD"><a href="#HEAD" class="headerlink" title="HEAD"></a>HEAD</h2><p>下面这个分别为HEAD 在 server 端（左边）和 client 端（右边）的实验结果。</p>
-<p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611185732114.png" alt="image-20240611185732114"></p>
-<h2 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h2><p>下面这个分别为POST 在 server 端（左边）和 client 端（右边）的实验结果。</p>
-<p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611185825141.png" alt="image-20240611185825141"></p>
+<h1 id="三实验结果和分析">三、实验结果和分析</h1>
+<h2 id="get">GET</h2>
+<p>以下分别为 GET 在 server 端（左边）和 client 端（右边）的实验结果。由于server端检查过长，所以只截屏了一部分</p>
+<figure>
+<img src="./image-20240611185439064.png" alt="image-20240611185439064" /><figcaption aria-hidden="true">image-20240611185439064</figcaption>
+</figure>
+<figure>
+<img src="./image-20240611185513598.png" alt="image-20240611185513598" /><figcaption aria-hidden="true">image-20240611185513598</figcaption>
+</figure>
+<h2 id="head">HEAD</h2>
+<p>下面这个分别为HEAD 在 server 端（左边）和 client 端（右边）的实验结果。</p>
+<figure>
+<img src="./image-20240611185732114.png" alt="image-20240611185732114" /><figcaption aria-hidden="true">image-20240611185732114</figcaption>
+</figure>
+<h2 id="post">POST</h2>
+<p>下面这个分别为POST 在 server 端（左边）和 client 端（右边）的实验结果。</p>
+<figure>
+<img src="./image-20240611185825141.png" alt="image-20240611185825141" /><figcaption aria-hidden="true">image-20240611185825141</figcaption>
+</figure>
 <p>以下分别为几个错误类型在 client 端和 server 端的测试结果。</p>
-<h2 id="400"><a href="#400" class="headerlink" title="400"></a>400</h2><p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611185933016.png" alt="image-20240611185933016"></p>
-<h2 id="501"><a href="#501" class="headerlink" title="501"></a>501</h2><p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611190019458.png" alt="image-20240611190019458"></p>
-<h2 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h2><p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611190149560.png" alt="image-20240611190149560"></p>
+<h2 id="section">400</h2>
+<figure>
+<img src="./image-20240611185933016.png" alt="image-20240611185933016" /><figcaption aria-hidden="true">image-20240611185933016</figcaption>
+</figure>
+<h2 id="section-1">501</h2>
+<figure>
+<img src="./image-20240611190019458.png" alt="image-20240611190019458" /><figcaption aria-hidden="true">image-20240611190019458</figcaption>
+</figure>
+<h2 id="error">Error</h2>
+<figure>
+<img src="./image-20240611190149560.png" alt="image-20240611190149560" /><figcaption aria-hidden="true">image-20240611190149560</figcaption>
+</figure>
 <p>在自动测试平台上的结果如下图所示：</p>
-<p><img src="/2024/06/11/%E8%AE%A1%E7%BD%91socket%E5%AE%9E%E9%AA%8Cweek1/image-20240611192952651.png" alt="image-20240611192952651"></p>
-<h1 id="四-进度总结"><a href="#四-进度总结" class="headerlink" title="四.进度总结"></a>四.进度总结</h1><p><strong>本周任务完成表</strong></p>
+<figure>
+<img src="./image-20240611192952651.png" alt="image-20240611192952651" /><figcaption aria-hidden="true">image-20240611192952651</figcaption>
+</figure>
+<h1 id="四.进度总结">四.进度总结</h1>
+<p><strong>本周任务完成表</strong></p>
 <p>在“完成”“没完成”列对应打“√”</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>本周任务要求</th>
 <th>完成</th>
 <th>没完成</th>
 <th>备注</th>
 </tr>
 </thead>
-<tbody><tr>
-<td>1、阅读HTTP&#x2F;1.1的标准文档RFC2616</td>
+<tbody>
+<tr class="odd">
+<td>1、阅读HTTP/1.1的标准文档RFC2616</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>2、搭建编程环境</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>3、熟悉Socket编程方法；</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>4、掌握lex和yacc正确解析消息（message）的方法</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>5.1实现简单的echo web server。Echo GET, HEAD, POST</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>5.2 响应没有实现的方法</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="odd">
 <td>5.3 响应错误的方法</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr class="even">
 <td>6、功能测试</td>
 <td>√</td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 
     </div>
 
@@ -637,7 +667,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">一、协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%EF%BC%88%E4%B8%80%EF%BC%89%E4%BB%A3%E7%A0%81%E6%BA%90%E6%96%87%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">（一）代码源文件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%BA%90%E6%96%87%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">代码源文件架构分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">功能模块分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">消息解析方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Lex-%E5%92%8C-Yacc-%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Lex 和 Yacc 介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">消息解析流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lex-%E5%92%8C-Yacc-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">Lex 和 Yacc 工作流程图</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">二、协议实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">1.消息解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="nav-number">2.2.</span> <span class="nav-text">2.实现服务端与客户端的通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%89echo-client"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">1）echo_client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%89echo-server"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">2）echo_server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">伪代码实现</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">三、实验结果和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GET"><span class="nav-number">3.1.</span> <span class="nav-text">GET</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HEAD"><span class="nav-number">3.2.</span> <span class="nav-text">HEAD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#POST"><span class="nav-number">3.3.</span> <span class="nav-text">POST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#400"><span class="nav-number">3.4.</span> <span class="nav-text">400</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#501"><span class="nav-number">3.5.</span> <span class="nav-text">501</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Error"><span class="nav-number">3.6.</span> <span class="nav-text">Error</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B-%E8%BF%9B%E5%BA%A6%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">四.进度总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.</span> <span class="nav-text">一、协议设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%A3%E7%A0%81%E6%BA%90%E6%96%87%E4%BB%B6%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">（一）代码源文件架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%BA%90%E6%96%87%E4%BB%B6%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">代码源文件架构分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">功能模块分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">消息解析方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lex-%E5%92%8C-yacc-%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">Lex 和 Yacc 介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">消息解析流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lex-%E5%92%8C-yacc-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">Lex 和 Yacc 工作流程图</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">二、协议实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%A7%A3%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">1.消息解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%B8%8E%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="nav-number">2.2.</span> <span class="nav-text">2.实现服务端与客户端的通信</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#echo_client"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">1）echo_client</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#echo_server"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">2）echo_server</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%AA%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">伪代码实现</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">三、实验结果和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#get"><span class="nav-number">3.1.</span> <span class="nav-text">GET</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#head"><span class="nav-number">3.2.</span> <span class="nav-text">HEAD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#post"><span class="nav-number">3.3.</span> <span class="nav-text">POST</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section"><span class="nav-number">3.4.</span> <span class="nav-text">400</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#section-1"><span class="nav-number">3.5.</span> <span class="nav-text">501</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#error"><span class="nav-number">3.6.</span> <span class="nav-text">Error</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B.%E8%BF%9B%E5%BA%A6%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">四.进度总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -729,12 +759,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -842,6 +872,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 

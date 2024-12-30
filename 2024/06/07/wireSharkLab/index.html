@@ -320,79 +320,79 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="实验一、GetStarted"><a href="#实验一、GetStarted" class="headerlink" title="实验一、GetStarted"></a>实验一、GetStarted</h1><p>本次实验的主要目标是向你介绍 Wireshark。以下问题将展示你已经能够启动并运行 Wireshark，并且已经探索了它的一些功能。根据你的 Wireshark 实验回答以下问题：</p>
+        <h1 id="实验一getstarted">实验一、GetStarted</h1>
+<p>本次实验的主要目标是向你介绍 Wireshark。以下问题将展示你已经能够启动并运行 Wireshark，并且已经探索了它的一些功能。根据你的 Wireshark 实验回答以下问题：</p>
 <blockquote>
-<ol>
+<ol type="1">
 <li>在上面第7步的未过滤数据包列表窗口中列出出现在协议列中的3种不同的协议。</li>
 </ol>
 </blockquote>
 <p>分别有SSDP、DNS、ICMPv6，如下图</p>
-<img src="./image-20240608010240201.png" alt="image-20240608010240201" style="zoom:80%;" />
-
+<p><img src="./image-20240608010240201.png" alt="image-20240608010240201" style="zoom:80%;" /></p>
 <blockquote>
-<ol start="2">
+<ol start="2" type="1">
 <li>从发送 HTTP GET 消息到接收 HTTP OK 回复花了多长时间？（默认情况下，数据包列表窗口中的时间列的值是 Wireshark 跟踪开始以来的时间，以秒为单位。要以时间格式显示时间字段，选择 Wireshark 查看下拉菜单，然后选择时间显示格式，然后选择时间格式。）</li>
 </ol>
 </blockquote>
-<img src="./image-20240608010755604.png" alt="image-20240608010755604" style="zoom:80%;" />
-
+<p><img src="./image-20240608010755604.png" alt="image-20240608010755604" style="zoom:80%;" /></p>
 <p>由上图可知，中间间隔了大概0.2s</p>
 <blockquote>
-<ol start="3">
+<ol start="3" type="1">
 <li>gaia.cs.umass.edu 的互联网地址是什么（也称为 www-net.cs.umass.edu）？你计算机的互联网地址是什么？</li>
 </ol>
 </blockquote>
-<img src="./image-20240608011107832.png" alt="image-20240608011107832" style="zoom:80%;" />
-
+<p><img src="./image-20240608011107832.png" alt="image-20240608011107832" style="zoom:80%;" /></p>
 <p>在 Wireshark 中，选中 HTTP GET 请求数据包后，在数据包详细信息窗口中可以找到以下信息：</p>
 <ul>
 <li><strong>源 IP 地址</strong>：这就是我的计算机的互联网地址172.18.168.120。</li>
 <li><strong>目的 IP 地址</strong>：这就是 gaia.cs.umass.edu 的互联网地址128.119.245.12。</li>
 </ul>
 <blockquote>
-<ol start="4">
+<ol start="4" type="1">
 <li>打印上面第2题中提到的两个 HTTP 消息（GET 和 OK）。为此，从 Wireshark 文件命令菜单中选择打印，然后选择“仅选定的数据包”和“按显示打印”单选按钮，然后点击确定。</li>
 </ol>
 </blockquote>
 <p>打印结果如下：</p>
-<img src="./image-20240608011854689.png" alt="image-20240608011854689" style="zoom:80%;" />
-
-<h1 id="实验二、HTTP"><a href="#实验二、HTTP" class="headerlink" title="实验二、HTTP"></a>实验二、HTTP</h1><h2 id="一、The-Basic-HTTP-GET-response-interaction"><a href="#一、The-Basic-HTTP-GET-response-interaction" class="headerlink" title="一、The Basic HTTP GET&#x2F;response interaction"></a>一、The Basic HTTP GET&#x2F;response interaction</h2><p>根据步骤的要求实验结果截屏如下</p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240608014619648.png" alt="image-20240608014619648"></p>
+<p><img src="./image-20240608011854689.png" alt="image-20240608011854689" style="zoom:80%;" /></p>
+<h1 id="实验二http">实验二、HTTP</h1>
+<h2 id="一the-basic-http-getresponse-interaction">一、The Basic HTTP GET/response interaction</h2>
+<p>根据步骤的要求实验结果截屏如下</p>
+<figure>
+<img src="./image-20240608014619648.png" alt="image-20240608014619648" /><figcaption aria-hidden="true">image-20240608014619648</figcaption>
+</figure>
 <p>问答问题如下：</p>
-<img src="./image-20240608020350934.png" alt="image-20240608020350934" style="zoom:80%;" />
-
+<p><img src="./image-20240608020350934.png" alt="image-20240608020350934" style="zoom:80%;" /></p>
 <blockquote>
-<p> 1.<strong>您的浏览器运行的是HTTP 1.0还是1.1版本？服务器运行的是哪个版本的HTTP？</strong></p>
+<p>1.<strong>您的浏览器运行的是HTTP 1.0还是1.1版本？服务器运行的是哪个版本的HTTP？</strong></p>
 </blockquote>
 <ul>
-<li>浏览器运行的是HTTP&#x2F;1.1版本：<ul>
-<li>位于第一条记录的第2行：“Wireshark-file1.html HTTP&#x2F;1.1”</li>
-</ul>
-</li>
-<li>服务器运行的是HTTP&#x2F;1.1版本：<ul>
-<li>位于第二条记录的第3行：“HTTP&#x2F;1.1 200 OK (text&#x2F;html)”</li>
-</ul>
-</li>
+<li>浏览器运行的是HTTP/1.1版本：
+<ul>
+<li>位于第一条记录的第2行：“Wireshark-file1.html HTTP/1.1”</li>
+</ul></li>
+<li>服务器运行的是HTTP/1.1版本：
+<ul>
+<li>位于第二条记录的第3行：“HTTP/1.1 200 OK (text/html)”</li>
+</ul></li>
 </ul>
 <blockquote>
 <p>2.<strong>您的浏览器向服务器指示它可以接受哪些语言（如果有）？</strong></p>
 </blockquote>
 <ul>
-<li>位于第一条记录的第13行：“Accept-Language: zh-CN,zh;q&#x3D;0.9,en;q&#x3D;0.8\r\n”</li>
+<li>位于第一条记录的第13行：“Accept-Language: zh-CN,zh;q=0.9,en;q=0.8”</li>
 </ul>
 <blockquote>
 <p>3.<strong>您的计算机的IP地址是什么？gaia.cs.umass.edu服务器的IP地址是什么？</strong></p>
 </blockquote>
 <ul>
-<li>您的计算机IP地址：<ul>
+<li>您的计算机IP地址：
+<ul>
 <li>位于第一条记录的第5行：“Src: 172.18.168.120”</li>
-</ul>
-</li>
-<li>服务器IP地址：<ul>
+</ul></li>
+<li>服务器IP地址：
+<ul>
 <li>位于第一条记录的第5行：“Dst: 128.119.245.12”</li>
-</ul>
-</li>
+</ul></li>
 </ul>
 <blockquote>
 <p>4.<strong>服务器返回给您的浏览器的状态代码是什么？</strong></p>
@@ -401,17 +401,22 @@
 <blockquote>
 <p>5.<strong>您正在检索的HTML文件在服务器上最后一次修改是什么时候？</strong></p>
 </blockquote>
-<p>位于第二条记录的第14行：“Last-Modified: Fri, 07 Jun 2024 02:59:02 GMT\r\n”</p>
+<p>位于第二条记录的第14行：“Last-Modified: Fri, 07 Jun 2024 02:59:02 GMT”</p>
 <blockquote>
 <p>6.<strong>服务器向您的浏览器返回了多少字节的内容？</strong></p>
 </blockquote>
-<p>位于第二条记录的第18行：“Content-Length: 128\r\n”</p>
+<p>位于第二条记录的第18行：“Content-Length: 128”</p>
 <blockquote>
 <p>7.<strong>通过检查数据包内容窗口中的原始数据，您是否看到数据中有任何在数据包列表窗口中未显示的标头？如果有，请列出一个。</strong></p>
 </blockquote>
 <p>从图片上看，所有标头都已显示在列表窗口中，没有看到未显示的标头。</p>
-<h2 id="二、The-HTTP-CONDITIONAL-GET-response-interaction"><a href="#二、The-HTTP-CONDITIONAL-GET-response-interaction" class="headerlink" title="二、The HTTP CONDITIONAL GET&#x2F;response interaction"></a>二、The HTTP CONDITIONAL GET&#x2F;response interaction</h2><p><img src="/2024/06/07/wireSharkLab/Page1.png" alt="Page1"></p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240608021913091.png" alt="image-20240608021913091"></p>
+<h2 id="二the-http-conditional-getresponse-interaction">二、The HTTP CONDITIONAL GET/response interaction</h2>
+<figure>
+<img src="./Page1.png" alt="Page1" /><figcaption aria-hidden="true">Page1</figcaption>
+</figure>
+<figure>
+<img src="./image-20240608021913091.png" alt="image-20240608021913091" /><figcaption aria-hidden="true">image-20240608021913091</figcaption>
+</figure>
 <blockquote>
 <p>8.<strong>检查浏览器发送到服务器的第一个HTTP GET请求的内容。您是否看到HTTP GET中的“IF-MODIFIED-SINCE”行？</strong></p>
 </blockquote>
@@ -424,14 +429,14 @@
 </blockquote>
 <p>是的，服务器显式返回了文件内容。</p>
 <ul>
-<li>参考位置：在第二条记录中，第8行显示“Status Code: 200”，并且第12行到第22行显示了文件内容的详细信息（包括Content-Length: 371\r\n）。</li>
+<li>参考位置：在第二条记录中，第8行显示“Status Code: 200”，并且第12行到第22行显示了文件内容的详细信息（包括Content-Length: 371）。</li>
 </ul>
 <blockquote>
-<p> 10.<strong>现在检查浏览器发送到服务器的第二个HTTP GET请求的内容。您是否看到HTTP GET中的“IF-MODIFIED-SINCE:”行？如果有，此标头后面跟随了哪些信息？</strong></p>
+<p>10.<strong>现在检查浏览器发送到服务器的第二个HTTP GET请求的内容。您是否看到HTTP GET中的“IF-MODIFIED-SINCE:”行？如果有，此标头后面跟随了哪些信息？</strong></p>
 </blockquote>
 <p>是的，看到“IF-MODIFIED-SINCE:”行。</p>
 <ul>
-<li>参考位置：在第三条记录中，第13行显示“IF-MODIFIED-SINCE: Fri, 07 Jun 2024 05:59:02 GMT\r\n”。</li>
+<li>参考位置：在第三条记录中，第13行显示“IF-MODIFIED-SINCE: Fri, 07 Jun 2024 05:59:02 GMT”。</li>
 </ul>
 <blockquote>
 <p>11.<strong>服务器在响应第二个HTTP GET请求时返回的HTTP状态代码和短语是什么？服务器是否显式返回了文件内容？解释。</strong></p>
@@ -440,7 +445,10 @@
 <ul>
 <li>参考位置：在第四条记录中，第7行显示“Status Code: 304”，第8行显示“Response Phrase: Not Modified”。</li>
 </ul>
-<h2 id="三、Retrieving-Long-Documents"><a href="#三、Retrieving-Long-Documents" class="headerlink" title="三、Retrieving Long Documents"></a>三、Retrieving Long Documents</h2><p><img src="/2024/06/07/wireSharkLab/image-20240610001629922.png" alt="image-20240610001629922"></p>
+<h2 id="三retrieving-long-documents">三、Retrieving Long Documents</h2>
+<figure>
+<img src="./image-20240610001629922.png" alt="image-20240610001629922" /><figcaption aria-hidden="true">image-20240610001629922</figcaption>
+</figure>
 <blockquote>
 <p>12.<strong>您的浏览器发送了多少条HTTP GET请求消息？哪个数据包编号包含《权利法案》的GET消息？</strong></p>
 </blockquote>
@@ -460,7 +468,7 @@
 </blockquote>
 <p>状态代码是200 OK。</p>
 <ul>
-<li>参考位置：在第二条记录中，第3行显示“HTTP&#x2F;1.1 200 OK (text&#x2F;html)”，第五条记录中，第3行显示“HTTP&#x2F;1.1 200 OK (text&#x2F;html)”。</li>
+<li>参考位置：在第二条记录中，第3行显示“HTTP/1.1 200 OK (text/html)”，第五条记录中，第3行显示“HTTP/1.1 200 OK (text/html)”。</li>
 </ul>
 <blockquote>
 <p>15.<strong>需要多少包含数据的TCP段来承载单个HTTP响应和《权利法案》的文本？</strong></p>
@@ -469,7 +477,10 @@
 <ul>
 <li>参考位置：在第二条记录中，第9行显示“4 Reassembled TCP Segments (4861 bytes)”，第五条记录中，第9行显示“4 Reassembled TCP Segments (4861 bytes)”。</li>
 </ul>
-<h2 id="四、包含嵌入对象的HTML文档"><a href="#四、包含嵌入对象的HTML文档" class="headerlink" title="四、包含嵌入对象的HTML文档"></a>四、包含嵌入对象的HTML文档</h2><p><img src="/2024/06/07/wireSharkLab/image-20240610003729656.png" alt="image-20240610003729656"></p>
+<h2 id="四包含嵌入对象的html文档">四、包含嵌入对象的HTML文档</h2>
+<figure>
+<img src="./image-20240610003729656.png" alt="image-20240610003729656" /><figcaption aria-hidden="true">image-20240610003729656</figcaption>
+</figure>
 <blockquote>
 <p>16.<strong>您的浏览器发送了多少条HTTP GET请求消息？这些GET请求发送到哪些互联网地址？</strong></p>
 </blockquote>
@@ -489,63 +500,85 @@
 <ul>
 <li>时间戳显示，第二个GET请求（数据包96）是在第一个GET请求（数据包65）完成并收到响应（数据包73和84）之后发送的。这表明浏览器在处理第一个请求完成后才开始处理第二个请求，说明下载过程是串行的。</li>
 </ul>
-<h2 id="五、HTTP身份验证"><a href="#五、HTTP身份验证" class="headerlink" title="五、HTTP身份验证"></a>五、HTTP身份验证</h2><p><img src="/2024/06/07/wireSharkLab/image-20240610005603834.png" alt="image-20240610005603834"></p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610005611363.png" alt="image-20240610005611363"></p>
+<h2 id="五http身份验证">五、HTTP身份验证</h2>
+<figure>
+<img src="./image-20240610005603834.png" alt="image-20240610005603834" /><figcaption aria-hidden="true">image-20240610005603834</figcaption>
+</figure>
+<figure>
+<img src="./image-20240610005611363.png" alt="image-20240610005611363" /><figcaption aria-hidden="true">image-20240610005611363</figcaption>
+</figure>
 <blockquote>
 <p>18.<strong>服务器对来自您的浏览器的初始HTTP GET消息的响应是什么（状态代码和短语）？</strong></p>
 </blockquote>
 <p>服务器的响应是401 Unauthorized。</p>
 <ul>
-<li><strong>参考位置</strong>：第二条记录，第3行显示“HTTP&#x2F;1.1 401 Unauthorized”。</li>
+<li><strong>参考位置</strong>：第二条记录，第3行显示“HTTP/1.1 401 Unauthorized”。</li>
 </ul>
 <blockquote>
 <p>19.<strong>当您的浏览器第二次发送HTTP GET消息时，HTTP GET消息中包含了什么新字段？</strong></p>
 </blockquote>
 <p>第二次发送的HTTP GET消息中包含了“Authorization”字段。</p>
 <ul>
-<li><strong>参考位置</strong>：数据包2469，第11行显示“Authorization: Basic d2lyZXNoYXJrLXN0dWRlbnRzOm5ldHdvcms&#x3D;\r\n”。</li>
+<li><strong>参考位置</strong>：数据包2469，第11行显示“Authorization: Basic d2lyZXNoYXJrLXN0dWRlbnRzOm5ldHdvcms=”。</li>
 </ul>
-<h1 id="实验三、TCP"><a href="#实验三、TCP" class="headerlink" title="实验三、TCP"></a>实验三、TCP</h1><h2 id="一、A-first-look-at-the-captured-trace"><a href="#一、A-first-look-at-the-captured-trace" class="headerlink" title="一、A first look at the captured trace"></a>一、A first look at the captured trace</h2><blockquote>
+<h1 id="实验三tcp">实验三、TCP</h1>
+<h2 id="一a-first-look-at-the-captured-trace">一、A first look at the captured trace</h2>
+<blockquote>
 <p>1.客户端计算机（源）的IP地址和TCP端口号是什么？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610012023256.png" alt="image-20240610012023256"></p>
-<p>根据HTTP&#x2F;POST下的字段可以发现，源IP地址为172.18.168.120，TCP端口号为7847</p>
+<figure>
+<img src="./image-20240610012023256.png" alt="image-20240610012023256" /><figcaption aria-hidden="true">image-20240610012023256</figcaption>
+</figure>
+<p>根据HTTP/POST下的字段可以发现，源IP地址为172.18.168.120，TCP端口号为7847</p>
 <blockquote>
 <p>2.gaia.cs.umass.edu的IP地址是什么？它在这个连接中发送和接收TCP段的端口号是多少？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610012255568.png" alt="image-20240610012255568"></p>
+<figure>
+<img src="./image-20240610012255568.png" alt="image-20240610012255568" /><figcaption aria-hidden="true">image-20240610012255568</figcaption>
+</figure>
 <p>还是刚刚的内容下方便可以找到，目标IP地址为128.119.245.12，目标端口号为80</p>
 <blockquote>
 <p>3.如果你已创建自己的跟踪文件，请回答客户端计算机（源）的IP地址和TCP端口号是什么？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610012849946.png" alt="image-20240610012849946"></p>
+<figure>
+<img src="./image-20240610012849946.png" alt="image-20240610012849946" /><figcaption aria-hidden="true">image-20240610012849946</figcaption>
+</figure>
 <p>下载并打开跟踪文件，可以看到源IP地址为192.168.1.102，TCP端口号为1161</p>
-<h2 id="二、TCP基础"><a href="#二、TCP基础" class="headerlink" title="二、TCP基础"></a>二、TCP基础</h2><blockquote>
+<h2 id="二tcp基础">二、TCP基础</h2>
+<blockquote>
 <p>4.用于启动客户端计算机和gaia.cs.umass.edu之间TCP连接的TCP SYN段的序列号是多少？该段中是什么标识段为SYN段？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610013118719.png" alt="image-20240610013118719"></p>
+<figure>
+<img src="./image-20240610013118719.png" alt="image-20240610013118719" /><figcaption aria-hidden="true">image-20240610013118719</figcaption>
+</figure>
 <p>序列号为0，标志位是0x002，代表是SYN段</p>
 <blockquote>
 <p>5.gaia.cs.umass.edu发送给客户端计算机以回复SYN的SYNACK段的序列号是多少？SYNACK段中的确认字段的值是多少？gaia.cs.umass.edu是如何确定该值的？该段中是什么标识段为SYNACK段？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610013413738.png" alt="image-20240610013413738"></p>
+<figure>
+<img src="./image-20240610013413738.png" alt="image-20240610013413738" /><figcaption aria-hidden="true">image-20240610013413738</figcaption>
+</figure>
 <p>相对序列号为0，确认字段为相对序列号+1，是1. 标志位是0x012，代表这是一个SYN，ACK段</p>
 <blockquote>
 <p>6.包含HTTP POST命令的TCP段的序列号是多少？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610013659129.png" alt="image-20240610013659129"></p>
+<figure>
+<img src="./image-20240610013659129.png" alt="image-20240610013659129" /><figcaption aria-hidden="true">image-20240610013659129</figcaption>
+</figure>
 <p>找到包含HTTP POST命令的TCP段。可以通过在“Info”列中找到包含“POST”的条目。发现其序列号为164041</p>
 <blockquote>
 <p>7.将包含HTTP POST的TCP段视为TCP连接中的第一个段。前六个段的序列号是多少（包括包含HTTP POST的段）？每个段在何时发送？每个段的确认在何时收到？考虑每个TCP段发送和收到其确认之间的时间差，每个段的RTT值是多少？每个确认收到后EstimatedRTT值是多少？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610014211540.png" alt="image-20240610014211540"></p>
+<figure>
+<img src="./image-20240610014211540.png" alt="image-20240610014211540" /><figcaption aria-hidden="true">image-20240610014211540</figcaption>
+</figure>
 <p>通过点击每个TCP段的信息可以得到，前六个段的序列号分别是164091、1、1、1、164091、0</p>
 <p>第一段（HTTP POST命令段）</p>
 <ul>
 <li><strong>序列号</strong>：104</li>
 <li><strong>发送时间</strong>：21:44:25.867722</li>
 <li><strong>确认时间</strong>：21:44:25.959852</li>
-<li><strong>RTT值</strong>：21:44:25.959852 - 21:44:25.867722 &#x3D; 0.09213 秒</li>
+<li><strong>RTT值</strong>：21:44:25.959852 - 21:44:25.867722 = 0.09213 秒</li>
 <li><strong>EstimatedRTT值</strong>：初始值为RTT值，即0.09213秒</li>
 </ul>
 <p>第二段</p>
@@ -553,24 +586,24 @@
 <li><strong>序列号</strong>：1</li>
 <li><strong>发送时间</strong>：21:44:25.867738</li>
 <li><strong>确认时间</strong>：21:44:26.018268</li>
-<li><strong>RTT值</strong>：21:44:26.018268 - 21:44:25.867738 &#x3D; 0.15053 秒</li>
-<li><strong>EstimatedRTT值</strong>：0.875 * 0.09213 + 0.125 * 0.15053 &#x3D; 0.09923秒</li>
+<li><strong>RTT值</strong>：21:44:26.018268 - 21:44:25.867738 = 0.15053 秒</li>
+<li><strong>EstimatedRTT值</strong>：0.875 * 0.09213 + 0.125 * 0.15053 = 0.09923秒</li>
 </ul>
 <p>第三段</p>
 <ul>
 <li><strong>序列号</strong>：1</li>
 <li><strong>发送时间</strong>：21:44:26.018268</li>
 <li><strong>确认时间</strong>：21:44:26.026211</li>
-<li><strong>RTT值</strong>：21:44:26.026211 - 21:44:26.018268 &#x3D; 0.00794 秒</li>
-<li><strong>EstimatedRTT值</strong>：0.875 * 0.09923 + 0.125 * 0.00794 &#x3D; 0.08931秒</li>
+<li><strong>RTT值</strong>：21:44:26.026211 - 21:44:26.018268 = 0.00794 秒</li>
+<li><strong>EstimatedRTT值</strong>：0.875 * 0.09923 + 0.125 * 0.00794 = 0.08931秒</li>
 </ul>
 <p>第四段</p>
 <ul>
 <li><strong>序列号</strong>：1</li>
 <li><strong>发送时间</strong>：21:44:26.018268</li>
 <li><strong>确认时间</strong>：21:44:26.221522</li>
-<li><strong>RTT值</strong>：21:44:26.221522 - 21:44:26.018268 &#x3D; 0.20325 秒</li>
-<li><strong>EstimatedRTT值</strong>：0.875 * 0.08931 + 0.125 * 0.20325 &#x3D; 0.10397秒</li>
+<li><strong>RTT值</strong>：21:44:26.221522 - 21:44:26.018268 = 0.20325 秒</li>
+<li><strong>EstimatedRTT值</strong>：0.875 * 0.08931 + 0.125 * 0.20325 = 0.10397秒</li>
 </ul>
 <p>第五段（HTTP 200 OK）</p>
 <ul>
@@ -591,7 +624,9 @@
 <blockquote>
 <p>8.前六个TCP段的长度是多少？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610015408184.png" alt="image-20240610015408184"></p>
+<figure>
+<img src="./image-20240610015408184.png" alt="image-20240610015408184" /><figcaption aria-hidden="true">image-20240610015408184</figcaption>
+</figure>
 <p>第一个段（HTTP POST命令段）：104字节</p>
 <p>第二个段：60字节</p>
 <p>第三个段：60字节</p>
@@ -601,7 +636,9 @@
 <blockquote>
 <p>9.在整个跟踪记录中，接收方广告的最小可用缓冲区空间是多少？接收方缓冲区空间的不足是否曾经限制了发送方？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610015711835.png" alt="image-20240610015711835"></p>
+<figure>
+<img src="./image-20240610015711835.png" alt="image-20240610015711835" /><figcaption aria-hidden="true">image-20240610015711835</figcaption>
+</figure>
 <p>我找到的最小的缓冲空间大小为5840，没有窗口大小为0的情况，因此接收方缓冲区空间未曾限制发送方。</p>
 <blockquote>
 <p>10.跟踪文件中是否有任何重传的段？你检查了（在跟踪中）什么来回答这个问题？</p>
@@ -611,33 +648,35 @@
 <blockquote>
 <p>11.接收方通常在一个ACK中确认多少数据？你能识别出接收方每接收两个段就确认一次的情况吗？</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610020552227.png" alt="image-20240610020552227"></p>
+<figure>
+<img src="./image-20240610020552227.png" alt="image-20240610020552227" /><figcaption aria-hidden="true">image-20240610020552227</figcaption>
+</figure>
 <p>还是根据之前的截图，得出结论</p>
-<ol>
-<li>第一个ACK段<ul>
+<ol type="1">
+<li>第一个ACK段
+<ul>
 <li>确认号：159389</li>
-</ul>
-</li>
-<li>第二个ACK段<ul>
+</ul></li>
+<li>第二个ACK段
+<ul>
 <li>确认号：162309</li>
-<li>确认的数据量：162309 - 159389 &#x3D; 2920字节</li>
-</ul>
-</li>
-<li>第三个ACK段<ul>
+<li>确认的数据量：162309 - 159389 = 2920字节</li>
+</ul></li>
+<li>第三个ACK段
+<ul>
 <li>确认号：164041</li>
-<li>确认的数据量：164041 - 162309 &#x3D; 1732字节</li>
-</ul>
-</li>
-<li>第四个ACK段<ul>
+<li>确认的数据量：164041 - 162309 = 1732字节</li>
+</ul></li>
+<li>第四个ACK段
+<ul>
 <li>确认号：164091</li>
-<li>确认的数据量：164091 - 164041 &#x3D; 50字节</li>
-</ul>
-</li>
-<li>第五个ACK段<ul>
+<li>确认的数据量：164091 - 164041 = 50字节</li>
+</ul></li>
+<li>第五个ACK段
+<ul>
 <li>确认号：164091（没有变化）</li>
 <li>确认的数据量：0字节</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p><strong>是否存在每接收两个段就确认一次的情况</strong>：</p>
 <p>通过检查确认号，可以看到ACK段的确认号在大多数情况下是递增的，每个ACK段确认不同数量的数据。并且可以看到每个ACK段并不一定是每接收两个段就确认一次，而是依据接收的数据量和具体的传输情况。</p>
@@ -645,193 +684,194 @@
 <p>12.TCP连接的吞吐量（每单位时间传输的字节数）是多少？解释你是如何计算这个值的。</p>
 </blockquote>
 <p>第一个TCP数据段</p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610021412345.png" alt="image-20240610021412345"></p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610021450522.png" alt="image-20240610021450522"></p>
+<figure>
+<img src="./image-20240610021412345.png" alt="image-20240610021412345" /><figcaption aria-hidden="true">image-20240610021412345</figcaption>
+</figure>
+<figure>
+<img src="./image-20240610021450522.png" alt="image-20240610021450522" /><figcaption aria-hidden="true">image-20240610021450522</figcaption>
+</figure>
 <p>可以看到其序列号是566</p>
 <p>最后一个TCP数据段</p>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610021530636.png" alt="image-20240610021530636"></p>
+<figure>
+<img src="./image-20240610021530636.png" alt="image-20240610021530636" /><figcaption aria-hidden="true">image-20240610021530636</figcaption>
+</figure>
 <p>可以看到其序列号是164091</p>
 <ul>
-<li>第一个数据段：<ul>
+<li>第一个数据段：
+<ul>
 <li>序列号：566</li>
 <li>发送时间：2004-08-21 21:44:20.612118</li>
-</ul>
-</li>
-<li>最后一个数据段：<ul>
+</ul></li>
+<li>最后一个数据段：
+<ul>
 <li>序列号：164091</li>
 <li>发送时间：2004-08-21 21:44:26.221522</li>
-</ul>
-</li>
+</ul></li>
 </ul>
 <p>计算方法：</p>
-<ol>
-<li><strong>确定传输的数据量</strong>：<ul>
-<li>传输的数据量 &#x3D; 最后一个数据段的序列号 - 第一个数据段的序列号 + 最后一个数据段的长度</li>
-<li>传输的数据量 &#x3D; 164091 - 566 + 54（假设最后一个数据段的长度为54字节）</li>
-<li>传输的数据量 &#x3D; 164091 - 566 + 54 &#x3D; 163579字节</li>
-</ul>
-</li>
-<li><strong>确定传输的时间</strong>：<ul>
-<li>传输的时间 &#x3D; 最后一个数据段的时间 - 第一个数据段的时间</li>
-<li>传输的时间 &#x3D; 21:44:26.221522 - 21:44:20.612118</li>
-<li>传输的时间 &#x3D; 5.609404秒</li>
-</ul>
-</li>
-<li><strong>计算吞吐量</strong>：<ul>
-<li>吞吐量（字节&#x2F;秒）&#x3D; 传输的数据量 &#x2F; 传输的时间</li>
-<li>吞吐量 &#x3D; 163579字节 &#x2F; 5.609404秒</li>
-<li>吞吐量 ≈ 29166.61 字节&#x2F;秒</li>
-</ul>
-</li>
+<ol type="1">
+<li><strong>确定传输的数据量</strong>：
+<ul>
+<li>传输的数据量 = 最后一个数据段的序列号 - 第一个数据段的序列号 + 最后一个数据段的长度</li>
+<li>传输的数据量 = 164091 - 566 + 54（假设最后一个数据段的长度为54字节）</li>
+<li>传输的数据量 = 164091 - 566 + 54 = 163579字节</li>
+</ul></li>
+<li><strong>确定传输的时间</strong>：
+<ul>
+<li>传输的时间 = 最后一个数据段的时间 - 第一个数据段的时间</li>
+<li>传输的时间 = 21:44:26.221522 - 21:44:20.612118</li>
+<li>传输的时间 = 5.609404秒</li>
+</ul></li>
+<li><strong>计算吞吐量</strong>：
+<ul>
+<li>吞吐量（字节/秒）= 传输的数据量 / 传输的时间</li>
+<li>吞吐量 = 163579字节 / 5.609404秒</li>
+<li>吞吐量 ≈ 29166.61 字节/秒</li>
+</ul></li>
 </ol>
 <p>结果：</p>
-<p>TCP连接的吞吐量约为 29166.61 字节&#x2F;秒。</p>
-<h2 id="三、-TCP拥塞控制的实际应用"><a href="#三、-TCP拥塞控制的实际应用" class="headerlink" title="三、 TCP拥塞控制的实际应用"></a>三、 TCP拥塞控制的实际应用</h2><img src="./image-20240610023619971.png" alt="image-20240610023619971" style="zoom:50%;" />
-
+<p>TCP连接的吞吐量约为 29166.61 字节/秒。</p>
+<h2 id="三-tcp拥塞控制的实际应用">三、 TCP拥塞控制的实际应用</h2>
+<p><img src="./image-20240610023619971.png" alt="image-20240610023619971" style="zoom:50%;" /></p>
 <blockquote>
 <p>13.使用时间序列图（Stevens）绘图工具查看从客户端发送到gaia.cs.umass.edu服务器的段的序列号与时间的关系图。你能识别出TCP的慢启动阶段开始和结束的位置，以及拥塞避免接管的位置吗？评论测量数据与我们在教材中研究的TCP理想化行为的不同之处。</p>
 </blockquote>
 <p><font color = "blue"><strong>慢启动阶段</strong></font></p>
-<ol>
+<ol type="1">
 <li><strong>开始位置</strong>：慢启动阶段始于TCP连接的开始，也就是三次握手完成后的第一个数据包发送。</li>
-<li>特征：<ul>
+<li>特征：
+<ul>
 <li>发送窗口大小从一个段开始，并以指数级增长。</li>
 <li>每次接收到一个ACK，发送窗口大小加倍。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p><font color = "blue"><strong>拥塞避免阶段</strong></font></p>
-<ol>
+<ol type="1">
 <li><strong>结束位置</strong>：慢启动阶段结束时，拥塞窗口大小达到慢启动阈值（ssthresh）。</li>
 <li><strong>开始位置</strong>：拥塞避免阶段开始于慢启动阶段结束之后。</li>
-<li>特征：<ul>
+<li>特征：
+<ul>
 <li>发送窗口大小以线性增长（每个RTT增加一个MSS）。</li>
-<li>每次接收到一个ACK，发送窗口大小增加一个MSS&#x2F;MSS。</li>
-</ul>
-</li>
+<li>每次接收到一个ACK，发送窗口大小增加一个MSS/MSS。</li>
+</ul></li>
 </ol>
 <p><font color = "blue"><strong>测量数据与理想化TCP行为的不同之处</strong></font></p>
-<ol>
-<li>丢包和重传：<ul>
+<ol type="1">
+<li>丢包和重传：
+<ul>
 <li>在实际网络中，由于网络拥塞、线路质量等原因，数据包可能会丢失或延迟，导致重传。</li>
 <li>在理想化的TCP模型中，假设网络没有丢包且传输是连续的。</li>
-</ul>
-</li>
-<li>网络拥塞：<ul>
+</ul></li>
+<li>网络拥塞：
+<ul>
 <li>实际网络中，网络拥塞会影响RTT和吞吐量，导致拥塞窗口大小的调整。</li>
 <li>理想化模型中，假设网络拥塞情况较少。</li>
-</ul>
-</li>
-<li>ACK延迟：<ul>
+</ul></li>
+<li>ACK延迟：
+<ul>
 <li>实际中，接收方可能会延迟发送ACK，从而影响发送方的拥塞窗口调整。</li>
 <li>理想化模型假设ACK立即返回。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <blockquote>
 <p>14.在你从计算机向gaia.cs.umass.edu传输文件时，回答上述两个问题。</p>
 </blockquote>
 <p>识别方法和上面类似，具体来讲</p>
 <p>实际数据中的识别</p>
-<ol>
-<li><strong>慢启动阶段</strong>：<ul>
+<ol type="1">
+<li><strong>慢启动阶段</strong>：
+<ul>
 <li>在Wireshark的时间序列图中，从数据包发送的开始（例如，时间点为21:44:20）到某个时间点（例如，21:44:25），可以看到序列号随时间以指数级增长。</li>
 <li>具体来说，如果在第一个RTT内（假设RTT为100ms）发送了1个数据包，第二个RTT内发送了2个数据包，第三个RTT内发送了4个数据包，这表明这是慢启动阶段。</li>
-</ul>
-</li>
-<li><strong>拥塞避免阶段</strong>：<ul>
+</ul></li>
+<li><strong>拥塞避免阶段</strong>：
+<ul>
 <li>当时间序列图中的增长趋势从指数级变为线性（例如，从21:44:25到21:44:30），可以看到每个RTT内发送的数据包数量增长变得较慢。</li>
 <li>例如，在这个阶段，每个RTT内发送的数据包数量增加一个固定的数量（例如，每个RTT增加一个MSS）。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p>比较实际测量数据与理想化TCP行为的不同之处</p>
-<ol>
-<li><strong>丢包和重传</strong>：<ul>
+<ol type="1">
+<li><strong>丢包和重传</strong>：
+<ul>
 <li>实际网络中，由于网络拥塞、线路质量等原因，数据包可能会丢失或延迟，导致重传。这会导致拥塞窗口的调整和传输速率的波动。</li>
 <li>理想化模型中，假设网络没有丢包且传输是连续的。</li>
-</ul>
-</li>
-<li><strong>网络拥塞</strong>：<ul>
+</ul></li>
+<li><strong>网络拥塞</strong>：
+<ul>
 <li>实际网络中，网络拥塞会影响RTT和吞吐量，导致拥塞窗口大小的调整。</li>
 <li>理想化模型假设网络拥塞情况较少，传输更为平稳。</li>
-</ul>
-</li>
-<li><strong>ACK延迟</strong>：<ul>
+</ul></li>
+<li><strong>ACK延迟</strong>：
+<ul>
 <li>实际中，接收方可能会延迟发送ACK，从而影响发送方的拥塞窗口调整。</li>
 <li>理想化模型假设ACK立即返回，传输过程更加顺畅。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p>实际测量数据示例：</p>
 <ul>
-<li><strong>慢启动阶段</strong>：<ul>
+<li><strong>慢启动阶段</strong>：
+<ul>
 <li>起始时间：21:44:20</li>
 <li>结束时间：21:44:25</li>
 <li>特征：序列号随时间以指数级增长。</li>
-</ul>
-</li>
-<li><strong>拥塞避免阶段</strong>：<ul>
+</ul></li>
+<li><strong>拥塞避免阶段</strong>：
+<ul>
 <li>起始时间：21:44:25</li>
 <li>结束时间：21:45:25</li>
 <li>特征：序列号随时间以线性增长。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h1 id="实验四、DHCP"><a href="#实验四、DHCP" class="headerlink" title="实验四、DHCP"></a>实验四、DHCP</h1><img src="./image-20240610134508643.png" alt="image-20240610134508643" style="zoom:50%;" />
-
+<h1 id="实验四dhcp">实验四、DHCP</h1>
+<p><img src="./image-20240610134508643.png" alt="image-20240610134508643" style="zoom:50%;" /></p>
 <blockquote>
 <p>1.DHCP 消息是通过 UDP 还是 TCP 发送的？</p>
 </blockquote>
-<img src="./image-20240610140802667.png" alt="image-20240610140802667" style="zoom:50%;" />
-
+<p><img src="./image-20240610140802667.png" alt="image-20240610140802667" style="zoom:50%;" /></p>
 <p>DHCP 消息是通过 UDP（用户数据报协议）发送的。具体来说，DHCP 客户端和服务器使用 UDP 端口 67 和 68 进行通信。客户端发送的请求使用端口 68，服务器发送的响应使用端口 67。</p>
 <blockquote>
-<p>2.画一个时间数据报图，说明客户端和服务器之间的第一个四包发现&#x2F;提供&#x2F;请求&#x2F;确认 DHCP 交换的顺序。对于每个包，指出源和目标端口号。端口号是否与本实验中给出的示例相同？</p>
+<p>2.画一个时间数据报图，说明客户端和服务器之间的第一个四包发现/提供/请求/确认 DHCP 交换的顺序。对于每个包，指出源和目标端口号。端口号是否与本实验中给出的示例相同？</p>
 </blockquote>
-<img src="./output.png" alt="output" style="zoom:50%;" />
-
-<p>上图展示了客户端和服务器之间的第一个四包发现&#x2F;提供&#x2F;请求&#x2F;确认 DHCP 交换的顺序：</p>
-<ol>
-<li><strong>DHCP Discover（发现包）</strong><ul>
+<p><img src="./output.png" alt="output" style="zoom:50%;" /></p>
+<p>上图展示了客户端和服务器之间的第一个四包发现/提供/请求/确认 DHCP 交换的顺序：</p>
+<ol type="1">
+<li><strong>DHCP Discover（发现包）</strong>
+<ul>
 <li>源端口号：68</li>
 <li>目标端口号：67</li>
-</ul>
-</li>
-<li><strong>DHCP Offer（提供包）</strong><ul>
+</ul></li>
+<li><strong>DHCP Offer（提供包）</strong>
+<ul>
 <li>源端口号：67</li>
 <li>目标端口号：68</li>
-</ul>
-</li>
-<li><strong>DHCP Request（请求包）</strong><ul>
+</ul></li>
+<li><strong>DHCP Request（请求包）</strong>
+<ul>
 <li>源端口号：68</li>
 <li>目标端口号：67</li>
-</ul>
-</li>
-<li><strong>DHCP ACK（确认包）</strong><ul>
+</ul></li>
+<li><strong>DHCP ACK（确认包）</strong>
+<ul>
 <li>源端口号：67</li>
 <li>目标端口号：68</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <blockquote>
 <p>3.你的主机的链路层（例如以太网）地址是什么？</p>
 </blockquote>
-<img src="./image-20240610135221115.png" alt="image-20240610135221115" style="zoom:50%;" />
-
+<p><img src="./image-20240610135221115.png" alt="image-20240610135221115" style="zoom:50%;" /></p>
 <p>主机的链路层地址是 <strong>00:08:74:4f:36:23</strong></p>
 <blockquote>
 <p>4.DHCP 发现消息中的哪些值与 DHCP 请求消息不同？</p>
 </blockquote>
 <p>发现消息</p>
-<img src="./image-20240610135716809.png" alt="image-20240610135716809" style="zoom: 67%;" />
-
+<p><img src="./image-20240610135716809.png" alt="image-20240610135716809" style="zoom: 67%;" /></p>
 <p>请求消息</p>
-<img src="./image-20240610135650346.png" alt="image-20240610135650346" style="zoom:50%;" />
-
+<p><img src="./image-20240610135650346.png" alt="image-20240610135650346" style="zoom:50%;" /></p>
 <p><font color = "blue">DHCP 发现消息（Discover Message）</font></p>
 <ul>
-<li><strong>消息类型</strong>：Discover (Message Type &#x3D; 1)</li>
+<li><strong>消息类型</strong>：Discover (Message Type = 1)</li>
 <li><strong>事务 ID</strong>：0xb310</li>
 <li><strong>源地址</strong>：0.0.0.0</li>
 <li><strong>目标地址</strong>：255.255.255.255</li>
@@ -840,7 +880,7 @@
 </ul>
 <p><font color = "blue">DHCP 请求消息（Request Message）</font></p>
 <ul>
-<li><strong>消息类型</strong>：Request (Message Type &#x3D; 3)</li>
+<li><strong>消息类型</strong>：Request (Message Type = 3)</li>
 <li><strong>事务 ID</strong>：0xb311</li>
 <li><strong>源地址</strong>：0.0.0.0</li>
 <li><strong>目标地址</strong>：255.255.255.255</li>
@@ -848,68 +888,66 @@
 <li><strong>UDP 目标端口</strong>：67</li>
 </ul>
 <p><font color = "blue">主要区别：</font></p>
-<ol>
-<li>**消息类型 (Message Type)**：<ul>
+<ol type="1">
+<li><strong>消息类型 (Message Type)</strong>：
+<ul>
 <li>发现消息的消息类型为 1。</li>
 <li>请求消息的消息类型为 3。</li>
-</ul>
-</li>
-<li>**事务 ID (Transaction ID)**：<ul>
+</ul></li>
+<li><strong>事务 ID (Transaction ID)</strong>：
+<ul>
 <li>发现消息的事务 ID 为 0xb310。</li>
 <li>请求消息的事务 ID 为 0xb311。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <p>这两个字段的值是区分 DHCP 发现消息和请求消息的主要因素。其他字段，如源和目标地址、端口号等，在这两个消息中是相同的。</p>
 <blockquote>
-<ol start="5">
-<li>第一个四个（发现&#x2F;提供&#x2F;请求&#x2F;确认）DHCP 消息中的事务 ID 值是什么？第二组（请求&#x2F;确认）DHCP 消息中的事务 ID 值是什么？事务 ID 字段的目的是什么？</li>
+<ol start="5" type="1">
+<li>第一个四个（发现/提供/请求/确认）DHCP 消息中的事务 ID 值是什么？第二组（请求/确认）DHCP 消息中的事务 ID 值是什么？事务 ID 字段的目的是什么？</li>
 </ol>
 </blockquote>
 <p><font color = "blue">第一个四个 DHCP 消息中的事务 ID 值：</font></p>
-<ol>
-<li><p><strong>DHCP Discover</strong> - Transaction ID: 0x3e5e0ce3</p>
-</li>
-<li><p><strong>DHCP Offer</strong> - Transaction ID: 0x3e5e0ce3</p>
-</li>
-<li><p><strong>DHCP Request</strong> - Transaction ID: 0x3e5e0ce3</p>
-</li>
-<li><p><strong>DHCP ACK</strong> - Transaction ID: 0x3e5e0ce3</p>
-</li>
+<ol type="1">
+<li><p><strong>DHCP Discover</strong> - Transaction ID: 0x3e5e0ce3</p></li>
+<li><p><strong>DHCP Offer</strong> - Transaction ID: 0x3e5e0ce3</p></li>
+<li><p><strong>DHCP Request</strong> - Transaction ID: 0x3e5e0ce3</p></li>
+<li><p><strong>DHCP ACK</strong> - Transaction ID: 0x3e5e0ce3</p></li>
 </ol>
-<p><font color = "blue">第二组（请求&#x2F;确认）DHCP 消息中的事务 ID 值：</font></p>
-<ol>
+<p><font color = "blue">第二组（请求/确认）DHCP 消息中的事务 ID 值：</font></p>
+<ol type="1">
 <li><strong>DHCP Request</strong> - Transaction ID: 0x257e55a3</li>
 <li><strong>DHCP ACK</strong> - Transaction ID: 0x257e55a3</li>
 </ol>
 <p><font color = "blue">事务 ID 字段的目的：</font></p>
 <p>事务 ID (Transaction ID) 字段的目的是用于匹配客户端和服务器之间的 DHCP 消息交换。它是一个随机生成的值，用于区分不同的 DHCP 事务，确保每个客户端请求能够与相应的服务器响应正确匹配。这个 ID 由客户端生成，并在每个 DHCP 消息中包含，以便服务器可以识别和处理来自特定客户端的请求。</p>
 <blockquote>
-<p>6.主机使用 DHCP 获取 IP 地址等信息。但主机的 IP 地址直到四消息交换结束时才被确认！如果 IP 地址在四消息交换结束之前未设置，那么四消息交换中的 IP 数据报中使用了哪些值？对于每个 DHCP 消息（发现&#x2F;提供&#x2F;请求&#x2F;确认），指出封装的 IP 数据报中携带的源和目标 IP 地址。</p>
+<p>6.主机使用 DHCP 获取 IP 地址等信息。但主机的 IP 地址直到四消息交换结束时才被确认！如果 IP 地址在四消息交换结束之前未设置，那么四消息交换中的 IP 数据报中使用了哪些值？对于每个 DHCP 消息（发现/提供/请求/确认），指出封装的 IP 数据报中携带的源和目标 IP 地址。</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240610140614018.png" alt="image-20240610140614018"></p>
+<figure>
+<img src="./image-20240610140614018.png" alt="image-20240610140614018" /><figcaption aria-hidden="true">image-20240610140614018</figcaption>
+</figure>
 <p><font color = "blue">DHCP 消息和相应的 IP 地址：</font></p>
-<ol>
-<li><strong>DHCP Discover 消息</strong><ul>
+<ol type="1">
+<li><strong>DHCP Discover 消息</strong>
+<ul>
 <li><strong>源 IP 地址</strong>：0.0.0.0</li>
 <li><strong>目标 IP 地址</strong>：255.255.255.255</li>
-</ul>
-</li>
-<li><strong>DHCP Offer 消息</strong><ul>
+</ul></li>
+<li><strong>DHCP Offer 消息</strong>
+<ul>
 <li><strong>源 IP 地址</strong>：192.168.1.1</li>
 <li><strong>目标 IP 地址</strong>：255.255.255.255</li>
-</ul>
-</li>
-<li><strong>DHCP Request 消息</strong><ul>
+</ul></li>
+<li><strong>DHCP Request 消息</strong>
+<ul>
 <li><strong>源 IP 地址</strong>：0.0.0.0</li>
 <li><strong>目标 IP 地址</strong>：255.255.255.255</li>
-</ul>
-</li>
-<li><strong>DHCP ACK 消息</strong><ul>
+</ul></li>
+<li><strong>DHCP ACK 消息</strong>
+<ul>
 <li><strong>源 IP 地址</strong>：192.168.1.1</li>
 <li><strong>目标 IP 地址</strong>：255.255.255.255</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 <blockquote>
 <p>7.你的 DHCP 服务器的 IP 地址是什么？</p>
@@ -918,15 +956,13 @@
 <blockquote>
 <p>8.DHCP 服务器在 DHCP 提供消息中向你的主机提供了什么 IP 地址？指出包含提供的 DHCP 地址的 DHCP 消息。</p>
 </blockquote>
-<img src="./image-20240610141106206.png" alt="image-20240610141106206" style="zoom:80%;" />
-
+<p><img src="./image-20240610141106206.png" alt="image-20240610141106206" style="zoom:80%;" /></p>
 <p><strong>提供的 IP 地址</strong>：192.168.1.101</p>
 <p><strong>包含提供的 DHCP 地址的消息</strong>：DHCP Offer 消息</p>
 <blockquote>
 <p>9.在本作业的示例截图中，主机和 DHCP 服务器之间没有中继代理。追踪中的哪些值表明没有中继代理？你的实验中是否有中继代理？如果有，中继代理的 IP 地址是什么？</p>
 </blockquote>
-<img src="./image-20240610141601599.png" alt="image-20240610141601599" style="zoom: 67%;" />
-
+<p><img src="./image-20240610141601599.png" alt="image-20240610141601599" style="zoom: 67%;" /></p>
 <p><strong>没有中继代理的标志</strong>：<code>giaddr</code> 字段的值为 0.0.0.0。这表明没有中继代理参与 DHCP 消息的传输。在我的实验中<code>giaddr</code> 字段的值为 0.0.0.0，因此也没有中继代理</p>
 <blockquote>
 <p>10.解释 DHCP 提供消息中的路由器和子网掩码行的目的。</p>
@@ -946,9 +982,8 @@
 </blockquote>
 <p>在 DHCP Request 消息的选项部分，找到如下信息：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Option: (<span class="number">50</span>) Requested IP <span class="title function_">Address</span> <span class="params">(<span class="number">192.168</span><span class="number">.1</span><span class="number">.101</span>)</span></span><br></pre></td></tr></table></figure>
-
 <p>这表明客户端在 DHCP Request 消息中明确请求了服务器在 DHCP Offer 消息中提供的 IP 地址 <strong>192.168.1.101</strong>。</p>
-<ol>
+<ol type="1">
 <li><strong>客户端接受了 DHCP 服务器提供的 IP 地址</strong>：192.168.1.101。</li>
 <li><strong>客户端请求的地址位置</strong>：在 DHCP Request 消息的 <code>Option: (50) Requested IP Address</code> 字段中。</li>
 </ol>
@@ -958,22 +993,21 @@
 <p><font color = "blue">租赁时间的目的：</font></p>
 <p>租赁时间（Lease Time）是在 DHCP 协议中，指的是 DHCP 服务器分配给客户端的 IP 地址的有效使用期限。租赁时间决定了客户端可以使用分配的 IP 地址的时长。在租赁时间到期之前，客户端需要向 DHCP 服务器请求续约，以继续使用当前的 IP 地址。如果客户端未能在租赁时间到期前续约，DHCP 服务器可以收回该 IP 地址并分配给其他客户端。</p>
 <p><strong>主要目的</strong>：</p>
-<ol>
+<ol type="1">
 <li><strong>动态分配 IP 地址</strong>：通过设置租赁时间，DHCP 服务器可以更高效地管理和分配 IP 地址，确保网络资源的合理利用。</li>
 <li><strong>防止 IP 地址冲突</strong>：通过控制租赁时间，可以减少 IP 地址冲突的风险，确保每个客户端在网络中有一个唯一的 IP 地址。</li>
 <li><strong>资源回收和重新分配</strong>：如果设备离开网络或关闭，在租赁时间到期后，IP 地址可以被回收并重新分配给其他设备。</li>
 </ol>
 <p><font color = "blue">在你的实验中，租赁时间是多少？</font></p>
 <p>在你提供的 DHCP Offer 消息截图中，租赁时间在 <code>IP Address Lease Time</code> 选项中，选项代码为 51,86400 秒，即 1 天。。</p>
-<img src="./image-20240611125130352.png" alt="image-20240611125130352" style="zoom:50%;" />
-
+<p><img src="./image-20240611125130352.png" alt="image-20240611125130352" style="zoom:50%;" /></p>
 <blockquote>
 <p>13.DHCP 释放消息的目的是什么？DHCP 服务器是否会发出确认收到客户端的 DHCP 释放请求的确认？如果客户端的 DHCP 释放消息丢失会发生什么？</p>
 </blockquote>
 <p><font color = "blue">DHCP 释放消息的目的：</font></p>
 <p>DHCP 释放（Release）消息是由客户端发送给 DHCP 服务器的，用于通知服务器客户端不再需要分配给它的 IP 地址。通过发送 DHCP 释放消息，客户端可以主动释放其 IP 地址，使该地址可以立即被 DHCP 服务器回收并重新分配给其他客户端。</p>
 <p><strong>主要目的</strong>：</p>
-<ol>
+<ol type="1">
 <li><strong>主动释放 IP 地址</strong>：客户端通过发送 DHCP 释放消息来通知服务器，它不再需要当前的 IP 地址。</li>
 <li><strong>提高资源利用率</strong>：通过主动释放 IP 地址，服务器可以更快地将该地址分配给其他需要的设备，从而提高网络资源的利用率。</li>
 </ol>
@@ -983,7 +1017,7 @@
 </ul>
 <p><font color = "blue">如果客户端的 DHCP 释放消息丢失会发生什么？</font></p>
 <p>如果客户端的 DHCP 释放消息丢失，服务器不会收到该通知，可能会继续认为客户端仍然在使用该 IP 地址。这种情况下：</p>
-<ol>
+<ol type="1">
 <li><strong>服务器的 IP 地址不会立即被回收</strong>：服务器可能需要等待租赁时间到期后，才能收回并重新分配该 IP 地址。</li>
 <li><strong>资源利用效率降低</strong>：因为服务器没有收到释放消息，IP 地址会在租赁时间到期前保持分配状态，即使客户端已经不再使用该地址，从而降低资源利用效率。</li>
 </ol>
@@ -991,19 +1025,19 @@
 <blockquote>
 <p>14.从 Wireshark 窗口中清除 bootp 过滤器。在 DHCP 包交换期间是否发送或接收了任何 ARP 包？如果有，解释这些 ARP 包的目的。</p>
 </blockquote>
-<p><img src="/2024/06/07/wireSharkLab/image-20240611125457251.png" alt="image-20240611125457251"></p>
+<figure>
+<img src="./image-20240611125457251.png" alt="image-20240611125457251" /><figcaption aria-hidden="true">image-20240611125457251</figcaption>
+</figure>
 <p><font color = "blue">ARP 请求包：</font></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Who has <span class="number">192.168</span><span class="number">.1</span><span class="number">.101</span>? Tell <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
-
 <ul>
 <li><strong>目的</strong>：LinksysGroup 发出的 ARP 请求，询问网络中哪个设备拥有 IP 地址 192.168.1.101。</li>
-<li><strong>来源</strong>：LinksysGroup_da:af:…</li>
+<li><strong>来源</strong>：LinksysGroup_da:af:...</li>
 <li><strong>目标</strong>：Broadcast（广播）</li>
 <li><strong>时间</strong>：2004-08-30 00:57:22.615714</li>
 </ul>
 <p><font color = "blue">ARP Announcement 包：</font></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ARP Announcement <span class="keyword">for</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.101</span></span><br></pre></td></tr></table></figure>
-
 <ul>
 <li><strong>目的</strong>：Dell_4f:36:23 发出的 ARP 公告，宣布自己使用了 IP 地址 192.168.1.101。</li>
 <li><strong>来源</strong>：Dell_4f:36:23</li>
@@ -1011,15 +1045,15 @@
 <li><strong>时间</strong>：2004-08-30 00:57:23.312590 等多次</li>
 </ul>
 <p><font color = "blue">ARP 包的目的：</font></p>
-<ol>
-<li><strong>确认 IP 地址是否唯一</strong>：<ul>
+<ol type="1">
+<li><strong>确认 IP 地址是否唯一</strong>：
+<ul>
 <li>当 DHCP 服务器提供一个新的 IP 地址给客户端时，客户端会发送 ARP 请求包，确认网络中没有其他设备正在使用这个 IP 地址。这是为了确保分配的 IP 地址是唯一的，没有冲突。</li>
-</ul>
-</li>
-<li><strong>更新 ARP 缓存和宣布 IP 地址</strong>：<ul>
+</ul></li>
+<li><strong>更新 ARP 缓存和宣布 IP 地址</strong>：
+<ul>
 <li>客户端获取并确认 IP 地址后，会通过 ARP Announcement 包在网络中广播自己的 IP 地址和 MAC 地址映射。这有助于更新其他设备的 ARP 缓存，确保它们可以正确地与新获取 IP 地址的设备通信。</li>
-</ul>
-</li>
+</ul></li>
 </ol>
 
     </div>
@@ -1132,7 +1166,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80%E3%80%81GetStarted"><span class="nav-number">1.</span> <span class="nav-text">实验一、GetStarted</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8C%E3%80%81HTTP"><span class="nav-number">2.</span> <span class="nav-text">实验二、HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81The-Basic-HTTP-GET-response-interaction"><span class="nav-number">2.1.</span> <span class="nav-text">一、The Basic HTTP GET&#x2F;response interaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81The-HTTP-CONDITIONAL-GET-response-interaction"><span class="nav-number">2.2.</span> <span class="nav-text">二、The HTTP CONDITIONAL GET&#x2F;response interaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81Retrieving-Long-Documents"><span class="nav-number">2.3.</span> <span class="nav-text">三、Retrieving Long Documents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%8C%85%E5%90%AB%E5%B5%8C%E5%85%A5%E5%AF%B9%E8%B1%A1%E7%9A%84HTML%E6%96%87%E6%A1%A3"><span class="nav-number">2.4.</span> <span class="nav-text">四、包含嵌入对象的HTML文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81HTTP%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-number">2.5.</span> <span class="nav-text">五、HTTP身份验证</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%E3%80%81TCP"><span class="nav-number">3.</span> <span class="nav-text">实验三、TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81A-first-look-at-the-captured-trace"><span class="nav-number">3.1.</span> <span class="nav-text">一、A first look at the captured trace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81TCP%E5%9F%BA%E7%A1%80"><span class="nav-number">3.2.</span> <span class="nav-text">二、TCP基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81-TCP%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text">三、 TCP拥塞控制的实际应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9B%E3%80%81DHCP"><span class="nav-number">4.</span> <span class="nav-text">实验四、DHCP</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80getstarted"><span class="nav-number">1.</span> <span class="nav-text">实验一、GetStarted</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8Chttp"><span class="nav-number">2.</span> <span class="nav-text">实验二、HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80the-basic-http-getresponse-interaction"><span class="nav-number">2.1.</span> <span class="nav-text">一、The Basic HTTP GET&#x2F;response interaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cthe-http-conditional-getresponse-interaction"><span class="nav-number">2.2.</span> <span class="nav-text">二、The HTTP CONDITIONAL GET&#x2F;response interaction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89retrieving-long-documents"><span class="nav-number">2.3.</span> <span class="nav-text">三、Retrieving Long Documents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%8C%85%E5%90%AB%E5%B5%8C%E5%85%A5%E5%AF%B9%E8%B1%A1%E7%9A%84html%E6%96%87%E6%A1%A3"><span class="nav-number">2.4.</span> <span class="nav-text">四、包含嵌入对象的HTML文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94http%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81"><span class="nav-number">2.5.</span> <span class="nav-text">五、HTTP身份验证</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89tcp"><span class="nav-number">3.</span> <span class="nav-text">实验三、TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80a-first-look-at-the-captured-trace"><span class="nav-number">3.1.</span> <span class="nav-text">一、A first look at the captured trace</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Ctcp%E5%9F%BA%E7%A1%80"><span class="nav-number">3.2.</span> <span class="nav-text">二、TCP基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-tcp%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text">三、 TCP拥塞控制的实际应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E5%9B%9Bdhcp"><span class="nav-number">4.</span> <span class="nav-text">实验四、DHCP</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -1224,12 +1258,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">250k</span>
+    <span title="站点总字数">253k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">3:47</span>
+    <span title="站点阅读时长">3:50</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
   </div>
@@ -1337,6 +1371,8 @@ $(document).ready(function() {
 
 
 
+
+  
 
   
 
